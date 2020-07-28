@@ -1,15 +1,12 @@
 import json
 import os
-import uuid
+from os.path import join, dirname
 
 import boto3
 import requests
 from boto3.session import Session
-from requests_aws4auth import AWS4Auth
-import json
-from os.path import join, dirname
 from jsonschema import validate, exceptions
-
+from requests_aws4auth import AWS4Auth
 
 opg_sirius_api_gateway_dev_aws = {
     "name": "original collections api on aws dev",
@@ -17,26 +14,30 @@ opg_sirius_api_gateway_dev_aws = {
         "url": "https://3d9iqi6bq9.execute-api.eu-west-1.amazonaws.com/v1/lpa-online-tool/lpas",
         "method": "GET",
         "valid_lpa_online_tool_ids": ["A33718377316"],
-        "invalid_lpa_online_tool_ids": ["banana"]
+        "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
         "url": "https://3d9iqi6bq9.execute-api.eu-west-1.amazonaws.com/v1/use-an-lpa/lpas",
         "method": "GET",
         "valid_sirius_uids": ["700000000013"],
         "invalid_sirius_uids": ["9"],
-    }
+    },
 }
 
 configs_to_test = [opg_sirius_api_gateway_dev_aws]
 
 
 def pytest_html_report_title(report):
-   report.title = "opg-data-lpa integration tests"
+    report.title = "opg-data-lpa integration tests"
 
 
 def send_a_request(
-    test_config, url=None, method=None, payload=None, extra_headers=None,
-        content_type=None
+    test_config,
+    url=None,
+    method=None,
+    payload=None,
+    extra_headers=None,
+    content_type=None,
 ):
     print(f"Using test_config: {test_config['name']}")
 
@@ -95,7 +96,6 @@ def send_a_request(
     print(f"response: {json.dumps(response.json(), indent=4)}")
 
     return response.status_code, response.text
-
 
 
 def is_valid_schema(data, schema_file):
