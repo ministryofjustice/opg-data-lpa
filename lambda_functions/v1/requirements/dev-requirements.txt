@@ -2,3 +2,10 @@ pytest
 flake8
 flake8-quotes
 Flask
+connexion
+pytest-env
+boto3
+pytest-cov
+requests-aws4auth
+pytest-html
+moto

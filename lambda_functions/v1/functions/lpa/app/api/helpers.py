@@ -12,7 +12,7 @@ def custom_logger(name=None):
     Returns:
         Logger instance
     """
-    logger_name = name if name else "default"
+    logger_name = name if name else "opg-data-lpa"
     formatter = logging.Formatter(
         fmt=f"%(asctime)s - %(levelname)s - {logger_name} - in %("
         f"funcName)s:%(lineno)d - %(message)s"
