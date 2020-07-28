@@ -1,0 +1,348 @@
+---
+version: 2.1
+
+parameters:
+  run_pull_request:
+    type: boolean
+    default: true
+  run_commit_to_master:
+    type: boolean
+    default: true
+  run_verify_pact:
+    type: boolean
+    default: true
+  consumerversion:
+    type: string
+    default: ""
+  consumer:
+    type: string
+    default: ""
+
+workflows:
+  pull_request:
+    when: << pipeline.parameters.run_pull_request >>
+    jobs:
+      - build_and_test:
+          name: build and artifact
+          filters: {branches:{ignore:[master]}}
+
+      - terraform_preflight:
+          name: terraform preflight checks
+          requires: [build and artifact]
+          filters: {branches:{ignore:[master]}}
+
+      - terraform_action:
+          name: apply branch environment
+          requires: [terraform preflight checks]
+          tf_command: apply
+          filters: {branches:{ignore:[master]}}
+
+      - cleanup:
+          name: approve destroy environment
+          type: approval
+          requires: [apply branch environment]
+          filters: {branches:{ignore:[master]}}
+
+      - terraform_action:
+          name: destroy branch environment
+          requires: [approve destroy environment]
+          tf_command: destroy
+          filters: {branches:{ignore:[master]}}
+
+  commit_to_master:
+    when: << pipeline.parameters.run_commit_to_master >>
+    jobs:
+      - build_and_test:
+          name: build and artifact
+          filters: {branches:{only:[master]}}
+
+      - terraform_action:
+          name: development apply
+          requires: [build and artifact]
+          tf_command: apply --auto-approve
+          tf_workspace: development
+          apply_check: true
+          filters: {branches:{only:[master]}}
+
+      - terraform_action:
+         name: preprod apply
+         requires: [development apply]
+         tf_command: apply --auto-approve
+         tf_workspace: preproduction
+         apply_check: true
+         filters: {branches:{only:[master]}}
+
+      - approve:
+         name: approve release to production
+         type: approval
+         requires: [preprod apply]
+         filters: {branches:{only:[master]}}
+
+      - terraform_action:
+          name: integration apply
+          requires: [approve release to production]
+          tf_command: apply --auto-approve
+          tf_workspace: integration
+          apply_check: true
+          filters: {branches:{only:[master]}}
+
+      - terraform_action:
+          name: integration apply
+          requires: [approve release to production]
+          tf_command: apply --auto-approve
+          tf_workspace: integration
+          apply_check: true
+          filters: {branches:{only:[master]}}
+
+      - terraform_action:
+         name: production apply
+         requires: [approve release to production]
+         tf_command: apply --auto-approve
+         tf_workspace: production
+         apply_check: true
+         filters: {branches:{only:[master]}}
+         pact_tag_production: true
+
+  verify_pact:
+    when: << pipeline.parameters.run_verify_pact >>
+    jobs:
+      - pact_verification:
+          name: verify the latest pact
+
+orbs:
+  lpa:
+    executors:
+      python_with_tfvars:
+        docker:
+          - image: circleci/python:3
+        environment:
+          TF_CLI_ARGS_plan: -input=false -lock=false
+          TF_CLI_ARGS_apply: -input=false -auto-approve
+          TF_CLI_ARGS_destroy: -input=false -auto-approve
+          TF_CLI_ARGS_init: -input=false -upgrade=true -reconfigure
+          TF_VAR_default_role: sirius-ci
+          TF_VERSION: 0.12.26
+          TF_SHA256SUM: 607bc802b1c6c2a5e62cc48640f38aaa64bef1501b46f0ae4829feb51594b257
+      python:
+        docker:
+          - image: circleci/python:3.8.1
+    commands:
+      terraform_install:
+        steps:
+          - run:
+              name: Download Terraform
+              command: curl -sfSO https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
+          - run:
+              name: Add Terraform SHA256SUM
+              command: echo "${TF_SHA256SUM} terraform_${TF_VERSION}_linux_amd64.zip" > SHA256SUMS
+          - run:
+              name: Check Terraform SHA256SUM
+              command: sha256sum -c --status SHA256SUMS
+          - run:
+              name: Install Terraform
+              command: sudo unzip terraform_${TF_VERSION}_linux_amd64.zip -d /bin
+      aws_cli_install:
+        steps:
+          - run:
+              name: install aws cli
+              command: |
+                pip3 install awscli --upgrade --user
+
+jobs:
+  build_and_test:
+    executor: lpa/python
+    steps:
+      - checkout
+      - run:
+          name: install all requirements locally
+          command: install_requirements.sh -d lambda_functions -r dev-requirements.txt
+      - run:
+          name: run flake8 - python PEP8 linter, complexity checker
+          command: |
+            flake8 --ignore Q000 lambda_functions
+      - run:
+          name: get test coverage (fails below 90%)
+          command: |
+            python -m pytest --cov=lambda_functions/v1/functions/lpa_codes/app/api/ --cov-fail-under=90
+      - run:
+          name: run unit tests (with pytest)
+          command: |
+            python -m pytest
+      - run:
+          name: install requirements for all lambda layers
+          command: |
+            install_requirements.sh \
+            -d lambda_functions \
+            -r dev-requirements.txt \
+            -p lambda_layers/python/lib/python3.7/site-packages
+      - run:
+          name: create artifact for future stages
+          command: |
+            chmod -R 755 ./lambda_functions
+            zip -r9 /tmp/opg-data-lpa.zip .
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - opg-data-lpa.zip
+
+  terraform_preflight:
+    executor: lpa/python_with_tfvars
+    parameters:
+      tf_workspace:
+        description: terraform workspace
+        type: string
+        default: ""
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - lpa/terraform_install
+      - run:
+          name: unzip artifact
+          command: unzip ./opg-data-lpa.zip -d .
+      - run:
+          name: initialize terraform - environment
+          working_directory: ~/project/terraform/environment
+          command: terraform init
+      - run:
+          name: Set BASH_ENV
+          command: ~/project/.circleci/set_env.sh >> $BASH_ENV
+      - run:
+          name: terraform check formatting - environment
+          working_directory: ~/project/terraform/environment
+          command: terraform fmt -diff -check -recursive
+      - run:
+          name: validate terraform - environment
+          working_directory: ~/project/terraform/environment
+          command: terraform validate
+      - run:
+          name: terraform plan - branch
+          working_directory: ~/project/terraform/environment
+          command: terraform plan -input=false
+      - run:
+          name: terraform plan - development
+          command: terraform_plan.sh -w development
+          working_directory: ~/project/terraform/environment
+      - run:
+          name: terraform plan - integration
+          command: terraform_plan.sh -w integration
+          working_directory: ~/project/terraform/environment
+      - run:
+          name: terraform plan - preproduction
+          command: terraform_plan.sh -w preproduction
+          working_directory: ~/project/terraform/environment
+      - run:
+          name: terraform plan - production
+          command: terraform_plan.sh -w production
+          working_directory: ~/project/terraform/environment
+
+  terraform_action:
+    executor: lpa/python_with_tfvars
+    parameters:
+      tf_workspace:
+        description: terraform workspace
+        type: string
+        default: ""
+      tf_command:
+        description: terraform command
+        default: plan
+        type: string
+      apply_check:
+        description: workaround for rest api provider
+        type: boolean
+        default: false
+      pact_tag_production:
+        description: to tag the production commit
+        type: boolean
+        default: false
+    environment:
+      WORKSPACE: << parameters.tf_workspace >>
+    working_directory: ~/project
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - lpa/terraform_install
+      - run:
+          name: unzip artifact
+          command: unzip ./opg-data-lpa.zip -d .
+      - run:
+          name: Set Environment Variables
+          command: |
+            ~/project/.circleci/set_env.sh >> $BASH_ENV
+            eval $(cat $BASH_ENV)
+      - run:
+          name: initialize terraform - environment
+          working_directory: ~/project/terraform/environment
+          command: terraform init
+      - run:
+          name: terraform << parameters.tf_command >> - environment
+          working_directory: ~/project/terraform/environment
+          command: terraform << parameters.tf_command >>
+      # https://github.com/terraform-providers/terraform-provider-aws/issues/5364
+      - when:
+          condition: << parameters.apply_check >>
+          steps:
+            - run:
+                name: conditionally reapply if gateway policy is missing
+                working_directory: ~/project/terraform/environment
+                command: |
+                  if [ $(terraform output policy | wc -m) -gt 1 ]
+                  then echo "policy attached, doing nothing"
+                  else terraform << parameters.tf_command >>
+                  fi
+      - when:
+          condition: << parameters.pact_tag_production >>
+          steps:
+            - digideps-data/python_requirements
+            - run:
+                name: tag pact commit with v<x>_production
+                command: |
+                  echo ${API_VERSION}
+                  python tag_pact.py \
+                  --pact_broker_url"${PACT_BROKER_BASE_URL}" \
+                  --broker_user_name="admin" \
+                  --broker_secret_name="pactbroker_admin" \
+                  --pacticipant="${PACT_PROVIDER}" \
+                  --tag="${API_VERSION}_production" \
+                  --git_commit="${GIT_COMMIT_PROVIDER}"
+                working_directory: ~/project/pact_provider
+  pact_verification:
+    docker:
+      # Primary container image where all the steps run.
+      - image: circleci/python:3
+    working_directory: ~/project
+    parameters:
+    environment:
+      GIT_CONSUMER: << pipeline.parameters.consumer >>
+      GIT_COMMIT_CONSUMER: << pipeline.parameters.consumerversion >>
+    steps:
+      - checkout
+      - run:
+          name: Set BASH_ENV
+          command: ./set_env.sh >> $BASH_ENV
+          working_directory: ~/project/.circleci
+      - run:
+          name: spin up mock rest api
+          command: echo "Insert command to spin up env here"
+          background: true
+      - run:
+          name: check mock env started correctly
+          command: |
+            sleep 3
+            echo "Insert commands to check mock env running correctly here"
+      - digideps-data/pact_install
+      - run:
+          name: verify pact
+          command: |
+            echo ${API_VERSION}
+            python check_pact_deployable.py \
+            --provider_base_url="http://localhost:4343" \
+            --pact_broker_url="${PACT_BROKER_BASE_URL}" \
+            --broker_user_name="admin" \
+            --broker_secret_name="pactbroker_admin" \
+            --consumer_pacticipant="${PACT_CONSUMER}" \
+            --provider_pacticipant="${PACT_PROVIDER}" \
+            --api_version="${API_VERSION}" \
+            --git_commit_consumer="${GIT_COMMIT_CONSUMER}" \
+            --git_commit_provider="${GIT_COMMIT_PROVIDER}" || echo "Failed but because no mocks set up yet"
+          working_directory: ~/project/pact_provider

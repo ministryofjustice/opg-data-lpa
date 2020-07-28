@@ -1,0 +1,17 @@
+---
+openapi: '3.0.2'
+info:
+  title: state-${environment}
+  version: '1.0'
+servers:
+  - url: /setup
+    description: state path to update state
+paths:
+  /state:
+    post:
+      summary: "Update PACT state"
+      description: "Endpoint to update the PACT state dependent on what pact verification sends"
+      operationId: lpa_mock.update_state
+      responses:
+        201:
+          description: "Row inserted"
