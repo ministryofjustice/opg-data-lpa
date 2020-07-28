@@ -16,4 +16,4 @@ _Any tips and tricks, blog posts or tools which helped you. Plus anything notabl
 * [ ] I have added relevant logging with appropriate levels to my code
 * [ ] I have updated documentation where relevant
 * [ ] I have added tests to prove my work
-* [ ] The product team have tested these changes
+* [ ] I have run the integration tests (results below)
