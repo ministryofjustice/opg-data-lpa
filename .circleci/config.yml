@@ -103,14 +103,14 @@ workflows:
          filters: {branches:{only:[master]}}
          pact_tag_production: true
 
-  verify_pact:
-    when: << pipeline.parameters.run_verify_pact >>
-    jobs:
-      - pact_verification:
-          name: verify the latest pact
+#  verify_pact:
+#    when: << pipeline.parameters.run_verify_pact >>
+#    jobs:
+#      - pact_verification:
+#          name: verify the latest pact
 
 orbs:
-  lpa:
+  lpa-data:
     executors:
       python_with_tfvars:
         docker:
@@ -147,15 +147,24 @@ orbs:
               name: install aws cli
               command: |
                 pip3 install awscli --upgrade --user
+      pact_install:
+        steps:
+          - run:
+              name: Set up ready for pact tests
+              command: |
+                wget https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.82.3/pact-1.82.3-linux-x86_64.tar.gz
+                tar xzf pact-1.82.3-linux-x86_64.tar.gz
+              working_directory: ~/project
 
 jobs:
   build_and_test:
-    executor: lpa/python
+    executor: lpa-data/python
     steps:
       - checkout
       - run:
           name: install all requirements locally
-          command: install_requirements.sh -d lambda_functions -r dev-requirements.txt
+          command: ./install_requirements.sh -d lambda_functions -r dev-requirements.txt
+          working_directory: ~/project/docs/ci_scripts
       - run:
           name: run flake8 - python PEP8 linter, complexity checker
           command: |
@@ -163,18 +172,21 @@ jobs:
       - run:
           name: get test coverage (fails below 90%)
           command: |
-            python -m pytest --cov=lambda_functions/v1/functions/lpa_codes/app/api/ --cov-fail-under=90
+            echo "add code coverage report here"
+            # python -m pytest --cov=lambda_functions/v1/functions/lpa/app/api/ --cov-fail-under=0
       - run:
           name: run unit tests (with pytest)
           command: |
-            python -m pytest
+            echo "add testing command here"
+            # python -m pytest -m "not (smoke_test or pact_test)"
       - run:
           name: install requirements for all lambda layers
           command: |
-            install_requirements.sh \
+            ./install_requirements.sh \
             -d lambda_functions \
             -r dev-requirements.txt \
             -p lambda_layers/python/lib/python3.7/site-packages
+          working_directory: ~/project/docs/ci_scripts
       - run:
           name: create artifact for future stages
           command: |
@@ -186,7 +198,7 @@ jobs:
             - opg-data-lpa.zip
 
   terraform_preflight:
-    executor: lpa/python_with_tfvars
+    executor: lpa-data/python_with_tfvars
     parameters:
       tf_workspace:
         description: terraform workspace
@@ -196,7 +208,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
-      - lpa/terraform_install
+      - lpa-data/terraform_install
       - run:
           name: unzip artifact
           command: unzip ./opg-data-lpa.zip -d .
@@ -221,23 +233,23 @@ jobs:
           command: terraform plan -input=false
       - run:
           name: terraform plan - development
-          command: terraform_plan.sh -w development
-          working_directory: ~/project/terraform/environment
+          command: ./terraform_plan.sh -w development
+          working_directory: ~/project/docs/ci_scripts
       - run:
           name: terraform plan - integration
-          command: terraform_plan.sh -w integration
-          working_directory: ~/project/terraform/environment
+          command: ./terraform_plan.sh -w integration
+          working_directory: ~/project/docs/ci_scripts
       - run:
           name: terraform plan - preproduction
-          command: terraform_plan.sh -w preproduction
-          working_directory: ~/project/terraform/environment
+          command: ./terraform_plan.sh -w preproduction
+          working_directory: ~/project/docs/ci_scripts
       - run:
           name: terraform plan - production
-          command: terraform_plan.sh -w production
-          working_directory: ~/project/terraform/environment
+          command: ./terraform_plan.sh -w production
+          working_directory: ~/project/docs/ci_scripts
 
   terraform_action:
-    executor: lpa/python_with_tfvars
+    executor: lpa-data/python_with_tfvars
     parameters:
       tf_workspace:
         description: terraform workspace
@@ -261,7 +273,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
-      - lpa/terraform_install
+      - lpa-data/terraform_install
       - run:
           name: unzip artifact
           command: unzip ./opg-data-lpa.zip -d .
@@ -293,7 +305,9 @@ jobs:
       - when:
           condition: << parameters.pact_tag_production >>
           steps:
-            - digideps-data/python_requirements
+            - run:
+                name: install all requirements locally
+                command: install_requirements.sh -d lambda_functions -r dev-requirements.txt
             - run:
                 name: tag pact commit with v<x>_production
                 command: |
@@ -330,7 +344,7 @@ jobs:
           command: |
             sleep 3
             echo "Insert commands to check mock env running correctly here"
-      - digideps-data/pact_install
+      - lpa-data/pact_install
       - run:
           name: verify pact
           command: |

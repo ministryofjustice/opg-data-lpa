@@ -17,8 +17,8 @@ then
   FLAG_INSTALL_PATH=" --target ${INSTALL_PATH}"
   for ver in $(ls -d ../../${DIRECTORY}/*/ | awk -F'/' '{print $4}' | grep '^v[1-9]\+')
   do
-    LAYER_PATH="${DIRECTORY}/${ver}/${INSTALL_PATH}"
-    pip3 install -r "../../${DIRECTORY}/${ver}/requirements/${REQ_FILE}$" --target "./${LAYER_PATH}/"
+    LAYER_PATH="../../${DIRECTORY}/${ver}/${INSTALL_PATH}"
+    pip3 install -r "../../${DIRECTORY}/${ver}/requirements/${REQ_FILE}" --target "./${LAYER_PATH}/"
   done
 else
   for ver in $(ls -d ../../${DIRECTORY}/*/ | awk -F'/' '{print $4}' | grep '^v[1-9]\+')

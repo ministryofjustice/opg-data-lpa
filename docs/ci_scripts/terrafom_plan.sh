@@ -10,6 +10,7 @@ do
   esac
 done
 
+cd ~/project/terraform/environment || echo "Directory does not exist" && exit 1
 TF_DIR=".terraform"
 if [ -d "${TF_DIR}" ]; then rm -Rf ${TF_DIR}; fi
 export TF_WORKSPACE=${TF_WS}
