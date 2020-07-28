@@ -1,0 +1,55 @@
+{
+	"consumer": {
+		"name": "OPGExampleApp"
+	},
+	"provider": {
+		"name": "OPGExampleAPI"
+	},
+	"interactions": [{
+			"_id": "zf69ceef4d7fb82af014da950a3d9028a905c4de",
+			"description": "a request for a case",
+			"request": {
+				"method": "get",
+				"path": "/case/123",
+				"headers": {
+					"Accept": "application/json"
+				}
+			},
+			"response": {
+				"status": 200,
+				"headers": {
+					"Content-Type": "application/json"
+				},
+				"body": {
+					"name": "Joe Bloggs"
+				},
+				"matchingRules": {
+					"$.body.name": {
+						"match": "type"
+					}
+				}
+			}
+		},
+		{
+			"_id": "zb3c23c364f420e1d1296d56a47695de0428d0af",
+			"description": "a request for a case",
+			"request": {
+				"method": "get",
+				"path": "/case/999",
+				"headers": {
+					"Accept": "application/json"
+				}
+			},
+			"response": {
+				"status": 404,
+				"headers": {}
+			}
+		}
+	],
+	"metadata": {
+		"pactSpecification": {
+			"version": "2.0.0"
+		}
+	},
+	"createdAt": "2020-03-02T22:21:46+00:00"
+}
