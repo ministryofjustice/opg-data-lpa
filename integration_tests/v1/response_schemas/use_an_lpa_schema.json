@@ -1,0 +1,383 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "uId": {
+      "type": "string"
+    },
+    "receiptDate": {
+      "type": "string"
+    },
+    "registrationDate": {
+      "type": "null"
+    },
+    "rejectedDate": {
+      "type": "null"
+    },
+    "donor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "uId": {
+          "type": "string"
+        },
+        "dob": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "salutation": {
+          "type": "string"
+        },
+        "firstname": {
+          "type": "string"
+        },
+        "middlenames": {
+          "type": "string"
+        },
+        "surname": {
+          "type": "string"
+        },
+        "addresses": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "town": {
+                  "type": "string"
+                },
+                "county": {
+                  "type": "string"
+                },
+                "postcode": {
+                  "type": "string"
+                },
+                "country": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "addressLine1": {
+                  "type": "string"
+                },
+                "addressLine2": {
+                  "type": "string"
+                },
+                "addressLine3": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "town",
+                "county",
+                "postcode",
+                "country",
+                "type",
+                "addressLine1",
+                "addressLine2",
+                "addressLine3"
+              ]
+            }
+          ]
+        },
+        "companyName": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "id",
+        "uId",
+        "dob",
+        "email",
+        "salutation",
+        "firstname",
+        "middlenames",
+        "surname",
+        "addresses",
+        "companyName"
+      ]
+    },
+    "applicationType": {
+      "type": "string"
+    },
+    "caseSubtype": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "caseAttorneySingular": {
+      "type": "boolean"
+    },
+    "caseAttorneyJointlyAndSeverally": {
+      "type": "boolean"
+    },
+    "caseAttorneyJointly": {
+      "type": "boolean"
+    },
+    "caseAttorneyJointlyAndJointlyAndSeverally": {
+      "type": "boolean"
+    },
+    "onlineLpaId": {
+      "type": "null"
+    },
+    "cancellationDate": {
+      "type": "null"
+    },
+    "attorneys": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "uId": {
+              "type": "string"
+            },
+            "dob": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "salutation": {
+              "type": "string"
+            },
+            "firstname": {
+              "type": "string"
+            },
+            "middlenames": {
+              "type": "null"
+            },
+            "surname": {
+              "type": "string"
+            },
+            "addresses": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "town": {
+                      "type": "string"
+                    },
+                    "county": {
+                      "type": "string"
+                    },
+                    "postcode": {
+                      "type": "string"
+                    },
+                    "country": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "addressLine1": {
+                      "type": "string"
+                    },
+                    "addressLine2": {
+                      "type": "string"
+                    },
+                    "addressLine3": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "town",
+                    "county",
+                    "postcode",
+                    "country",
+                    "type",
+                    "addressLine1",
+                    "addressLine2",
+                    "addressLine3"
+                  ]
+                }
+              ]
+            },
+            "systemStatus": {
+              "type": "boolean"
+            },
+            "companyName": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "id",
+            "uId",
+            "dob",
+            "email",
+            "salutation",
+            "firstname",
+            "middlenames",
+            "surname",
+            "addresses",
+            "systemStatus",
+            "companyName"
+          ]
+        }
+      ]
+    },
+    "replacementAttorneys": {
+      "type": "array",
+      "items": {}
+    },
+    "trustCorporations": {
+      "type": "array",
+      "items": {}
+    },
+    "certificateProviders": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "uId": {
+              "type": "string"
+            },
+            "dob": {
+              "type": "null"
+            },
+            "email": {
+              "type": "null"
+            },
+            "salutation": {
+              "type": "string"
+            },
+            "firstname": {
+              "type": "string"
+            },
+            "middlenames": {
+              "type": "null"
+            },
+            "surname": {
+              "type": "string"
+            },
+            "addresses": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "town": {
+                      "type": "string"
+                    },
+                    "county": {
+                      "type": "string"
+                    },
+                    "postcode": {
+                      "type": "string"
+                    },
+                    "country": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "addressLine1": {
+                      "type": "string"
+                    },
+                    "addressLine2": {
+                      "type": "string"
+                    },
+                    "addressLine3": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "town",
+                    "county",
+                    "postcode",
+                    "country",
+                    "type",
+                    "addressLine1",
+                    "addressLine2",
+                    "addressLine3"
+                  ]
+                }
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "uId",
+            "dob",
+            "email",
+            "salutation",
+            "firstname",
+            "middlenames",
+            "surname",
+            "addresses"
+          ]
+        }
+      ]
+    },
+    "attorneyActDecisions": {
+      "type": "null"
+    },
+    "applicationHasRestrictions": {
+      "type": "boolean"
+    },
+    "applicationHasGuidance": {
+      "type": "boolean"
+    },
+    "lpaDonorSignatureDate": {
+      "type": "string"
+    },
+    "lifeSustainingTreatment": {
+      "type": "null"
+    }
+  },
+  "required": [
+    "id",
+    "uId",
+    "receiptDate",
+    "registrationDate",
+    "rejectedDate",
+    "donor",
+    "applicationType",
+    "caseSubtype",
+    "status",
+    "caseAttorneySingular",
+    "caseAttorneyJointlyAndSeverally",
+    "caseAttorneyJointly",
+    "caseAttorneyJointlyAndJointlyAndSeverally",
+    "onlineLpaId",
+    "cancellationDate",
+    "attorneys",
+    "replacementAttorneys",
+    "trustCorporations",
+    "certificateProviders",
+    "attorneyActDecisions",
+    "applicationHasRestrictions",
+    "applicationHasGuidance",
+    "lpaDonorSignatureDate",
+    "lifeSustainingTreatment"
+  ]
+}

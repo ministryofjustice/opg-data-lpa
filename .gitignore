@@ -37,3 +37,4 @@ process.yml
 *crash.log
 lambda_functions/v1/lambda_layers/python/lib/python3.7/site-packages/*
 !lambda_functions/v1/lambda_layers/python/lib/python3.7/site-packages/README.md
+/integration_tests/v1/report.html

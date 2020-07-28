@@ -1,0 +1,7 @@
+pytest
+pytest-env
+pytest-xdist
+pytest-html
+requests_aws4auth
+boto3
+jsonschema

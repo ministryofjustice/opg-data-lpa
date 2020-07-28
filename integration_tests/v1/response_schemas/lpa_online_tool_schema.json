@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "onlineLpaId": {
+      "type": "string"
+    },
+    "receiptDate": {
+      "type": "string"
+    },
+    "registrationDate": {
+      "type": "string"
+    },
+    "rejectedDate": {
+      "type": "null"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "onlineLpaId",
+    "receiptDate",
+    "registrationDate",
+    "rejectedDate",
+    "status"
+  ]
+}
