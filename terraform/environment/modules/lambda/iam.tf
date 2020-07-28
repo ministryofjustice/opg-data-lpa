@@ -44,24 +44,6 @@ data "aws_iam_policy_document" "lambda" {
       "logs:DescribeLogStreams"
     ]
   }
-
-  statement {
-    sid       = "allowSecretsManagerAccess"
-    effect    = "Allow"
-    resources = ["*"]
-    actions = [
-      "secretsmanager:GetSecretValue"
-    ]
-  }
-
-  statement {
-    sid       = "allowAssumeAccess"
-    effect    = "Allow"
-    resources = ["arn:aws:iam::${var.account.digideps_account_id}:role/integrations-s3-read-${var.account.account_mapping}"]
-    actions = [
-      "sts:AssumeRole"
-    ]
-  }
 }
 
 resource "aws_iam_role_policy_attachment" "vpc_access_execution_role" {

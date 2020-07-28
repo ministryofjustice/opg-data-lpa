@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "gateway_resource_execution_policy" {
 resource "aws_iam_policy" "access_policy" {
   depends_on = [aws_api_gateway_rest_api.lpa]
 
-  name   = "access-policy-${local.environment}"
+  name   = "access-policy-lpa-${local.environment}"
   policy = data.aws_iam_policy_document.gateway_resource_execution_policy.json
 }
 

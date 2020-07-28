@@ -229,15 +229,11 @@ jobs:
           command: terraform validate
       - run:
           name: terraform plan - branch
-          working_directory: ~/project/terraform/environment
           command: terraform plan -input=false
+          working_directory: ~/project/terraform/environment
       - run:
           name: terraform plan - development
           command: ./terraform_plan.sh -w development
-          working_directory: ~/project/docs/ci_scripts
-      - run:
-          name: terraform plan - integration
-          command: ./terraform_plan.sh -w integration
           working_directory: ~/project/docs/ci_scripts
       - run:
           name: terraform plan - preproduction

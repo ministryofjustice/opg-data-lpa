@@ -77,10 +77,89 @@ x-amazon-apigateway-gateway-responses:
       application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-WAF_FILTERED", "title":$context.error.messageString, "detail": "", "meta": {"x-ray": "$context.xrayTraceId"} }}'
 
 paths:
-  /example_route:
+  /healthcheck:
+    description: Sirius healthcheck
+    get:
+      summary: Sirius healthcheck
+      description: Client report
+      operationId: app.healthcheck
+      tags:
+        - "deputy-reporting"
+      security:
+        - sigv4: []
+      x-amazon-apigateway-request-validator: "all"
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.flask_app_name}/invocations
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
+      responses:
+        200:
+          description: Sirius healthcheck
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Healthcheck'
+                  meta:
+                    type: object
+        400:
+          description: Generic bad request (generally invalid syntax)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        401:
+          description: Unauthorised (no current user and there should be)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        403:
+          description: Forbidden - The current user is forbidden from accessing this data (in this way)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        404:
+          description: That URL is not a valid route, or the item resource does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        500:
+          description: Something unexpected happened and it is the API"s fault
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        503:
+          description: Service Unavailable - please try again later
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error503'
+
+  /example_route/{lpa_online_tool_id}:
     get:
       security:
         - sigv4: []
+      x-amazon-apigateway-request-validator: "all"
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.flask_app_name}/invocations
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
       parameters:
         - in: path
           name: lpa_online_tool_id
@@ -159,37 +238,8 @@ components:
       in: "header"
       x-amazon-apigateway-authtype: "awsSigv4"
   schemas:
-    CodeCreated:
-      properties:
-        codes:
-          type: array
-          items:
-            type: object
-            properties:
-              lpa:
-                type: string
-              actor:
-                type: string
-              code:
-                type: string
-      example:
-        codes:
-          - lpa: "eed4f597-fd87-4536-99d0-895778824861"
-            actor: "12ad81a9-f89d-4804-99f5-7c0c8669ac9b"
-            code: "YsSu4iAztUXm"
-          - lpa: "eed4f597-fd87-4536-99d0-895778824861"
-            actor: "9a619d46-8712-4bfb-a49f-c14914ff319d"
-            code: "aEYVS6i9zSwy"
-      required:
-        - codes
-    ValidateCode:
-      properties:
-        actor:
-          type: string
-      example:
-        actor: "12ad81a9-f89d-4804-99f5-7c0c8669ac9b"
-      required:
-        - actor
+    Healthcheck:
+      type: object
     Error400:
       type: object
       required:
