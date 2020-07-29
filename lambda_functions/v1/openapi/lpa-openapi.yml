@@ -1,6 +1,6 @@
 openapi: '3.0.2'
 info:
-  title: lpa-${environment}
+  title: template-${environment}
   version: '1.0'
 servers:
   - url: /v1
@@ -146,7 +146,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error503'
 
-  /example_route/{lpa_online_tool_id}:
+  /example_route/{template_online_tool_id}:
     get:
       security:
         - sigv4: []
@@ -162,7 +162,7 @@ paths:
         type: "aws_proxy"
       parameters:
         - in: path
-          name: lpa_online_tool_id
+          name: template_online_tool_id
           schema:
             type: string
             pattern: '^A\d{11}$'
@@ -171,7 +171,7 @@ paths:
           example: A12345678987
       responses:
         '200':
-          description: LPA details returned for the requested ID
+          description: template details returned for the requested ID
           headers:
             Age:
               schema:
@@ -186,38 +186,38 @@ paths:
               schema:
                 type: object
                 required:
-                  - onlineLpaId
+                  - onlinetemplateId
                   - receiptDate
                   - registrationDate
                   - rejectedDate
                   - status
                 properties:
-                  onlineLpaId:
+                  onlinetemplateId:
                     type: string
                     example: A22486562341
                     pattern: '^A\d{11}$'
                   receiptDate:
                     type: string
                     format: date
-                    description: The date the LPA was created
+                    description: The date the template was created
                     example: '2018-06-30'
                   rejectedDate:
                     type: string
                     format: date
                     nullable: true
-                    description: The date the LPA was rejected
+                    description: The date the template was rejected
                     example: '2018-06-30'
                   registrationDate:
                     type: string
                     format: date
                     nullable: true
-                    description: The date the LPA was registered
+                    description: The date the template was registered
                     example: '2018-06-30'
                   status:
                     type: string
                     enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered]
         '404':
-          description: An LPA with the passed ID Not Found
+          description: An template with the passed ID Not Found
         '400':
           description: Bad request
         '403':

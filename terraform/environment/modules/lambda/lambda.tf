@@ -38,7 +38,7 @@ resource "aws_lambda_function" "lambda_function" {
 }
 
 resource "aws_lambda_permission" "lambda_permission" {
-  statement_id  = "AllowApiLPAGatewayInvoke_${var.environment}-${var.openapi_version}-${var.lambda_function_subdir}"
+  statement_id  = "AllowApitemplateGatewayInvoke_${var.environment}-${var.openapi_version}-${var.lambda_function_subdir}"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda_function.function_name
   principal     = "apigateway.amazonaws.com"

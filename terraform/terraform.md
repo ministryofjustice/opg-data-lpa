@@ -1,4 +1,4 @@
-# Terraform in Opg-Data-lpa
+# Terraform in Opg-Data-template
 
 The purpose of this readme is to clarify what the terraform code is doing and how it interacts
 with the CI pipeline as well as giving some common commands and tasks anyone can perform with the
@@ -68,6 +68,9 @@ changes to work with the new specification.
 add new modules with appropriate variables passed in.
 4) In locals.tf update the ```latest_openapi_version``` variable.
 5) In ```stage.tf``` copy and paste the module deploy_v* and add new module for this version.
+
+For convenience you can search the repo for `Modify here for new version` and it will give you
+instructions on what to do.
 
 This will allow us to connect to two separate end points based on stage version.
 

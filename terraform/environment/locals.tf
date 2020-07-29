@@ -6,19 +6,19 @@ locals {
 
   default_tags = {
     business-unit          = "OPG"
-    application            = "Data-lpa"
+    application            = "Data-template"
     environment-name       = local.environment
     owner                  = "OPG Supervision"
     infrastructure-support = "OPG WebOps: opgteam@digital.justice.gov.uk"
     is-production          = local.account.is_production
-    source-code            = "https://github.com/ministryofjustice/opg-data-lpa"
+    source-code            = "https://github.com/ministryofjustice/opg-data-template"
   }
 
   policy_len_tag = {
-    policy_len = aws_api_gateway_rest_api.lpa.policy
+    policy_len = aws_api_gateway_rest_api.template.policy
   }
 
-  api_name = "lpa"
+  api_name = "template"
 
   api_template_vars = {
     region      = "eu-west-1"
@@ -33,9 +33,9 @@ locals {
 
 //https://github.com/terraform-providers/terraform-provider-aws/issues/5364
 output "policy" {
-  value = aws_api_gateway_rest_api.lpa.policy
+  value = aws_api_gateway_rest_api.template.policy
 }
 
 output "rest_arn" {
-  value = aws_api_gateway_rest_api.lpa.execution_arn
+  value = aws_api_gateway_rest_api.template.execution_arn
 }

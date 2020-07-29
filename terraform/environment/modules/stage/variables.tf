@@ -24,4 +24,4 @@ variable "rest_api" {}
 
 variable "domain_name" {}
 
-variable "lpa_lambda" {}
+variable "template_lambda" {}

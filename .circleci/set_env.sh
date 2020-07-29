@@ -2,7 +2,7 @@
 set -e
 PACT_BROKER_ADMIN="admin"
 PACT_BASE_URL="https://pact-broker.api.opg.service.justice.gov.uk"
-PROVIDER="lpa"
+PROVIDER="template"
 CONSUMER="sirius"
 
 WORKSPACE=${WORKSPACE:-$CIRCLE_BRANCH}

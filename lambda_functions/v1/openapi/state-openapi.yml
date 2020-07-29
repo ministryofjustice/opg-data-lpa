@@ -11,7 +11,7 @@ paths:
     post:
       summary: "Update PACT state"
       description: "Endpoint to update the PACT state dependent on what pact verification sends"
-      operationId: lpa_mock.update_state
+      operationId: template_mock.update_state
       responses:
         201:
           description: "Row inserted"

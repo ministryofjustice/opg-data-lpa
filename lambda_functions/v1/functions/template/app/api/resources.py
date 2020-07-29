@@ -7,7 +7,7 @@ from .errors import error_message
 from .helpers import custom_logger
 from .endpoints import handle_template
 
-logger = custom_logger("lpa")
+logger = custom_logger("template")
 
 version = os.getenv("API_VERSION")
 api = Blueprint("api", __name__, url_prefix=f"/{version}")

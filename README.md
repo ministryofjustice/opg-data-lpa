@@ -1,12 +1,12 @@
-# opg-data-lpa
+# opg-data-template
 
 ## Purpose
 
-OPG Data LPA is a repo to build a rest API for interactions with LPA. Currently it includes GET endpoints for
-gathering information about LPAs from sirius.
+OPG Data template is a repo to build a rest API for interactions with template. Currently it includes GET endpoints for
+gathering information about templates from sirius.
 
 In the future it may be expanded to have further GET endpoints or PUT, POST or DELETE endpoints for  strictly
-LPA related functions.
+template related functions.
 
 ## Tech stack
 

@@ -42,4 +42,4 @@ services:
     networks:
       default:
         aliases:
-          - lpa.local
+          - template.local

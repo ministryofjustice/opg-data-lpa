@@ -4,7 +4,7 @@ locals {
 }
 
 resource "aws_api_gateway_method_settings" "global_gateway_settings" {
-  rest_api_id = aws_api_gateway_rest_api.lpa.id
+  rest_api_id = aws_api_gateway_rest_api.template.id
   //Modify here for new version - replace with new code (comment out old code)
   stage_name  = module.deploy_v1.stage.stage_name
   method_path = "*/*"
@@ -16,7 +16,7 @@ resource "aws_api_gateway_method_settings" "global_gateway_settings" {
 
 }
 
-resource "aws_api_gateway_domain_name" "lpa_data" {
+resource "aws_api_gateway_domain_name" "template_data" {
   domain_name              = trimsuffix(local.a_record, ".")
   regional_certificate_arn = local.certificate_arn
 
@@ -39,16 +39,16 @@ module "deploy_v1" {
   api_name           = local.api_name
   openapi_version    = "v1"
   //Modify here for new version - point to different version
-  lpa_lambda  = module.lambda_lpa_v1.lambda
-  rest_api    = aws_api_gateway_rest_api.lpa
-  domain_name = aws_api_gateway_domain_name.lpa_data
+  template_lambda = module.lambda_template_v1.lambda
+  rest_api        = aws_api_gateway_rest_api.template
+  domain_name     = aws_api_gateway_domain_name.template_data
 }
 
 //Modify here for new version - replace with new code (comment out old code)
 resource "aws_api_gateway_base_path_mapping" "mapping" {
-  api_id      = aws_api_gateway_rest_api.lpa.id
+  api_id      = aws_api_gateway_rest_api.template.id
   stage_name  = module.deploy_v1.deployment.stage_name
-  domain_name = aws_api_gateway_domain_name.lpa_data.domain_name
+  domain_name = aws_api_gateway_domain_name.template_data.domain_name
   base_path   = module.deploy_v1.deployment.stage_name
 }
 
