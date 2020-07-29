@@ -3,7 +3,7 @@ set -e
 PACT_BROKER_ADMIN="admin"
 PACT_BASE_URL="https://pact-broker.api.opg.service.justice.gov.uk"
 PROVIDER="template"
-CONSUMER="sirius"
+CONSUMER="template2"
 
 WORKSPACE=${WORKSPACE:-$CIRCLE_BRANCH}
 WORKSPACE=${WORKSPACE//[^[:alnum:]]/}

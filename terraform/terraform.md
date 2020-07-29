@@ -1,4 +1,4 @@
-# Terraform in Opg-Data-template
+# Terraform in Opg-Data-Template
 
 The purpose of this readme is to clarify what the terraform code is doing and how it interacts
 with the CI pipeline as well as giving some common commands and tasks anyone can perform with the
@@ -47,7 +47,8 @@ Our deployments in this lambda are controlled by one of 3 variables being update
 
 1) stage_version: If there's a new API version released
 2) content_api_sha: If the content of the openapi spec changes
-3) lambda_version_folder_sha: If the pre-generated sha of the lambda folder changes (e.g there's been a change in the lambda code).
+3) lambda_version_folder_sha: If the pre-generated sha of the lambda folder changes
+(e.g there's been a change in the lambda code).
 
 If any of these change it triggers a 'deployment'.
 
@@ -69,9 +70,6 @@ add new modules with appropriate variables passed in.
 4) In locals.tf update the ```latest_openapi_version``` variable.
 5) In ```stage.tf``` copy and paste the module deploy_v* and add new module for this version.
 
-For convenience you can search the repo for `Modify here for new version` and it will give you
-instructions on what to do.
-
 This will allow us to connect to two separate end points based on stage version.
 
 It is not practical using this method, to support long term, multiple versions as deployments are per
@@ -90,3 +88,11 @@ As such it is part of the CI pipeline to check the sha of the requirements.txt.
 There is a comment in there where you can update the date which will change the sha and thus update
 the layer. Also if a new requirement is added it will rebuild the layer. Otherwise it will stick with
 the current layer.
+
+### Issues
+
+There are a couple of issues with the policy that force us to use openapi spec policy which means we can't specify
+the individual gateway arn. This seems fine as policy is per gateway only and we can lock it down to resources:
+
+- https://github.com/terraform-providers/terraform-provider-aws/issues/5364
+- https://github.com/terraform-providers/terraform-provider-aws/pull/13619

@@ -37,7 +37,7 @@ resource "aws_api_gateway_stage" "currentstage" {
 }
 
 resource "aws_cloudwatch_log_group" "template_data" {
-  name              = "API-Gateway-Execution-Logs-${var.rest_api.name}-${var.openapi_version}"
+  name              = "API-Gateway-Execution-Logs-${var.environment}-template-${var.openapi_version}"
   retention_in_days = 30
   tags              = var.tags
 }

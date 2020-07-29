@@ -61,7 +61,6 @@ workflows:
           requires: [build and artifact]
           tf_command: apply --auto-approve
           tf_workspace: development
-          apply_check: true
           filters: {branches:{only:[master]}}
 
       - terraform_action:
@@ -69,7 +68,6 @@ workflows:
          requires: [development apply]
          tf_command: apply --auto-approve
          tf_workspace: preproduction
-         apply_check: true
          filters: {branches:{only:[master]}}
 
       - approve:
@@ -83,7 +81,6 @@ workflows:
           requires: [approve release to production]
           tf_command: apply --auto-approve
           tf_workspace: integration
-          apply_check: true
           filters: {branches:{only:[master]}}
 
       - terraform_action:
@@ -91,7 +88,6 @@ workflows:
           requires: [approve release to production]
           tf_command: apply --auto-approve
           tf_workspace: integration
-          apply_check: true
           filters: {branches:{only:[master]}}
 
       - terraform_action:
@@ -99,7 +95,6 @@ workflows:
          requires: [approve release to production]
          tf_command: apply --auto-approve
          tf_workspace: production
-         apply_check: true
          filters: {branches:{only:[master]}}
          pact_tag_production: true
 
@@ -231,18 +226,18 @@ jobs:
           name: terraform plan - branch
           command: terraform plan -input=false
           working_directory: ~/project/terraform/environment
-      - run:
-          name: terraform plan - development
-          command: ./terraform_plan.sh -w development
-          working_directory: ~/project/docs/ci_scripts
-      - run:
-          name: terraform plan - preproduction
-          command: ./terraform_plan.sh -w preproduction
-          working_directory: ~/project/docs/ci_scripts
-      - run:
-          name: terraform plan - production
-          command: ./terraform_plan.sh -w production
-          working_directory: ~/project/docs/ci_scripts
+#      - run:
+#          name: terraform plan - development
+#          command: ./terraform_plan.sh -w development
+#          working_directory: ~/project/docs/ci_scripts
+#      - run:
+#          name: terraform plan - preproduction
+#          command: ./terraform_plan.sh -w preproduction
+#          working_directory: ~/project/docs/ci_scripts
+#      - run:
+#          name: terraform plan - production
+#          command: ./terraform_plan.sh -w production
+#          working_directory: ~/project/docs/ci_scripts
 
   terraform_action:
     executor: template-data/python_with_tfvars
@@ -255,10 +250,6 @@ jobs:
         description: terraform command
         default: plan
         type: string
-      apply_check:
-        description: workaround for rest api provider
-        type: boolean
-        default: false
       pact_tag_production:
         description: to tag the production commit
         type: boolean
@@ -286,18 +277,6 @@ jobs:
           name: terraform << parameters.tf_command >> - environment
           working_directory: ~/project/terraform/environment
           command: terraform << parameters.tf_command >>
-      # https://github.com/terraform-providers/terraform-provider-aws/issues/5364
-      - when:
-          condition: << parameters.apply_check >>
-          steps:
-            - run:
-                name: conditionally reapply if gateway policy is missing
-                working_directory: ~/project/terraform/environment
-                command: |
-                  if [ $(terraform output policy | wc -m) -gt 1 ]
-                  then echo "policy attached, doing nothing"
-                  else terraform << parameters.tf_command >>
-                  fi
       - when:
           condition: << parameters.pact_tag_production >>
           steps:

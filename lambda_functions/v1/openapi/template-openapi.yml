@@ -76,15 +76,31 @@ x-amazon-apigateway-gateway-responses:
     responseTemplates:
       application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-WAF_FILTERED", "title":$context.error.messageString, "detail": "", "meta": {"x-ray": "$context.xrayTraceId"} }}'
 
+"x-amazon-apigateway-policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": ["${allowed_roles}"]
+            },
+            "Action": "execute-api:Invoke",
+            "Resource": [
+                "arn:aws:execute-api:eu-west-1:${account_id}:*/*/*/*"
+            ]
+        }
+    ]
+}
+
 paths:
   /healthcheck:
-    description: Sirius healthcheck
+    description: Flask Healthcheck
     get:
-      summary: Sirius healthcheck
-      description: Client report
+      summary: Flask Healthcheck
+      description: Healthcheck of flask app
       operationId: app.healthcheck
       tags:
-        - "deputy-reporting"
+        - "Template"
       security:
         - sigv4: []
       x-amazon-apigateway-request-validator: "all"
@@ -99,7 +115,7 @@ paths:
         type: "aws_proxy"
       responses:
         200:
-          description: Sirius healthcheck
+          description: OK
           content:
             application/json:
               schema:
@@ -146,7 +162,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error503'
 
-  /example_route/{template_online_tool_id}:
+  /example_route:
     get:
       security:
         - sigv4: []
@@ -160,15 +176,6 @@ paths:
         httpMethod: "POST"
         contentHandling: "CONVERT_TO_TEXT"
         type: "aws_proxy"
-      parameters:
-        - in: path
-          name: template_online_tool_id
-          schema:
-            type: string
-            pattern: '^A\d{11}$'
-          required: true
-          description: Online Tool ID
-          example: A12345678987
       responses:
         '200':
           description: template details returned for the requested ID
@@ -177,59 +184,54 @@ paths:
               schema:
                 type: integer
               description: |
-                The time elapsed, measured in seconds, since the returned response body was retrieved from Sirius.
-                Under normal circumstances this will be zero (0), indicating the response represents the current 'live' state within Sirius.
-                In the case that the Gateway was unable to retrieve an up to date response from Sirius, it will make best efforts to return a cached version.
-                It's up to the consumer of the API to determine if they wish to use a response based on its age.
+                An example template version of our code setup.
           content:
             application/json:
               schema:
                 type: object
                 required:
-                  - onlinetemplateId
-                  - receiptDate
-                  - registrationDate
-                  - rejectedDate
-                  - status
+                  - template
                 properties:
-                  onlinetemplateId:
+                  template:
                     type: string
-                    example: A22486562341
-                    pattern: '^A\d{11}$'
-                  receiptDate:
-                    type: string
-                    format: date
-                    description: The date the template was created
-                    example: '2018-06-30'
-                  rejectedDate:
-                    type: string
-                    format: date
-                    nullable: true
-                    description: The date the template was rejected
-                    example: '2018-06-30'
-                  registrationDate:
-                    type: string
-                    format: date
-                    nullable: true
-                    description: The date the template was registered
-                    example: '2018-06-30'
-                  status:
-                    type: string
-                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered]
-        '404':
-          description: An template with the passed ID Not Found
-        '400':
-          description: Bad request
-        '403':
-          description: Authentication failed
-        '429':
-          description: API Gateway throttling limit exceeded
-        '500':
-          description: Unhandeled internal exception within OPG Gateway
-        '502':
-          description: The Sirius data provider returned an exception
-        '504':
-          description: The Sirius data provider timed out
+                    example: "Some Example String Here"
+                    pattern: '.*$'
+        400:
+          description: Generic bad request (generally invalid syntax)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        401:
+          description: Unauthorised (no current user and there should be)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        403:
+          description: Forbidden - The current user is forbidden from accessing this data (in this way)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        404:
+          description: That URL is not a valid route, or the item resource does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        500:
+          description: Something unexpected happened and it is the API"s fault
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        503:
+          description: Service Unavailable - please try again later
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error503'
 components:
   securitySchemes:
     sigv4:

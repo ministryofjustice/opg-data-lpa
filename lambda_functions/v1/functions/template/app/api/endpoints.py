@@ -9,4 +9,4 @@ def handle_template():
     Add information here
     """
 
-    return {"Message": "OK"}, 200
+    return "example_route handled - OK", 200
