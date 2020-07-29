@@ -1,12 +1,11 @@
 import jwt
 import pytest
+from hypothesis import given, example
 
 from lambda_functions.v1.functions.lpa.app.api import sirius_service
+from lambda_functions.v1.tests.sirius_service.strategies import content_type
 
-# from lambda_functions.v1.tests.sirius_service.conftest import patched_get_secret
 
-
-# pytest.mark.usefixtures(patched_get_secret)
 @pytest.mark.parametrize(
     "test_content_type, test_secret_key, expected_content_type",
     [
@@ -26,7 +25,6 @@ def test_build_sirius_headers_content_type(
     assert headers["Content-Type"] == expected_content_type
 
 
-# pytest.mark.usefixtures(patched_get_secret)
 def test_build_sirius_headers_auth(patched_get_secret):
 
     headers = sirius_service.build_sirius_headers()
@@ -39,3 +37,21 @@ def test_build_sirius_headers_auth(patched_get_secret):
 
     with pytest.raises(jwt.DecodeError):
         jwt.decode(token.encode("UTF-8"), "this_is_the_wrong_key", algorithms="HS256")
+
+
+@given(test_content_type=content_type())
+@example(test_content_type=None)
+def test_build_sirius_headers_content_type_hypothesis(
+    test_content_type, patched_get_secret
+):
+    default_content_type = "application/json"
+
+    headers = sirius_service.build_sirius_headers(content_type=test_content_type)
+
+    if test_content_type:
+        assert headers["Content-Type"] == test_content_type
+    else:
+        assert headers["Content-Type"] == default_content_type
+
+        headers_no_content = sirius_service.build_sirius_headers()
+        assert headers_no_content["Content-Type"] == default_content_type

@@ -146,7 +146,91 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error503'
 
-  /example_route/{lpa_online_tool_id}:
+  /lpa-online-tool/lpas/{lpa_online_tool_id}:
+    get:
+      security:
+        - sigv4: []
+      x-amazon-apigateway-request-validator: "all"
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${region}:${account_id}:function:$${stageVariables.flask_app_name}/invocations
+        responses:
+          default:
+            statusCode: "200"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
+      parameters:
+        - in: path
+          name: lpa_online_tool_id
+          schema:
+            type: string
+            pattern: '^A\d{11}$'
+          required: true
+          description: Online Tool ID
+          example: A12345678987
+      responses:
+        '200':
+          description: LPA details returned for the requested ID
+          headers:
+            Age:
+              schema:
+                type: integer
+              description: |
+                The time elapsed, measured in seconds, since the returned response body was retrieved from Sirius.
+                Under normal circumstances this will be zero (0), indicating the response represents the current 'live' state within Sirius.
+                In the case that the Gateway was unable to retrieve an up to date response from Sirius, it will make best efforts to return a cached version.
+                It's up to the consumer of the API to determine if they wish to use a response based on its age.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - onlineLpaId
+                  - receiptDate
+                  - registrationDate
+                  - rejectedDate
+                  - status
+                properties:
+                  onlineLpaId:
+                    type: string
+                    example: A22486562341
+                    pattern: '^A\d{11}$'
+                  receiptDate:
+                    type: string
+                    format: date
+                    description: The date the LPA was created
+                    example: '2018-06-30'
+                  rejectedDate:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: The date the LPA was rejected
+                    example: '2018-06-30'
+                  registrationDate:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: The date the LPA was registered
+                    example: '2018-06-30'
+                  status:
+                    type: string
+                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered]
+        '404':
+          description: An LPA with the passed ID Not Found
+        '400':
+          description: Bad request
+        '403':
+          description: Authentication failed
+        '429':
+          description: API Gateway throttling limit exceeded
+        '500':
+          description: Unhandeled internal exception within OPG Gateway
+        '502':
+          description: The Sirius data provider returned an exception
+        '504':
+          description: The Sirius data provider timed out
+  //use-an-lpa/lpas/{lpa_online_tool_id}:
     get:
       security:
         - sigv4: []

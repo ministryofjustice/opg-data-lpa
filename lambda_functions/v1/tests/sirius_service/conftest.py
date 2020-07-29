@@ -1,6 +1,11 @@
 import pytest
 
 from lambda_functions.v1.functions.lpa.app.api import sirius_service
+import os
+
+
+# Defaults to 50
+max_examples = int(os.environ["HYPOTHESIS_MAX_EXAMPLES"])
 
 
 @pytest.fixture(autouse=False, scope="function")
