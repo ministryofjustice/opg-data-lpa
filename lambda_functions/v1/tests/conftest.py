@@ -3,14 +3,15 @@ import os
 
 
 @pytest.fixture(autouse=True)
-def aws_credentials():
-    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"  # pragma: allowlist secret
-    os.environ["AWS_SECURITY_TOKEN"] = "testing"
-    os.environ["AWS_SESSION_TOKEN"] = "testing"
-    os.environ["AWS_DEFAULT_REGION"] = "eu-west-1"
-    os.environ["AWS_XRAY_CONTEXT_MISSING"] = "LOG_ERROR"
-    os.environ["SIRIUS_BASE_URL"] = "http://not-really-sirius.com"
-    os.environ["SIRIUS_API_VERSION"] = "v1"
-    os.environ["SESSION_DATA"] = "publicapi@opgtest.com"
-    os.environ["JWT_SECRET"] = "THIS_IS_MY_SECRET_KEY"  # pragma: allowlist secret
+def aws_credentials(monkeypatch):
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "testing")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "testing")
+    monkeypatch.setenv("AWS_SECURITY_TOKEN", "testing")
+    monkeypatch.setenv("AWS_SESSION_TOKEN", "testing")
+    monkeypatch.setenv("AWS_DEFAULT_REGION", "eu-west-1")
+    monkeypatch.setenv("AWS_XRAY_CONTEXT_MISSING", "LOG_ERROR")
+    monkeypatch.setenv("SIRIUS_BASE_URL", "http://not-really-sirius.com")
+    monkeypatch.setenv("SIRIUS_API_VERSION", "v1")
+    monkeypatch.setenv("SESSION_DATA", "publicapi@opgtest.com")
+    monkeypatch.setenv("ENVIRONMENT", "not-a-real-environment")
+    monkeypatch.setenv("JWT_SECRET", "THIS_IS_MY_SECRET_KEY")

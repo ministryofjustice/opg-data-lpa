@@ -1,30 +1,30 @@
 from hypothesis import strategies as st
-# from hypothesis.provisional import domains
-# from yarl import URL
+from hypothesis.provisional import domains
+from yarl import URL
 
 
-# def url():
-#     """ Build http/https URL """
-#     scheme = st.sampled_from(["http", "https"])
-#     # Path must start with a slash
-#     pathSt = st.builds(lambda x: "/" + x, st.text())
-#     args = st.fixed_dictionaries(
-#         {
-#             "scheme": scheme,
-#             "host": domains(),
-#             "port": st.one_of(
-#                 st.none(), st.integers(min_value=10, max_value=2 ** 16 - 1)
-#             ),
-#             "path": pathSt,
-#             "query_string": st.text(),
-#             "fragment": st.text(),
-#         }
-#     )
-#     return st.builds(lambda x: URL.build(**x), args)
-#
-#
-# def url_as_string():
-#     return st.builds(lambda x: str(x), url())
+def url():
+    """ Build http/https URL """
+    scheme = st.sampled_from(["http", "https"])
+    # Path must start with a slash
+    pathSt = st.builds(lambda x: "/" + x, st.text())
+    args = st.fixed_dictionaries(
+        {
+            "scheme": scheme,
+            "host": domains(),
+            "port": st.one_of(
+                st.none(), st.integers(min_value=10, max_value=2 ** 16 - 1)
+            ),
+            "path": pathSt,
+            "query_string": st.text(),
+            "fragment": st.text(),
+        }
+    )
+    return st.builds(lambda x: URL.build(**x), args)
+
+
+def url_as_string():
+    return st.builds(lambda x: str(x), url())
 
 
 content_types = {

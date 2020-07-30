@@ -12,3 +12,4 @@ moto
 pyjwt
 hypothesis
 validators
+yarl
