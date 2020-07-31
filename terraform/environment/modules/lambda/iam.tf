@@ -18,15 +18,6 @@ data "aws_iam_policy_document" "lambda_assume" {
   }
 }
 
-statement {
-  sid       = "allowSecretsManagerAccess"
-  effect    = "Allow"
-  resources = ["*"]
-  actions = [
-    "secretsmanager:GetSecretValue"
-  ]
-}
-
 data "aws_iam_policy" "aws_xray_write_only_access" {
   arn = "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
 }
