@@ -13,7 +13,7 @@ opg_sirius_api_gateway_dev_aws = {
     "online_tool_endpoint": {
         "url": "https://3d9iqi6bq9.execute-api.eu-west-1.amazonaws.com/v1/lpa-online-tool/lpas",
         "method": "GET",
-        "valid_lpa_online_tool_ids": ["A33718377316"],
+        "valid_lpa_online_tool_ids": ["A39721583862"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
