@@ -230,7 +230,7 @@ paths:
           description: The Sirius data provider returned an exception
         '504':
           description: The Sirius data provider timed out
-  //use-an-lpa/lpas/{lpa_online_tool_id}:
+  /use-an-lpa/lpas/{lpa_online_tool_id}:
     get:
       security:
         - sigv4: []

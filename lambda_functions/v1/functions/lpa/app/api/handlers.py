@@ -2,12 +2,18 @@ import os
 
 import urllib3
 
-from .sirius_service import build_sirius_url
+from .sirius_service import build_sirius_url, send_request_to_sirius
 
 
 def get_by_online_tool_id(lpa_online_tool_id):
 
     sirius_url = generate_sirius_url(lpa_online_tool_id=lpa_online_tool_id)
+
+    sirius_status_code, sirius_response = send_request_to_sirius(url=sirius_url,
+                                                                 method="GET")
+
+    print(f"sirius_status_code: {sirius_status_code}")
+    print(f"sirius_response: {sirius_response}")
 
     response_message = {"message": f"OK {lpa_online_tool_id}", "sirius_url": sirius_url}
     print(f"message: {response_message}")
@@ -18,6 +24,12 @@ def get_by_online_tool_id(lpa_online_tool_id):
 def get_by_sirius_uid(sirius_uid):
 
     sirius_url = generate_sirius_url(sirius_uid=sirius_uid)
+
+    sirius_status_code, sirius_response = send_request_to_sirius(url=sirius_url,
+                                                                 method="GET")
+
+    print(f"sirius_status_code: {sirius_status_code}")
+    print(f"sirius_response: {sirius_response}")
 
     response_message = {"message": f"OK {sirius_uid}", "sirius_url": sirius_url}
     print(f"message: {response_message}")
