@@ -12,14 +12,10 @@ def get_by_online_tool_id(lpa_online_tool_id):
     sirius_status_code, sirius_response = send_request_to_sirius(
         url=sirius_url, method="GET"
     )
+    print(f"sirius_response: {sirius_response}")
 
-    response_message = {
-        "message": f"OK {lpa_online_tool_id}",
-        "sirius_url": sirius_url,
-        "sirius_response_code": sirius_status_code,
-        "full_sirius_response": sirius_response,
-        "formatted_sirius_response": format_response(sirius_response=sirius_response),
-    }
+    response_message = (format_response(sirius_response=sirius_response),)
+    print(f"response_message: {response_message}")
 
     return response_message, 200
 
@@ -31,12 +27,7 @@ def get_by_sirius_uid(sirius_uid):
         url=sirius_url, method="GET"
     )
 
-    response_message = {
-        "message": f"OK {sirius_uid}",
-        "sirius_url": sirius_url,
-        "sirius_response_code": sirius_status_code,
-        "full_sirius_response": sirius_response,
-    }
+    response_message = sirius_response
 
     return response_message, 200
 
@@ -56,7 +47,7 @@ def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
 
 def format_response(sirius_response):
 
-    lpa_data = sirius_response[0]
+    lpa_data = sirius_response
 
     result = {
         "onlineLpaId": lpa_data["onlineLpaId"],

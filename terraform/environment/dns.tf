@@ -27,10 +27,10 @@ data "aws_acm_certificate" "environment_cert" {
 
 resource "aws_route53_record" "validation" {
   count    = local.branch_build_flag ? 0 : 1
-  name     = aws_acm_certificate.environment_cert[0].domain_validation_options[0].resource_record_name
-  type     = aws_acm_certificate.environment_cert[0].domain_validation_options[0].resource_record_type
+  name     = sort(aws_acm_certificate.environment_cert[*].domain_validation_options)[0].resource_record_name
+  type     = sort(aws_acm_certificate.environment_cert[*].domain_validation_options)[0].resource_record_type
   zone_id  = data.aws_route53_zone.environment_cert.id
-  records  = [aws_acm_certificate.environment_cert[0].domain_validation_options[0].resource_record_value]
+  records  = [sort(aws_acm_certificate.environment_cert[*].domain_validation_options)[0].resource_record_value]
   ttl      = 60
   provider = aws.management
 }
