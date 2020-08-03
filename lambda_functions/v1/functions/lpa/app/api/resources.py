@@ -72,7 +72,7 @@ def handle_lpa_online_tool(lpa_online_tool_id):
     print(f"response: {response}")
     print(f"status: {status}")
 
-    return jsonify(response[0]), status
+    return jsonify(response), status
 
 
 @api.route("/use-an-lpa/lpas/<sirius_uid>", methods=["GET"])
@@ -81,4 +81,4 @@ def handle_use_an_lpa(sirius_uid):
 
     response, status = get_by_sirius_uid(sirius_uid=sirius_uid)
 
-    return jsonify(response[0]), status
+    return jsonify(response), status

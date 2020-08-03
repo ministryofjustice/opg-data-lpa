@@ -17,24 +17,24 @@ def get_by_online_tool_id(lpa_online_tool_id):
         url=sirius_url, method="GET"
     )
     
-    print(f"sirius_status_code: {sirius_status_code}")
-    print(f"sirius_response: {sirius_response}")
+    logger.info(f"sirius_status_code: {sirius_status_code}")
+    logger.info(f"sirius_response: {sirius_response}")
 
-    try:
-        if sirius_status_code > 300:
-            logger.info(f"Sirius error: {sirius_status_code}")
-            abort(404)
-        if len(sirius_response) == 0:
+
+
+    if sirius_status_code in [200]:
+        if len(sirius_response) > 0:
+            try:
+                return format_response(sirius_response=sirius_response), 200
+            except Exception as e:
+                logger.info(f"Error formatting sirius response: {e}")
+                abort(404)
+        else:
             logger.info(f"Sirius data empty")
-
             abort(404)
-    except Exception as e:
-        logger.info(f"Unknown Sirius error {e}")
+    else:
+        logger.info(f"Sirius error: {sirius_status_code}")
         abort(404)
-
-    response_message = (format_response(sirius_response=sirius_response),)
-
-    return response_message, 200
 
 
 def get_by_sirius_uid(sirius_uid):
@@ -43,20 +43,19 @@ def get_by_sirius_uid(sirius_uid):
     sirius_status_code, sirius_response = sirius_service.send_request_to_sirius(
         url=sirius_url, method="GET"
     )
-    try:
-        if sirius_status_code > 300:
-            logger.info(f"Sirius error: {sirius_status_code}")
-            abort(500)
-        if len(sirius_response) == 0:
+    if sirius_status_code in [200]:
+        if len(sirius_response) > 0:
+            try:
+                return sirius_response, 200
+            except Exception as e:
+                logger.info(f"Error formatting sirius response: {e}")
+                abort(404)
+        else:
             logger.info(f"Sirius data empty")
-
-            return "An LPA with the passed ID Not Found", 404
-    except Exception as e:
-        logger.info(f"Unknown Sirius error {e}")
-        abort(500)
-    response_message = sirius_response
-
-    return response_message, 200
+            abort(404)
+    else:
+        logger.info(f"Sirius error: {sirius_status_code}")
+        abort(404)
 
 
 def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
@@ -75,7 +74,8 @@ def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
 
 def format_response(sirius_response):
 
-    lpa_data = sirius_response
+    logger.info(f"type(sirius_response): {type(sirius_response)}")
+    lpa_data = sirius_response[0]
 
     result = {
         "onlineLpaId": lpa_data["onlineLpaId"],

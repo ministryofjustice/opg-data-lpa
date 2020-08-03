@@ -53,17 +53,23 @@ def patched_send_request_to_sirius(monkeypatch):
 
             response_data['uid'] = '-'.join(wrap(test_id, 4))
 
-            return 200, json.dumps(response_data)
+            response_data = [response_data]
+
+            return 200, response_data
 
 
         elif test_id[0] == 'A':
             print(f"test_id is a valid lpa-online-tool id: {test_id}")
 
-            response_data = load_data('lpa_online_tool_response.json', as_json=False)
+
+            response_data = load_data('lpa_online_tool_response.json',
+                                          as_json=False)
 
             response_data['onlineLpaId'] = test_id
 
-            return 200, json.dumps(response_data)
+            response_data = [response_data]
+
+            return 200, response_data
 
 
         elif test_id[:5] == "crash":

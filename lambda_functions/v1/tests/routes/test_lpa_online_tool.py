@@ -11,7 +11,7 @@ import pytest
 )
 def test_lpa_online_tool_route(online_tool_id, expected_status_code,test_server,
                                patched_send_request_to_sirius):
-    response = test_server.get(f"/v1/use-an-lpa/lpas/{online_tool_id}")
+    response = test_server.get(f"/v1/lpa-online-tool/lpas/{online_tool_id}")
 
     assert response.status_code == expected_status_code
 
