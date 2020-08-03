@@ -5,10 +5,12 @@ import urllib3
 from werkzeug.exceptions import abort
 
 from .helpers import custom_logger
+
 # from .sirius_service import build_sirius_url, send_request_to_sirius
 from . import sirius_service
 
 logger = custom_logger()
+
 
 def get_by_online_tool_id(lpa_online_tool_id):
     sirius_url = generate_sirius_url(lpa_online_tool_id=lpa_online_tool_id)
@@ -16,24 +18,22 @@ def get_by_online_tool_id(lpa_online_tool_id):
     sirius_status_code, sirius_response = sirius_service.send_request_to_sirius(
         url=sirius_url, method="GET"
     )
-    
+
     logger.info(f"sirius_status_code: {sirius_status_code}")
     logger.info(f"sirius_response: {sirius_response}")
-
-
 
     if sirius_status_code in [200]:
         if len(sirius_response) > 0:
             try:
                 return format_response(sirius_response=sirius_response), 200
             except Exception as e:
-                logger.info(f"Error formatting sirius response: {e}")
+                logger.error(f"Error formatting sirius response: {e}")
                 abort(404)
         else:
-            logger.info(f"Sirius data empty")
+            logger.error(f"Sirius data empty")
             abort(404)
     else:
-        logger.info(f"Sirius error: {sirius_status_code}")
+        logger.error(f"Sirius error: {sirius_status_code}")
         abort(404)
 
 
@@ -48,13 +48,13 @@ def get_by_sirius_uid(sirius_uid):
             try:
                 return sirius_response, 200
             except Exception as e:
-                logger.info(f"Error formatting sirius response: {e}")
+                logger.error(f"Error formatting sirius response: {e}")
                 abort(404)
         else:
-            logger.info(f"Sirius data empty")
+            logger.error(f"Sirius data empty")
             abort(404)
     else:
-        logger.info(f"Sirius error: {sirius_status_code}")
+        logger.error(f"Sirius error: {sirius_status_code}")
         abort(404)
 
 
@@ -66,8 +66,9 @@ def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
     elif sirius_uid:
         sirius_url_params = {"uid": sirius_uid}
 
-    url = sirius_service.build_sirius_url(endpoint=sirius_api_url,
-                                          url_params=sirius_url_params,)
+    url = sirius_service.build_sirius_url(
+        endpoint=sirius_api_url, url_params=sirius_url_params,
+    )
 
     return url
 

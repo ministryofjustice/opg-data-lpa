@@ -34,43 +34,35 @@ def patched_get_secret(monkeypatch):
     monkeypatch.setattr(api.sirius_service, "get_secret", mock_secret)
 
 
-
-
 @pytest.fixture()
 def patched_send_request_to_sirius(monkeypatch):
     def mock_get(*args, **kwargs):
         print("Using fake_send_request_to_sirius ")
-        
 
-
-        test_id = kwargs['url'].split('=')[1]
+        test_id = kwargs["url"].split("=")[1]
         print(f"test_id: {test_id}")
 
-        if test_id[0] == '7':
+        if test_id[0] == "7":
             print(f"test_id is a valid sirius uid: {test_id}")
 
-            response_data = load_data('use_an_lpa_response.json', as_json=False)
+            response_data = load_data("use_an_lpa_response.json", as_json=False)
 
-            response_data['uid'] = '-'.join(wrap(test_id, 4))
+            response_data["uid"] = "-".join(wrap(test_id, 4))
 
             response_data = [response_data]
 
             return 200, response_data
 
-
-        elif test_id[0] == 'A':
+        elif test_id[0] == "A":
             print(f"test_id is a valid lpa-online-tool id: {test_id}")
 
+            response_data = load_data("lpa_online_tool_response.json", as_json=False)
 
-            response_data = load_data('lpa_online_tool_response.json',
-                                          as_json=False)
-
-            response_data['onlineLpaId'] = test_id
+            response_data["onlineLpaId"] = test_id
 
             response_data = [response_data]
 
             return 200, response_data
-
 
         elif test_id[:5] == "crash":
             print("oh no you crashed sirius")
@@ -84,5 +76,3 @@ def patched_send_request_to_sirius(monkeypatch):
             return 404, ""
 
     monkeypatch.setattr(api.sirius_service, "send_request_to_sirius", mock_get)
-
-

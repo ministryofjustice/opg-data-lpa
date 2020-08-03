@@ -17,7 +17,3 @@ def aws_credentials(monkeypatch):
     monkeypatch.setenv("SESSION_DATA", "publicapi@opgtest.com")
     monkeypatch.setenv("ENVIRONMENT", "not-a-real-environment")
     monkeypatch.setenv("JWT_SECRET", "THIS_IS_MY_SECRET_KEY")
-
-
-
-
