@@ -1,7 +1,4 @@
 import pytest
-import os
-
-from lambda_functions.v1.functions.lpa.app import api
 
 
 @pytest.fixture(autouse=True)

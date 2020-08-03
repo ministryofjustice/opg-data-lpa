@@ -1,11 +1,10 @@
-import json
 from textwrap import wrap
 
 import pytest
 from flask import Flask
 
-from lambda_functions.v1.functions.lpa.app import create_app
 from lambda_functions.v1.functions.lpa.app import api
+from lambda_functions.v1.functions.lpa.app import create_app
 from lambda_functions.v1.tests.helpers import load_data
 
 
