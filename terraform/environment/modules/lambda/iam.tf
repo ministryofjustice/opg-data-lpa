@@ -16,7 +16,12 @@ data "aws_iam_policy_document" "lambda_assume" {
       identifiers = ["lambda.amazonaws.com"]
     }
   }
+
+
+
 }
+
+
 
 data "aws_iam_policy" "aws_xray_write_only_access" {
   arn = "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
@@ -42,6 +47,15 @@ data "aws_iam_policy_document" "lambda" {
       "logs:CreateLogStream",
       "logs:PutLogEvents",
       "logs:DescribeLogStreams"
+    ]
+  }
+
+  statement {
+    sid       = "allowSecretsManagerAccess"
+    effect    = "Allow"
+    resources = ["*"]
+    actions = [
+      "secretsmanager:GetSecretValue"
     ]
   }
 }

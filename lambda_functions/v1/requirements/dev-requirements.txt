@@ -9,3 +9,7 @@ pytest-cov
 requests-aws4auth
 pytest-html
 moto
+pyjwt
+hypothesis
+validators
+yarl

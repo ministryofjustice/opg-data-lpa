@@ -6,13 +6,13 @@
       "type": "string"
     },
     "receiptDate": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "registrationDate": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "rejectedDate": {
-      "type": "null"
+      "type": ["string", "null"]
     },
     "status": {
       "type": "string"
