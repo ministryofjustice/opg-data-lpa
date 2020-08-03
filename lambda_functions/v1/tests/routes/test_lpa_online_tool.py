@@ -1,6 +1,17 @@
-def test_lpa_online_tool_route(test_server):
-    fake_lpa_online_tool_id = "123456"
-    response = test_server.get(f"/v1/use-an-lpa/lpas/{fake_lpa_online_tool_id}")
+import pytest
 
-    assert response.status_code == 200
-    # assert response.get_json()["message"] == f"OK {fake_lpa_online_tool_id}"
+@pytest.mark.parametrize(
+    "online_tool_id, expected_status_code",
+    [
+        ("A39721583862", 200),
+        ("B39721583862", 404),
+        ("crash_sirius_with_500", 404),
+        ("crash_sirius_with_404", 501),
+    ]
+)
+def test_lpa_online_tool_route(online_tool_id, expected_status_code,test_server,
+                               patched_send_request_to_sirius):
+    response = test_server.get(f"/v1/use-an-lpa/lpas/{online_tool_id}")
+
+    assert response.status_code == expected_status_code
+

@@ -1,6 +1,8 @@
 import pytest
 import os
 
+from lambda_functions.v1.functions.lpa.app import api
+
 
 @pytest.fixture(autouse=True)
 def aws_credentials(monkeypatch):
@@ -15,3 +17,7 @@ def aws_credentials(monkeypatch):
     monkeypatch.setenv("SESSION_DATA", "publicapi@opgtest.com")
     monkeypatch.setenv("ENVIRONMENT", "not-a-real-environment")
     monkeypatch.setenv("JWT_SECRET", "THIS_IS_MY_SECRET_KEY")
+
+
+
+
