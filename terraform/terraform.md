@@ -37,6 +37,14 @@ the base directory and type ```direnv allow``` and it will pull in all the open 
 The OpenApi spec controls the auth method, validation and the versioning by means of using stage variables to point
 to separate lambdas.
 
+Issues:
+
+The following issues mean we are forced to ingnore changes on rest api and use the openapi spec for
+policy and description:
+
+- https://github.com/terraform-providers/terraform-provider-aws/issues/5364
+- https://github.com/terraform-providers/terraform-provider-aws/issues/5549
+
 ### API Gateway deployment
 
 The way the amazon API Gateway product works is that we have a rest api that has integrations to end points.

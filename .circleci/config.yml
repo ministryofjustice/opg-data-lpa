@@ -182,7 +182,7 @@ jobs:
           command: |
             ./install_requirements.sh \
             -d lambda_functions \
-            -r dev-requirements.txt \
+            -r requirements.txt \
             -p lambda_layers/python/lib/python3.7/site-packages
           working_directory: ~/project/docs/ci_scripts
       - run:
@@ -284,7 +284,6 @@ jobs:
           name: terraform << parameters.tf_command >> - environment
           working_directory: ~/project/terraform/environment
           command: terraform << parameters.tf_command >>
-      # https://github.com/terraform-providers/terraform-provider-aws/issues/5364
       - when:
           condition: << parameters.apply_check >>
           steps:

@@ -14,16 +14,13 @@ locals {
     source-code            = "https://github.com/ministryofjustice/opg-data-lpa"
   }
 
-  policy_len_tag = {
-    policy_len = aws_api_gateway_rest_api.lpa.policy
-  }
-
   api_name = "lpa"
 
   api_template_vars = {
-    region      = "eu-west-1"
-    environment = local.environment
-    account_id  = local.account.account_id
+    region        = "eu-west-1"
+    environment   = local.environment
+    allowed_roles = join(", ", local.account.allowed_roles)
+    account_id    = local.account.account_id
   }
 
   //Modify here for new version - replace with new code (comment out old code)
@@ -31,7 +28,6 @@ locals {
   openapispec            = file("../../lambda_functions/${local.latest_openapi_version}/openapi/${local.api_name}-openapi.yml")
 }
 
-//https://github.com/terraform-providers/terraform-provider-aws/issues/5364
 output "policy" {
   value = aws_api_gateway_rest_api.lpa.policy
 }
@@ -39,3 +35,4 @@ output "policy" {
 output "rest_arn" {
   value = aws_api_gateway_rest_api.lpa.execution_arn
 }
+
