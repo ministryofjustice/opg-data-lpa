@@ -2,6 +2,7 @@ openapi: '3.0.2'
 info:
   title: lpa-${environment}
   version: '1.0'
+  description: 'Rest API for LPA Data - ${environment}'
 servers:
   - url: /v1
     description: we use the path only so we can use in different contexts
@@ -75,6 +76,22 @@ x-amazon-apigateway-gateway-responses:
   WAF_FILTERED:
     responseTemplates:
       application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-WAF_FILTERED", "title":$context.error.messageString, "detail": "", "meta": {"x-ray": "$context.xrayTraceId"} }}'
+
+"x-amazon-apigateway-policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": [${allowed_roles}]
+            },
+            "Action": "execute-api:Invoke",
+            "Resource": [
+                "arn:aws:execute-api:eu-west-1:${account_id}:*/*/*/*"
+            ]
+        }
+    ]
+}
 
 paths:
   /healthcheck:

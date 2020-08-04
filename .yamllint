@@ -10,3 +10,4 @@ rules:
         level: warning
 ignore: |
     venv
+    lambda_functions/v1/openapi/lpa-openapi.yml
