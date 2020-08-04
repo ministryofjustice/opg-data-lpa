@@ -1,13 +1,14 @@
-import pytest
-
-
 import os
 
+import pytest
 
 # Defaults to 50
 import requests
 
 from lambda_functions.v1.functions.lpa.app.api import sirius_service
+
+# Defaults to 50
+max_examples = int(os.environ["HYPOTHESIS_MAX_EXAMPLES"])
 
 max_examples = int(os.environ["HYPOTHESIS_MAX_EXAMPLES"])
 
