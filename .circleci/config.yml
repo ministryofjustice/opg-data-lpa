@@ -115,6 +115,7 @@ orbs:
       python_with_tfvars:
         docker:
           - image: circleci/python:3
+        resource_class: small
         environment:
           TF_CLI_ARGS_plan: -input=false -lock=false
           TF_CLI_ARGS_apply: -input=false -auto-approve
@@ -155,10 +156,36 @@ orbs:
                 wget https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.82.3/pact-1.82.3-linux-x86_64.tar.gz
                 tar xzf pact-1.82.3-linux-x86_64.tar.gz
               working_directory: ~/project
+      cancel_redundant_builds:
+        steps:
+          - run:
+              name: install aws cli
+              command: |
+                pip3 install awscli --upgrade --user
+          - run:
+              name: login to code artifact for pip
+              command: ./login_code_artifact.sh -a 288342028542 -t pip
+              working_directory: ~/project/docs/ci_scripts
+          - run:
+              name: install cancel build requirements
+              command: pip3 install -r requirements.txt
+              working_directory: ~/project/docs/ci_scripts
+          - run:
+              name: cancel previous builds
+              command: |
+                python3 cancel_builds.py \
+                --circle_project_username="${CIRCLE_PROJECT_USERNAME}" \
+                --circle_project_reponame="${CIRCLE_PROJECT_REPONAME}" \
+                --circle_branch="${CIRCLE_BRANCH}" \
+                --circle_builds_token="${CIRCLE_BUILDS_TOKEN}" \
+                --terms_to_waitfor="apply,plan,terraform,destroy" \
+                --prod_job_terms="production ,integration ,pact"
+              working_directory: ~/project/docs/ci_scripts
 
 jobs:
   build_and_test:
     executor: lpa-data/python
+    resource_class: small
     steps:
       - checkout
       - run:
@@ -197,6 +224,7 @@ jobs:
 
   terraform_preflight:
     executor: lpa-data/python_with_tfvars
+    resource_class: small
     parameters:
       tf_workspace:
         description: terraform workspace
@@ -244,6 +272,7 @@ jobs:
 
   terraform_action:
     executor: lpa-data/python_with_tfvars
+    resource_class: small
     parameters:
       tf_workspace:
         description: terraform workspace
@@ -317,6 +346,7 @@ jobs:
     docker:
       # Primary container image where all the steps run.
       - image: circleci/python:3
+    resource_class: small
     working_directory: ~/project
     parameters:
     environment:
