@@ -10,7 +10,6 @@ requests-aws4auth
 pytest-html
 moto
 pyjwt
-pyjwt
 hypothesis
 validators
 yarl
