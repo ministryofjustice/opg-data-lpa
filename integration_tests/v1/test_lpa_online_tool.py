@@ -20,7 +20,6 @@ def test_online_tool_route(test_config):
         assert is_valid_schema(response_dict, "lpa_online_tool_schema.json")
 
 
-@pytest.mark.xfail(reason="not catching if sirius response is empty, returns 500")
 @pytest.mark.smoke_test
 @pytest.mark.parametrize("test_config", configs_to_test)
 def test_online_tool_route_invalid_id(test_config):
@@ -33,5 +32,3 @@ def test_online_tool_route_invalid_id(test_config):
         )
 
         assert status == 404
-        response_dict = json.loads(response)
-        assert response_dict == {}
