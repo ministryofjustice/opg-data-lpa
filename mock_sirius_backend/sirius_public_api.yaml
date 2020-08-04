@@ -1,3 +1,4 @@
+---
 swagger: '2.0'
 info:
   version: 1.0.0
@@ -51,194 +52,199 @@ paths:
             $ref: '#/definitions/Error'
         '500':
           description: Unexpected error
-#  /orders:
-#    post:
-#      description: |
-#        Creates a new Client, order and set of deputies in Sirius and attaches a set of documents to the order. Each request must use a unique CASREC number.
-#
-#        Prior to posting the payload, the client must upload the document files to the corresponding Sirius Public API S3 bucket. These buckets use the following format:
-#
-#        `opg-backoffice-public-api-{stack_name}` e.g. `opg-backoffice-public-api-datamigration`
-#
-#        A successful integration with this API will require working with the ops team to gain access to this bucket.
-#
-#        NB the filenames MUST include the file extension in order to calculate mime types and create valid filenames in Sirius.
-#
-#        ##### Endpoint behaviour
-#
-#        - Clients are uniquely identified by the court reference. Posting a request using the same court reference will not create a new client nor will it update the existing one. The existing client id will be returned.
-#        - Orders are uniquely identified by their associated court reference, their type and their date. If all match, the API will not create a new order nor will it update the existing one. The existing order id will be returned.
-#        - Multiple orders can be associated with the same client providing they are of different types or dates. Each new order requires a new API call.
-#        - Deputies are uniquely identified on a per order bases based on their first and last names. No deputy matching across orders occurs so each call to create an order will also create new deputies.
-#        - The filenames are checked prior to creating any entities. If the filenames don't exist in the Sirius Public API S3 bucket, a 400 bad request response will be returned highlighting the missing files.
-#      operationId: createOrder
-#      parameters:
-#        - name: order
-#          in: body
-#          description: Order and related entities to create in Sirius
-#          required: true
-#          schema:
-#            $ref: '#/definitions/Order'
-#      responses:
-#        '201':
-#          description: The Sirius specific ids of all the entities created
-#          schema:
-#            $ref: '#/definitions/SiriusIds'
-#        '400':
-#          description: Request validation error
-#          schema:
-#            $ref: '#/definitions/Error'
-#        '500':
-#          description: Unexpected error
-#  /documents:
-#    post:
-#      description: Post a document to be stored within Sirius
-#      operationId: createDeputyDocument
-#      parameters:
-#        - name: document
-#          in: body
-#          description: The document and associated metadata
-#          required: true
-#          schema:
-#            type: object
-#            required:
-#              - caseRecNumber
-#              - type
-#              - metadata
-#              - file
-#            properties:
-#              caseRecNumber:
-#                $ref: '#/definitions/CaseRecNumber'
-#              parentUuid:
-#                $ref: '#/definitions/DocumentUuid'
-#              type:
-#                $ref: '#/definitions/NoteType'
-#              metadata:
-#                type: object
-#                description: Metadata to be stored along with the document
-#              file:
-#                $ref: '#/definitions/DeputyDocumentFile'
-#      responses:
-#        '201':
-#          description: The document was created
-#          schema:
-#            $ref: '#/definitions/DeputyDocumentResponse'
-#        '400':
-#          description: Invalid query
-#          schema:
-#            $ref: '#/definitions/Error'
-#        '500':
-#          description: Unexpected error
-#    get:
-#      description: |
-#        This endpoint retrieves a list of documents for a client identified by casenumber, filtered by metadata
-#        <br />
-#        Retrieve documents by Client caseref: `/api/public/v1/documents?caserecnumber={caseref}&metadata[submission_id]={Digideps submission Id}&metadata[report_id]={UUID of parent document}`
-#        <br />
-#        e.g. `/api/public/v1/documents?caserecnumber=1681346T&metadata[submission_id]=11111&metadata[report_id]=94f2c3e7-34b8-47ff-bb6e-aa645f1e2c5d
-#      operationId: getDeputyDocuments
-#      parameters:
-#          - name: caserecnumber
-#            in: query
-#            type: string
-#            description: Case record number assigned to the client
-#            required: true
-#            pattern: '^([0-9]{7}T|[0-9]{8})$'
-#          - name: metadata[submission_id]
-#            in: query
-#            type: integer
-#            description: the Digideps submission id filter
-#            required: true
-#          - name: metadata[report_id]
-#            in: query
-#            type: string
-#            description: the Digideps report id filter
-#            required: true
-#      responses:
-#        '200':
-#          description: List retrieved
-#          schema:
-#            $ref: '#/definitions/DeputyDocumentResponseCollection'
-#        '400':
-#          description: Invalid query
-#          schema:
-#            $ref: '#/definitions/Error'
-#        '500':
-#          description: Unexpected error
-#    put:
-#      description: Update a document stored within Sirius
-#      operationId: updateDeputyDocument
-#      parameters:
-#        - name: uuid
-#          in: query
-#          type: string
-#          format: uuid
-#          pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
-#          description: The uuid of the document to be updated
-#          required: true
-#        - name: document
-#          in: body
-#          description: The document and associated metadata
-#          required: true
-#          schema:
-#            type: object
-#            required:
-#              - caseRecNumber
-#              - type
-#              - metadata
-#              - file
-#            properties:
-#              caseRecNumber:
-#                $ref: '#/definitions/CaseRecNumber'
-#              type:
-#                $ref: '#/definitions/NoteType'
-#              metadata:
-#                type: object
-#                description: Metadata to be stored along with the document
-#              file:
-#                $ref: '#/definitions/DeputyDocumentFile'
-#      responses:
-#        '200':
-#          description: The document was updated
-#          schema:
-#            $ref: '#/definitions/DeputyDocumentResponse'
-#        '400':
-#          description: Invalid query
-#          schema:
-#            $ref: '#/definitions/Error'
-#        '500':
-#          description: Unexpected error
-#  /correspondence/update-send-status:
-#    put:
-#      description: Update the state of the letter in the database after the queue consumer successfully processes a letter
-#      operationId: updateSendStatus
-#      parameters:
-#        - name: request
-#          in: body
-#          description: The document with associated Notify ID and status
-#          required: true
-#          schema:
-#            type: object
-#            required:
-#              - documentId
-#              - notifySendId
-#              - notifyStatus
-#            properties:
-#              documentId:
-#                $ref: '#/definitions/documentId'
-#              notifySendId:
-#                $ref: '#/definitions/notifySendId'
-#              notifyStatus:
-#                $ref: '#/definitions/notifyStatus'
-#      responses:
-#        '204':
-#          description: The status was updated
-#        '400':
-#          description: Invalid request
-#          schema:
-#            $ref: '#/definitions/Error'
-#        '500':
-#          description: Unexpected error
+  /orders:
+    post:
+      description: |
+        Creates a new Client, order and set of deputies in Sirius and attaches a set of documents to the order. Each request must use a unique CASREC number.
+
+        Prior to posting the payload, the client must upload the document files to the corresponding Sirius Public API S3 bucket. These buckets use the following format:
+
+        `opg-backoffice-public-api-{stack_name}` e.g. `opg-backoffice-public-api-datamigration`
+
+        A successful integration with this API will require working with the ops team to gain access to this bucket.
+
+        NB the filenames MUST include the file extension in order to calculate mime types and create valid filenames in Sirius.
+
+        ##### Endpoint behaviour
+
+        - Clients are uniquely identified by the court reference. Posting a request using the same court reference will not create a new client nor will it update the existing one. The existing client id will be returned.
+        - Orders are uniquely identified by their associated court reference, their type and their date. If all match, the API will not create a new order nor will it update the existing one. The existing order id will be returned.
+        - Multiple orders can be associated with the same client providing they are of different types or dates. Each new order requires a new API call.
+        - Deputies are uniquely identified on a per order bases based on their first and last names. No deputy matching across orders occurs so each call to create an order will also create new deputies.
+        - The filenames are checked prior to creating any entities. If the filenames don't exist in the Sirius Public API S3 bucket, a 400 bad request response will be returned highlighting the missing files.
+      x-swagger-router-controller: app
+      operationId: createOrder
+      parameters:
+        - name: order
+          in: body
+          description: Order and related entities to create in Sirius
+          required: true
+          schema:
+            $ref: '#/definitions/Order'
+      responses:
+        '201':
+          description: The Sirius specific ids of all the entities created
+          schema:
+            $ref: '#/definitions/SiriusIds'
+        '400':
+          description: Request validation error
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+  /documents:
+    post:
+      description: Post a document to be stored within Sirius
+      x-swagger-router-controller: app
+      operationId: createDeputyDocument
+      parameters:
+        - name: document
+          in: body
+          description: The document and associated metadata
+          required: true
+          schema:
+            type: object
+            required:
+              - caseRecNumber
+              - type
+              - metadata
+              - file
+            properties:
+              caseRecNumber:
+                $ref: '#/definitions/CaseRecNumber'
+              parentUuid:
+                $ref: '#/definitions/DocumentUuid'
+              type:
+                $ref: '#/definitions/NoteType'
+              metadata:
+                type: object
+                description: Metadata to be stored along with the document
+              file:
+                $ref: '#/definitions/DeputyDocumentFile'
+      responses:
+        '201':
+          description: The document was created
+          schema:
+            $ref: '#/definitions/DeputyDocumentResponse'
+        '400':
+          description: Invalid query
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+    get:
+      description: |
+        This endpoint retrieves a list of documents for a client identified by casenumber, filtered by metadata
+        <br />
+        Retrieve documents by Client caseref: `/api/public/v1/documents?caserecnumber={caseref}&metadata[submission_id]={Digideps submission Id}&metadata[report_id]={UUID of parent document}`
+        <br />
+        e.g. `/api/public/v1/documents?caserecnumber=1681346T&metadata[submission_id]=11111&metadata[report_id]=94f2c3e7-34b8-47ff-bb6e-aa645f1e2c5d
+      x-swagger-router-controller: app
+      operationId: getDeputyDocuments
+      parameters:
+          - name: caserecnumber
+            in: query
+            type: string
+            description: Case record number assigned to the client
+            required: true
+            pattern: '^([0-9]{7}T|[0-9]{8})$'
+          - name: metadata[submission_id]
+            in: query
+            type: integer
+            description: the Digideps submission id filter
+            required: true
+          - name: metadata[report_id]
+            in: query
+            type: string
+            description: the Digideps report id filter
+            required: true
+      responses:
+        '200':
+          description: List retrieved
+          schema:
+            $ref: '#/definitions/DeputyDocumentResponseCollection'
+        '400':
+          description: Invalid query
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+    put:
+      description: Update a document stored within Sirius
+      x-swagger-router-controller: app
+      operationId: updateDeputyDocument
+      parameters:
+        - name: uuid
+          in: query
+          type: string
+          format: uuid
+          pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
+          description: The uuid of the document to be updated
+          required: true
+        - name: document
+          in: body
+          description: The document and associated metadata
+          required: true
+          schema:
+            type: object
+            required:
+              - caseRecNumber
+              - type
+              - metadata
+              - file
+            properties:
+              caseRecNumber:
+                $ref: '#/definitions/CaseRecNumber'
+              type:
+                $ref: '#/definitions/NoteType'
+              metadata:
+                type: object
+                description: Metadata to be stored along with the document
+              file:
+                $ref: '#/definitions/DeputyDocumentFile'
+      responses:
+        '200':
+          description: The document was updated
+          schema:
+            $ref: '#/definitions/DeputyDocumentResponse'
+        '400':
+          description: Invalid query
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+  /correspondence/update-send-status:
+    put:
+      description: Update the state of the letter in the database after the queue consumer successfully processes a letter
+      x-swagger-router-controller: app
+      operationId: updateSendStatus
+      parameters:
+        - name: request
+          in: body
+          description: The document with associated Notify ID and status
+          required: true
+          schema:
+            type: object
+            required:
+              - documentId
+              - notifySendId
+              - notifyStatus
+            properties:
+              documentId:
+                $ref: '#/definitions/documentId'
+              notifySendId:
+                $ref: '#/definitions/notifySendId'
+              notifyStatus:
+                $ref: '#/definitions/notifyStatus'
+      responses:
+        '204':
+          description: The status was updated
+        '400':
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
 definitions:
   LpaCollection:
     type: array
@@ -780,4 +786,3 @@ definitions:
       - Rejected
       - Posted
     example: 'Sent for posting'
-

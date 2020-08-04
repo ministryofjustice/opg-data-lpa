@@ -17,6 +17,26 @@ def getLpas(*args, **kwargs):
     return response_message, int(status_code)
 
 
+def createOrder():
+    return "Not implemented", 501
+
+
+def createDeputyDocument():
+    return "Not implemented", 501
+
+
+def getDeputyDocuments():
+    return "Not implemented", 501
+
+
+def updateDeputyDocument():
+    return "Not implemented", 501
+
+
+def updateSendStatus():
+    return "Not implemented", 501
+
+
 logging.basicConfig(level=logging.INFO)
 sirius_server = connexion.FlaskApp(__name__)
 sirius_server.add_api("sirius_public_api.yaml")
