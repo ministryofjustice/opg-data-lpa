@@ -9,7 +9,7 @@ from .helpers import custom_logger
 
 logger = custom_logger("")
 
-version = os.getenv("API_VERSION")
+version = "v1"
 print(f"version: {version}")
 api = Blueprint("api", __name__, url_prefix=f"/{version}")
 

@@ -13,3 +13,4 @@ pyjwt
 hypothesis
 validators
 yarl
+localstack-client
