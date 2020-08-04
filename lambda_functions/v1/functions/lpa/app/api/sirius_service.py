@@ -61,16 +61,17 @@ def get_secret(environment):
     region_name = "eu-west-1"
 
     try:
-        if os.environ['ENVIRONMENT'] == 'local':
+        if os.environ["ENVIRONMENT"] == "local":
             current_session = localstack_client.session.Session()
-
 
         else:
             current_session = boto3.session.Session()
     except KeyError:
         current_session = boto3.session.Session()
 
-    client = current_session.client(service_name="secretsmanager", region_name=region_name)
+    client = current_session.client(
+        service_name="secretsmanager", region_name=region_name
+    )
 
     try:
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)

@@ -17,7 +17,6 @@ def getLpas(*args, **kwargs):
     return response_message, int(status_code)
 
 
-
 logging.basicConfig(level=logging.INFO)
 sirius_server = connexion.FlaskApp(__name__)
 sirius_server.add_api("sirius_public_api.yaml")
