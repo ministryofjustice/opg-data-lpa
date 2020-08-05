@@ -22,7 +22,22 @@ LPA related functions.
 
 ## Local Environment
 
-Information about spinning up the local environment
+#### Running flask app locally, aka the quick way
+
+1. Start a virtual environment
+1. Add all the env vars: `source .env`
+1. `cd lambda_functions/v1/functions/lpa/app`
+1. flask run
+1. Endpoints should be available on `http://localhost:5000`
+
+#### Running everything in Docker
+
+1. In the root folder: `docker-compose up`
+1. Wait a minute
+1. `cd mock_aws_services`
+1. `python create_secret.py`
+    * steps 3 & 4 are temporary, test data will soon be inserted automatically
+1. Endpoints should be available on `http://0.0.0.0:4343`
 
 ## Unit Tests
 

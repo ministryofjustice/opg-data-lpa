@@ -1,0 +1,788 @@
+---
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Sirius Public API
+  description: |
+    Fixed and versioned Sirius API endpoints allowing applications to integrate with Sirius in a contractually guaranteed way.
+
+    Once these endpoints are fixed at a major version, they may not change. A breaking change requires a new major version while maintaining the functionality of the existing versions.
+
+    Versions may only be decomissioned following discussion and agreement with clients.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+basePath: /api/public/v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /lpas:
+    get:
+      description: |
+        This end point retrieves information on a LPA (Legal Power Attorney), by specifying the Database ID or Online Tool ID (Barcode).
+        <br />
+        Retrieve LPA by Barcode: `/api/public/lpas?lpa-online-tool-id={barcode}&fields=status` e.g. `/api/public/lpas?lpa-online-tool-id=A12547854123&fields=status`
+        <br />
+        Retrieve LPA by ID:  `/api/public/lpas?id={id}` e.g. `/api/public/lpas?id=1`
+      x-swagger-router-controller: app
+      operationId: getLpas
+      parameters:
+          - name: lpa-online-tool-id
+            in: query
+            type: string
+            description: Barcode ID related to LPA
+            required: false
+          - name: uid
+            in: query
+            type: integer
+            description: Database record UID related to LPA, example `700000000054`
+            required: false
+      responses:
+        '200':
+          description: Record found and retrieved
+          schema:
+            $ref: '#/definitions/LpaCollection'
+        '400':
+          description: Invalid query
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+  /orders:
+    post:
+      description: |
+        Creates a new Client, order and set of deputies in Sirius and attaches a set of documents to the order. Each request must use a unique CASREC number.
+
+        Prior to posting the payload, the client must upload the document files to the corresponding Sirius Public API S3 bucket. These buckets use the following format:
+
+        `opg-backoffice-public-api-{stack_name}` e.g. `opg-backoffice-public-api-datamigration`
+
+        A successful integration with this API will require working with the ops team to gain access to this bucket.
+
+        NB the filenames MUST include the file extension in order to calculate mime types and create valid filenames in Sirius.
+
+        ##### Endpoint behaviour
+
+        - Clients are uniquely identified by the court reference. Posting a request using the same court reference will not create a new client nor will it update the existing one. The existing client id will be returned.
+        - Orders are uniquely identified by their associated court reference, their type and their date. If all match, the API will not create a new order nor will it update the existing one. The existing order id will be returned.
+        - Multiple orders can be associated with the same client providing they are of different types or dates. Each new order requires a new API call.
+        - Deputies are uniquely identified on a per order bases based on their first and last names. No deputy matching across orders occurs so each call to create an order will also create new deputies.
+        - The filenames are checked prior to creating any entities. If the filenames don't exist in the Sirius Public API S3 bucket, a 400 bad request response will be returned highlighting the missing files.
+      x-swagger-router-controller: app
+      operationId: createOrder
+      parameters:
+        - name: order
+          in: body
+          description: Order and related entities to create in Sirius
+          required: true
+          schema:
+            $ref: '#/definitions/Order'
+      responses:
+        '201':
+          description: The Sirius specific ids of all the entities created
+          schema:
+            $ref: '#/definitions/SiriusIds'
+        '400':
+          description: Request validation error
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+  /documents:
+    post:
+      description: Post a document to be stored within Sirius
+      x-swagger-router-controller: app
+      operationId: createDeputyDocument
+      parameters:
+        - name: document
+          in: body
+          description: The document and associated metadata
+          required: true
+          schema:
+            type: object
+            required:
+              - caseRecNumber
+              - type
+              - metadata
+              - file
+            properties:
+              caseRecNumber:
+                $ref: '#/definitions/CaseRecNumber'
+              parentUuid:
+                $ref: '#/definitions/DocumentUuid'
+              type:
+                $ref: '#/definitions/NoteType'
+              metadata:
+                type: object
+                description: Metadata to be stored along with the document
+              file:
+                $ref: '#/definitions/DeputyDocumentFile'
+      responses:
+        '201':
+          description: The document was created
+          schema:
+            $ref: '#/definitions/DeputyDocumentResponse'
+        '400':
+          description: Invalid query
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+    get:
+      description: |
+        This endpoint retrieves a list of documents for a client identified by casenumber, filtered by metadata
+        <br />
+        Retrieve documents by Client caseref: `/api/public/v1/documents?caserecnumber={caseref}&metadata[submission_id]={Digideps submission Id}&metadata[report_id]={UUID of parent document}`
+        <br />
+        e.g. `/api/public/v1/documents?caserecnumber=1681346T&metadata[submission_id]=11111&metadata[report_id]=94f2c3e7-34b8-47ff-bb6e-aa645f1e2c5d
+      x-swagger-router-controller: app
+      operationId: getDeputyDocuments
+      parameters:
+          - name: caserecnumber
+            in: query
+            type: string
+            description: Case record number assigned to the client
+            required: true
+            pattern: '^([0-9]{7}T|[0-9]{8})$'
+          - name: metadata[submission_id]
+            in: query
+            type: integer
+            description: the Digideps submission id filter
+            required: true
+          - name: metadata[report_id]
+            in: query
+            type: string
+            description: the Digideps report id filter
+            required: true
+      responses:
+        '200':
+          description: List retrieved
+          schema:
+            $ref: '#/definitions/DeputyDocumentResponseCollection'
+        '400':
+          description: Invalid query
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+    put:
+      description: Update a document stored within Sirius
+      x-swagger-router-controller: app
+      operationId: updateDeputyDocument
+      parameters:
+        - name: uuid
+          in: query
+          type: string
+          format: uuid
+          pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
+          description: The uuid of the document to be updated
+          required: true
+        - name: document
+          in: body
+          description: The document and associated metadata
+          required: true
+          schema:
+            type: object
+            required:
+              - caseRecNumber
+              - type
+              - metadata
+              - file
+            properties:
+              caseRecNumber:
+                $ref: '#/definitions/CaseRecNumber'
+              type:
+                $ref: '#/definitions/NoteType'
+              metadata:
+                type: object
+                description: Metadata to be stored along with the document
+              file:
+                $ref: '#/definitions/DeputyDocumentFile'
+      responses:
+        '200':
+          description: The document was updated
+          schema:
+            $ref: '#/definitions/DeputyDocumentResponse'
+        '400':
+          description: Invalid query
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+  /correspondence/update-send-status:
+    put:
+      description: Update the state of the letter in the database after the queue consumer successfully processes a letter
+      x-swagger-router-controller: app
+      operationId: updateSendStatus
+      parameters:
+        - name: request
+          in: body
+          description: The document with associated Notify ID and status
+          required: true
+          schema:
+            type: object
+            required:
+              - documentId
+              - notifySendId
+              - notifyStatus
+            properties:
+              documentId:
+                $ref: '#/definitions/documentId'
+              notifySendId:
+                $ref: '#/definitions/notifySendId'
+              notifyStatus:
+                $ref: '#/definitions/notifyStatus'
+      responses:
+        '204':
+          description: The status was updated
+        '400':
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+definitions:
+  LpaCollection:
+    type: array
+    minItems: 0
+    items:
+      $ref: '#/definitions/Lpa'
+  Lpa:
+    type: object
+    required:
+      - id
+      - uId
+      - applicationType
+      - caseSubtype
+      - receiptDate
+      - rejectedDate
+      - registrationDate
+      - cancellationDate
+      - status
+      - caseAttorneySingular
+      - caseAttorneyJointlyAndSeverally
+      - caseAttorneyJointly
+      - caseAttorneyJointlyAndJointlyAndSeverally
+      - applicationHasRestrictions
+      - applicationHasGuidance
+      - lpaDonorSignatureDate
+      - lifeSustainingTreatment
+      - onlineLpaId
+      - attorneyActDecisions
+      - donor
+      - attorneys
+      - replacementAttorneys
+      - certificateProviders
+      - trustCorporations
+    properties:
+      id:
+        type: integer
+      uId:
+        type: string
+        example: '7000-0000-0054'
+        description: e.g. 7000-0000-0054
+      applicationType:
+        type: string
+        enum: [Online, Classic]
+      caseSubtype:
+        type: string
+        enum: [hw, pfa]
+        minLength: 1
+        maxLength: 3
+      receiptDate:
+        type: string
+        format: date
+        description: The date the LPA was created
+        example: '2018-06-30'
+      rejectedDate:
+        type: string
+        format: date
+        description: The date the LPA was rejected
+        example: '2018-06-30'
+      registrationDate:
+        type: string
+        format: date
+        description: The date the LPA was registered
+        example: '2018-06-30'
+      cancellationDate:
+        type: string
+        format: date
+        description: The date the LPA was cancelled
+        example: '2018-06-30'
+      status:
+        type: string
+        enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Suspended, With COP, Withdrawn, Registered]
+        minLength: 1
+        maxLength: 10
+      caseAttorneySingular:
+        type: boolean
+      caseAttorneyJointlyAndSeverally:
+        type: boolean
+      caseAttorneyJointly:
+        type: boolean
+      caseAttorneyJointlyAndJointlyAndSeverally:
+        type: boolean
+      applicationHasRestrictions:
+        type: boolean
+      applicationHasGuidance:
+        type: boolean
+      lpaDonorSignatureDate:
+        type: string
+        format: date
+        example: '2018-06-30'
+      lifeSustainingTreatment:
+        type: string
+        enum: ['Option A', 'Option B', null]
+      onlineLpaId:
+        type: string
+        example: ABC123
+      attorneyActDecisions:
+        type: string
+        enum: ['When Registered', 'Loss of capacity', null]
+      donor:
+        $ref: '#/definitions/CaseActor'
+      attorneys:
+        type: array
+        items:
+          $ref: '#/definitions/CaseActor'
+      replacementAttorneys:
+        type: array
+        items:
+          $ref: '#/definitions/CaseActor'
+      trustCorporations:
+        type: array
+        items:
+          $ref: '#/definitions/CaseActor'
+      certificateProviders:
+        type: array
+        items:
+          $ref: '#/definitions/CaseActor'
+  CaseActor:
+    type: object
+    required:
+      - id
+      - uId
+      - email
+      - dob
+      - salutation
+      - firstname
+      - middlenames
+      - surname
+      - companyName
+      - systemStatus
+      - addresses
+    properties:
+      id:
+        type: integer
+        description: The case actor's database ID
+      uId:
+        type: string
+        example: '7000-0000-0054'
+        description: The case actor's unique ID (e.g. 7000-0000-0054)
+      email:
+        type: string
+        description: The case actor's contact email address
+        maxLength: 255
+      dob:
+        type: string
+        description: The case actor's date of birth
+        example: '1980-10-10'
+      salutation:
+        type: string
+        description: The case actor's salutation
+        example: Mrs
+      firstname:
+        type: string
+        description: The case actor's first name
+        example: Ian
+        maxLength: 255
+      middlenames:
+        type: string
+        description: The case actor's last name
+        example: Deputy
+        maxLength: 255
+      surname:
+        type: string
+        description: The case actor's last name
+        example: Deputy
+        maxLength: 255
+      companyName:
+        type: string
+        description: The case actor's company name (if relevant)
+        example: ABC Ltd
+        maxLength: 255
+      systemStatus:
+        type: boolean
+        description: The active/inactive status of the case actor
+      addresses:
+        type: array
+        items:
+          $ref: '#/definitions/Address'
+  Address:
+    required:
+      - id
+      - town
+      - county
+      - postcode
+      - country
+      - type
+      - addressLine1
+      - addressLine2
+      - addressLine3
+    properties:
+      id:
+        type: integer
+        description: The address database ID
+      town:
+        type: string
+        description: The town
+        maxLength: 255
+      county:
+        type: string
+        description: The county
+        maxLength: 255
+      postcode:
+        type: string
+        description: The postcode
+        maxLength: 255
+      country:
+        type: string
+        description: Address country
+        example: UK
+        maxLength: 255
+      type:
+        type: string
+        description: Address type
+        example: Primary
+        enum: [Primary]
+        maxLength: 7
+      addressLine1:
+        type: string
+        description: The first line of the address
+        maxLength: 255
+      addressLine2:
+        type: string
+        description: The second line of the address
+        maxLength: 255
+      addressLine3:
+        type: string
+        description: The third line of the address
+        maxLength: 255
+  Order:
+    required:
+      - courtReference
+      - type
+      - subType
+      - date
+      - issueDate
+      - appointmentType
+      - client
+      - deputies
+      - documents
+    properties:
+      courtReference:
+        type: string
+        description: Alphanumeric court reference matching either 8 digits or 7 followed by 'T'. Must be valid against a Modulus 11/ISBN 10 checksum https://en.wikipedia.org/wiki/Check_digit#ISBN_10. The combination of this and the type must be unique
+        example: '61429461'
+        minLength: 8
+        maxLength: 8
+      type:
+        type: string
+        enum: [HW, PF]
+        description: The type of order to create against the client. The combination of this and the court reference must be unique
+        example: PF
+      subType:
+        type: string
+        enum: [NEW_APPLICATION, REPLACEMENT_OF_DISCHARGED_DEPUTY, INTERIM_ORDER, TRUSTEE, VARIATION, DIRECTION]
+        description: Order subtype. Indicates whether the case will be supervised
+        example: NEW_APPLICATION
+      date:
+        type: string
+        format: date
+        description: The date the order was created
+        example: 2018-06-10
+      issueDate:
+        type: string
+        format: date
+        description: The date the order was issued
+        example: 2018-07-12
+      appointmentType:
+        type: string
+        enum: [SOLE, JOINT, JOINT_AND_SEVERAL]
+        description: How deputies are appointed
+        example: SOLE
+      assetLevel:
+        type: string
+        enum: [LOW, HIGH]
+        description: Only valid for Property & Finance orders. Set to HIGH if the bond or assets are above £21,000 otherwise set to LOW
+        example: HIGH
+      client:
+        $ref: '#/definitions/Client'
+      deputies:
+        type: array
+        items:
+          $ref: '#/definitions/Deputy'
+        description: The deputy or deputies that will be acting on behalf of the client
+      documents:
+        type: array
+        items:
+          $ref: '#/definitions/Document'
+        description: The full list of Court of Protection documents that support the new order
+  Client:
+    type: object
+    required:
+      - firstName
+      - lastName
+    properties:
+      firstName:
+        type: string
+        description: The client's first name
+        example: Peter
+        maxLength: 255
+      lastName:
+        type: string
+        description: The client's last name
+        example: Bloggs
+        maxLength: 255
+  Deputy:
+    type: object
+    required:
+      - type
+      - firstName
+      - lastName
+    properties:
+      type:
+        type: string
+        enum: [LAY, PUBLIC_AUTHORITY, PROFESSIONAL]
+        description: The type of the deputy. Determines the supervision level
+        example: LAY
+      firstName:
+        type: string
+        description: The deputy's first name
+        example: Ian
+        maxLength: 255
+      lastName:
+        type: string
+        description: The deputy's last name
+        example: Deputy
+        maxLength: 255
+      dob:
+        type: string
+        format: date
+        description: The deputy's date of birth (e.g. dd/mm/yyyy)
+        example: '2018-06-10'
+      email:
+        type: string
+        description: The deputy's contact email address
+        maxLength: 255
+      daytimeNumber:
+        type: string
+        description: The number to call the deputy on in the day
+        maxLength: 255
+      eveningNumber:
+        type: string
+        description: The number to call the deputy on in the evening
+        maxLength: 255
+      mobileNumber:
+        type: string
+        description: The deputy's mobile number
+        maxLength: 255
+      addressLine1:
+        type: string
+        description: The first line of the deputy's address
+        maxLength: 255
+      addressLine2:
+        type: string
+        description: The second line of the deputy's address
+        maxLength: 255
+      addressLine3:
+        type: string
+        description: The third line of the deputy's address
+        maxLength: 255
+      town:
+        type: string
+        description: The deputy's town
+        maxLength: 255
+      county:
+        type: string
+        description: The deputy's county
+        maxLength: 255
+      postcode:
+        type: string
+        description: The deputy's postcode
+        maxLength: 255
+  Document:
+    type: object
+    required:
+      - type
+      - filename
+    properties:
+      type:
+        type: string
+        enum: [COP1A, COP1C, COP3, COP4, COURT_ORDER, OTHER]
+        description: The type of the document supporting the order
+      filename:
+        type: string
+        description: The filename only of the Amazon AWS S3 link to the document file in the Sirius Public API bucket. NB the filenames MUST include the file extension in order to calculate mime types and create valid filenames in Sirius.
+        example: "dc_doc_123456_893721928748.pdf"
+  SiriusIds:
+    type: object
+    required:
+      - id
+      - client
+      - deputies
+      - documents
+    properties:
+      id:
+        type: integer
+        description: The Sirius id of the created order
+      client:
+        type: object
+        required:
+          - id
+        properties:
+          id:
+            type: integer
+            description: The Sirius id of the created client
+      deputies:
+        type: array
+        items:
+          type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+              description: The Sirius id of the created deputy
+      documents:
+        type: array
+        items:
+          type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+              description: The Sirius id of the created document
+  Error:
+    type: object
+    required:
+      - validation_errors
+      - status
+      - detail
+    properties:
+      validation_errors:
+        type: object
+        description: All validation errors are returned in this property. There is a child property named after the request property that faled validation e.g. appointmentType which itself has a property for each type of failed validation with a description
+      type:
+        type: string
+        description: a URL to a document describing the error condition (optional, and "about:blank" is assumed if none is provided; should resolve to a human-readable document; Apigility always provides this)
+        example: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+      title:
+        type: string
+        description: a brief title for the error condition (required; and should be the same for every problem of the same type; Apigility always provides this)
+        example: Bad Request
+      status:
+        type: string
+        description: the HTTP status code for the current request (optional; Apigility always provides this)
+        example: '400'
+      detail:
+        type: string
+        description: error details specific to this request (optional; Apigility requires it for each problem)
+        example: Payload failed validation
+      instance:
+        type: string
+        description: URI identifying the specific instance of this problem (optional; Apigility currently does not provide this)
+  NoteType:
+    type: string
+    enum:
+      - Call
+      - Case note
+      - Complaint
+      - Confidential
+      - Correspondence
+      - Email
+      - Finance - Correspondence
+      - Finance - Direct debits
+      - Finance - Remissions
+      - FOI/Information assurance
+      - Investigation
+      - Order
+      - Report
+      - Report - Financial evidence
+      - Report - Checklist
+      - Report - General
+      - Report - New Deputy Report
+      - Safeguarding
+      - Visit
+    example: 'Report - General'
+  DeputyDocumentResponseCollection:
+    type: array
+    minItems: 0
+    items:
+      $ref: '#/definitions/DeputyDocumentResponse'
+  DeputyDocumentResponse:
+    type: object
+    required:
+      - uuid
+    properties:
+      type:
+        $ref: '#/definitions/NoteType'
+      filename:
+        type: string
+        example: 'Report_1234567T_2018_2019_11111.pdf'
+      mimetype:
+        type: string
+        example: 'application/pdf'
+      metadata:
+        type: object
+        description: Metadata matches the metadata received in the request
+      uuid:
+        $ref: '#/definitions/DocumentUuid'
+      parentUuid:
+        $ref: '#/definitions/DocumentUuid'
+  DeputyDocumentFile:
+    type: object
+    description: The base64 encoded file
+    required:
+      - name
+      - type
+      - source
+    properties:
+      name:
+        type: string
+        example: Report_1234567T_2018_2019_11111.pdf
+      type:
+        type: string
+        example: application/pdf
+      source:
+        type: string
+        description: The base64 encoded file
+  CaseRecNumber:
+    type: string
+    pattern: '^([0-9]{7}T|[0-9]{8})$'
+    example: '0319392T'
+  DocumentUuid:
+    type: string
+    format: uuid
+    description: Document UUID
+    pattern: '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
+    example: '5a8b1a26-8296-4373-ae61-f8d0b250e773'
+  documentId:
+    type: integer
+    example: '11'
+  notifySendId:
+    type: string
+    example: "740e5834-3a29-46b4-9a6f-16142fde533a"
+  notifyStatus:
+    type: string
+    enum:
+      - Queued for sending
+      - Sent for posting
+      - Rejected
+      - Posted
+    example: 'Sent for posting'

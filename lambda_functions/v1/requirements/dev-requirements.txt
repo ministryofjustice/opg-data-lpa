@@ -13,3 +13,5 @@ pyjwt
 hypothesis
 validators
 yarl
+localstack-client
+tenacity

@@ -24,11 +24,33 @@ services:
       #Uncomment these two options for debugging purposes:
       # PACT_BROKER_WEBHOOK_HOST_WHITELIST: circleci.com
       # PACT_BROKER_LOG_LEVEL: DEBUG
+  mock-sirius:
+    build:
+      context: ./mock_sirius_backend
+      dockerfile: Dockerfile
+    environment:
+      - MOCKING_ENV
+    volumes:
+      - ./mock_sirius_backend/:/var/www/mock_sirius_backend/
+    ports:
+      - "5001:5001"
+  motoserver:
+    build:
+      context: ./mock_aws_services
+      dockerfile: Dockerfile
+    ports:
+      - "4584:4584"
   api_gateway:
     build:
       context: ./lambda_functions/v1
     ports:
       - "4343:4343"
+    links:
+      - mock-sirius
+      - motoserver
+    depends_on:
+      - mock-sirius
+      - motoserver
     volumes:
       - ./lambda_functions/v1/:/var/www/lambda_functions/v1/
     environment:
@@ -39,6 +61,10 @@ services:
       AWS_SECURITY_TOKEN: testing
       AWS_SESSION_TOKEN: testing
       AWS_DEFAULT_REGION: eu-west-1
+      SIRIUS_BASE_URL: http://mock-sirius:5001
+      SIRIUS_API_VERSION: v1
+      SESSION_DATA: publicapi@opgtest.com
+      LOCALSTACK_HOST: motoserver
     networks:
       default:
         aliases:

@@ -6,4 +6,7 @@ def create_app(Flask):
 
     app.register_blueprint(api_blueprint)
 
+    routes = [str(p) for p in app.url_map.iter_rules()]
+    print(f"routes: {routes}")
+
     return app

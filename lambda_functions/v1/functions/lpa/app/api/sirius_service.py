@@ -4,8 +4,11 @@ from urllib.parse import urlparse, urlencode, quote
 
 import boto3
 import jwt
+import localstack_client.session
+
 import requests
 from botocore.exceptions import ClientError
+
 
 from .helpers import custom_logger
 
@@ -55,11 +58,20 @@ def get_secret(environment):
     """
 
     secret_name = f"{environment}/jwt-key"
-    print(f"secret_name: {secret_name}")
     region_name = "eu-west-1"
 
-    session = boto3.session.Session()
-    client = session.client(service_name="secretsmanager", region_name=region_name)
+    try:
+        if os.environ["ENVIRONMENT"] == "local":
+            current_session = localstack_client.session.Session()
+
+        else:
+            current_session = boto3.session.Session()
+    except KeyError:
+        current_session = boto3.session.Session()
+
+    client = current_session.client(
+        service_name="secretsmanager", region_name=region_name
+    )
 
     try:
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)
