@@ -139,10 +139,8 @@ def handle_sirius_error(error_code=None, error_message=None, error_details=None)
 def check_sirius_available():
     healthcheck_url = f'{os.environ["SIRIUS_BASE_URL"]}/health-check'
     r = requests.get(url=healthcheck_url)
-    print(f"r: {r}")
 
-    # return True if r.status_code == 200 else False
-    return False
+    return True if r.status_code == 200 else False
 
 
 def send_request_to_sirius(key, url, method, content_type=None, data=None):
@@ -157,13 +155,14 @@ def send_request_to_sirius(key, url, method, content_type=None, data=None):
             url, method, content_type, data
         )
         if cache_enabled and method == "GET" and sirius_status_code == 200:
+            logger.info(f"Putting data in cache with key: {key}")
             put_sirius_data_in_cache(key, sirius_data)
 
         return sirius_status_code, sirius_data
     else:
-        if cache_enabled:
-            sirius_status_code = 200
-            sirius_data = get_sirius_data_from_cache(key)
+        if cache_enabled and method == "GET":
+            logger.info(f"Getting data from cache with key: {key}")
+            sirius_status_code, sirius_data = get_sirius_data_from_cache(key)
 
             return sirius_status_code, sirius_data
         else:
@@ -220,9 +219,11 @@ def get_sirius_data_from_cache(key):
     logger.info(f"getting redis: {cache_name}-{key}")
 
     if redis.exists(f"{cache_name}-{key}"):
+        status_code = 200
         result = redis.mget(f"{cache_name}-{key}")
         result = json.loads(result[0])
     else:
+        status_code = 500
         result = None
 
-    return result
+    return status_code, result
