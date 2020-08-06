@@ -22,13 +22,13 @@ from lambda_functions.v1.tests.sirius_service.strategies import (
 @example(url="http://not-an-url.com", method="POST", content_type=None, data=None)
 @example(url="http://not-an-url.com", method="PUT", content_type=None, data=None)
 @settings(max_examples=max_examples)
-def test_send_request_to_sirius(
+def test_get_data_from_sirius(
     url, method, content_type, data, patched_build_sirius_headers, patched_requests
 ):
 
     default_content_type = "application/json"
 
-    result_status, result_data = sirius_service.send_request_to_sirius(
+    result_status, result_data = sirius_service.get_data_from_sirius(
         url=url, method=method, content_type=content_type, data=json.dumps(data)
     )
 
@@ -44,13 +44,13 @@ def test_send_request_to_sirius(
         assert result_data["data"] is None
 
 
-def test_send_request_to_sirius_bad_method(
+def test_get_data_from_sirius_bad_method(
     patched_build_sirius_headers, patched_requests
 ):
     url = "http://not-an-url.com"
     method = "banana"
 
-    result_status, result_data = sirius_service.send_request_to_sirius(
+    result_status, result_data = sirius_service.get_data_from_sirius(
         url=url, method=method
     )
 
@@ -62,13 +62,13 @@ def test_send_request_to_sirius_bad_method(
     )
 
 
-def test_send_request_to_sirius_exception(
+def test_get_data_from_sirius_exception(
     patched_build_sirius_headers, patched_requests_broken, caplog
 ):
     url = "http://not-an-url.com"
     method = "GET"
 
-    result_status, result_data = sirius_service.send_request_to_sirius(
+    result_status, result_data = sirius_service.get_data_from_sirius(
         url=url, method=method
     )
     assert result_status == 500

@@ -13,14 +13,12 @@ logger = custom_logger()
 
 
 def get_by_online_tool_id(lpa_online_tool_id):
+
     sirius_url = generate_sirius_url(lpa_online_tool_id=lpa_online_tool_id)
 
     sirius_status_code, sirius_response = sirius_service.send_request_to_sirius(
-        url=sirius_url, method="GET"
+        key=lpa_online_tool_id, url=sirius_url, method="GET"
     )
-
-    logger.info(f"sirius_status_code: {sirius_status_code}")
-    logger.info(f"sirius_response: {sirius_response}")
 
     if sirius_status_code in [200]:
         if len(sirius_response) > 0:
