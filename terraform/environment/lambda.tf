@@ -9,6 +9,7 @@ module "lambda_lpa_v1" {
   openapi_version        = "v1"
   rest_api               = aws_api_gateway_rest_api.lpa
   account                = local.account
+  redis_sg_id            = aws_security_group.lpa_redis_sg.id
 }
 
 //Modify here for new version - create new one. keep original

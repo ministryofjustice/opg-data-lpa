@@ -19,6 +19,7 @@ variable "accounts" {
       session_data       = string
       target_environment = string
       threshold          = number
+      elasticache_count  = number
     })
   )
 }
