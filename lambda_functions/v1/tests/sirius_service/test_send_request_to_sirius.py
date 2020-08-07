@@ -8,20 +8,85 @@ from lambda_functions.v1.functions.lpa.app.api.sirius_service import (
 )
 
 
-@pytest.mark.parametrize(
-    "method, expected_status_code", [("GET", 200), ("POST", 200), ("PUT", 200)]
-)
-def test_send_request_to_sirius(monkeypatch, caplog, method, expected_status_code):
-    """
-    Sirius is available, cache enabled, request works and puts data in cache
-    """
-
+@pytest.fixture()
+def mock_caching_enabled(monkeypatch):
     monkeypatch.setenv("REQUEST_CACHING", "enabled")
+
+
+@pytest.fixture()
+def mock_caching_disabled(monkeypatch):
+    monkeypatch.setenv("REQUEST_CACHING", "disabled")
+
+
+@pytest.fixture()
+def mock_sirius_available(monkeypatch):
     monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: True)
+
+
+@pytest.fixture()
+def mock_sirius_not_available(monkeypatch):
+    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: False)
+
+
+@pytest.fixture()
+def mock_get_data_from_sirius_success(monkeypatch):
     monkeypatch.setattr(
         sirius_service, "get_data_from_sirius", lambda x, y, z, p: (200, "OK")
     )
-    monkeypatch.setattr(sirius_service, "put_sirius_data_in_cache", lambda x, y: True)
+
+
+@pytest.fixture()
+def mock_get_data_from_sirius_failed(monkeypatch):
+    monkeypatch.setattr(
+        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (500, "error")
+    )
+
+
+@pytest.fixture()
+def mock_put_data_in_cache_success(monkeypatch):
+    monkeypatch.setattr(
+        sirius_service, "put_sirius_data_in_cache", lambda redis_conn, key, data: True
+    )
+
+
+@pytest.fixture()
+def mock_put_data_in_cache_failed(monkeypatch):
+    monkeypatch.setattr(
+        sirius_service, "put_sirius_data_in_cache", lambda redis_conn, key, data: False
+    )
+
+
+@pytest.fixture()
+def mock_get_data_from_cache_success(monkeypatch):
+    monkeypatch.setattr(
+        sirius_service,
+        "get_sirius_data_from_cache",
+        lambda redis_conn, key: (200, {"test": "data"}),
+    )
+
+
+@pytest.fixture()
+def mock_get_data_from_cache_failed(monkeypatch):
+    monkeypatch.setattr(
+        sirius_service,
+        "get_sirius_data_from_cache",
+        lambda redis_conn, key: (500, None),
+    )
+
+
+@pytest.mark.parametrize(
+    "method, expected_status_code", [("GET", 200), ("POST", 200), ("PUT", 200)]
+)
+def test_send_request_to_sirius(
+    monkeypatch,
+    caplog,
+    mock_caching_enabled,
+    mock_sirius_available,
+    mock_get_data_from_sirius_success,
+    mock_put_data_in_cache_success,
+    method,
+    expected_status_code,
+):
 
     key = "test_key"
     url = "http://not-an-url.com"
@@ -43,18 +108,15 @@ def test_send_request_to_sirius(monkeypatch, caplog, method, expected_status_cod
     "method, expected_status_code", [("GET", 200), ("POST", 200), ("PUT", 200)]
 )
 def test_send_request_to_sirius_no_cache(
-    monkeypatch, caplog, method, expected_status_code
+    monkeypatch,
+    caplog,
+    mock_caching_disabled,
+    mock_sirius_available,
+    mock_get_data_from_sirius_success,
+    mock_put_data_in_cache_success,
+    method,
+    expected_status_code,
 ):
-    """
-    Sirius is available, cache disabled, request works
-    """
-
-    monkeypatch.setenv("REQUEST_CACHING", "disabled")
-    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: True)
-    monkeypatch.setattr(
-        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (200, "OK")
-    )
-    monkeypatch.setattr(sirius_service, "put_sirius_data_in_cache", lambda x, y: True)
 
     key = "test_key"
     url = "http://not-an-url.com"
@@ -73,18 +135,16 @@ def test_send_request_to_sirius_no_cache(
     "method, expected_status_code", [("GET", 200), ("POST", 200), ("PUT", 200)]
 )
 def test_send_request_to_sirius_no_cache_env_var(
-    monkeypatch, caplog, method, expected_status_code
+    monkeypatch,
+    caplog,
+    mock_sirius_available,
+    mock_get_data_from_sirius_success,
+    mock_put_data_in_cache_success,
+    method,
+    expected_status_code,
 ):
-    """
-    Sirius is available, cache disabled, request works
-    """
 
     monkeypatch.delenv("REQUEST_CACHING")
-    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: True)
-    monkeypatch.setattr(
-        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (200, "OK")
-    )
-    monkeypatch.setattr(sirius_service, "put_sirius_data_in_cache", lambda x, y: True)
 
     key = "test_key"
     url = "http://not-an-url.com"
@@ -104,18 +164,15 @@ def test_send_request_to_sirius_no_cache_env_var(
     "method, expected_status_code", [("GET", 500), ("POST", 500), ("PUT", 500)]
 )
 def test_send_request_to_sirius_request_fails(
-    monkeypatch, caplog, method, expected_status_code
+    monkeypatch,
+    caplog,
+    mock_caching_enabled,
+    mock_sirius_available,
+    mock_get_data_from_sirius_failed,
+    mock_put_data_in_cache_success,
+    method,
+    expected_status_code,
 ):
-    """
-    Sirius is available, cache enabled,  request fails
-    """
-
-    monkeypatch.setenv("REQUEST_CACHING", "enabled")
-    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: True)
-    monkeypatch.setattr(
-        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (500, "error")
-    )
-    monkeypatch.setattr(sirius_service, "put_sirius_data_in_cache", lambda x, y: True)
 
     key = "test_key"
     url = "http://not-an-url.com"
@@ -134,18 +191,15 @@ def test_send_request_to_sirius_request_fails(
     "method, expected_status_code", [("GET", 500), ("POST", 500), ("PUT", 500)]
 )
 def test_send_request_to_sirius_no_cache_request_fails(
-    monkeypatch, caplog, method, expected_status_code
+    monkeypatch,
+    caplog,
+    mock_caching_disabled,
+    mock_sirius_available,
+    mock_get_data_from_sirius_failed,
+    mock_put_data_in_cache_success,
+    method,
+    expected_status_code,
 ):
-    """
-    Sirius is available, cache disabled, request fails
-    """
-
-    monkeypatch.setenv("REQUEST_CACHING", "disabled")
-    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: True)
-    monkeypatch.setattr(
-        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (500, "error")
-    )
-    monkeypatch.setattr(sirius_service, "put_sirius_data_in_cache", lambda x, y: True)
 
     key = "test_key"
     url = "http://not-an-url.com"
@@ -164,20 +218,15 @@ def test_send_request_to_sirius_no_cache_request_fails(
     "method, expected_status_code", [("GET", 200), ("POST", 500), ("PUT", 500)]
 )
 def test_send_request_to_sirius_but_sirius_is_broken(
-    monkeypatch, caplog, method, expected_status_code
+    monkeypatch,
+    caplog,
+    mock_caching_enabled,
+    mock_sirius_not_available,
+    mock_get_data_from_sirius_failed,
+    mock_get_data_from_cache_success,
+    method,
+    expected_status_code,
 ):
-    """
-    Sirius is not available, cache enabled, request fails, cache works
-    """
-
-    monkeypatch.setenv("REQUEST_CACHING", "enabled")
-    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: False)
-    monkeypatch.setattr(
-        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (500, "errpr")
-    )
-    monkeypatch.setattr(
-        sirius_service, "get_sirius_data_from_cache", lambda x: (200, {"test": "data"})
-    )
 
     key = "test_key"
     url = "http://not-an-url.com"
@@ -199,20 +248,15 @@ def test_send_request_to_sirius_but_sirius_is_broken(
     "method, expected_status_code", [("GET", 500), ("POST", 500), ("PUT", 500)]
 )
 def test_send_request_to_sirius_but_sirius_is_broken_value_not_in_cache(
-    monkeypatch, caplog, method, expected_status_code
+    monkeypatch,
+    caplog,
+    mock_caching_enabled,
+    mock_sirius_not_available,
+    mock_get_data_from_sirius_failed,
+    mock_get_data_from_cache_failed,
+    method,
+    expected_status_code,
 ):
-    """
-    Sirius is not available, cache enabled, request fails and value not in cache
-    """
-
-    monkeypatch.setenv("REQUEST_CACHING", "enabled")
-    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: False)
-    monkeypatch.setattr(
-        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (500, "errpr")
-    )
-    monkeypatch.setattr(
-        sirius_service, "get_sirius_data_from_cache", lambda x: (500, None)
-    )
 
     key = "test_key"
     url = "http://not-an-url.com"
@@ -234,20 +278,15 @@ def test_send_request_to_sirius_but_sirius_is_broken_value_not_in_cache(
     "method, expected_status_code", [("GET", 500), ("POST", 500), ("PUT", 500)]
 )
 def test_send_request_to_sirius_but_sirius_is_broken_and_cache_disabled(
-    monkeypatch, caplog, method, expected_status_code
+    monkeypatch,
+    caplog,
+    mock_caching_disabled,
+    mock_sirius_not_available,
+    mock_get_data_from_sirius_failed,
+    mock_get_data_from_cache_success,
+    method,
+    expected_status_code,
 ):
-    """
-    Sirius is not available, cache disabled, request works, cache works
-    """
-
-    monkeypatch.setenv("REQUEST_CACHING", "disabled")
-    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: False)
-    monkeypatch.setattr(
-        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (500, "error")
-    )
-    monkeypatch.setattr(
-        sirius_service, "get_sirius_data_from_cache", lambda x: (200, {"test": "data"})
-    )
 
     key = "test_key"
     url = "http://not-an-url.com"

@@ -14,12 +14,6 @@ import redis
 
 logger = custom_logger("sirius_service")
 
-redis_url = os.environ["REDIS_URL"]
-
-redis = redis.StrictRedis.from_url(
-    url=redis_url, charset="utf-8", decode_responses=True
-)
-
 
 def build_sirius_url(endpoint, url_params=None):
     """
@@ -156,13 +150,17 @@ def send_request_to_sirius(key, url, method, content_type=None, data=None):
         )
         if cache_enabled and method == "GET" and sirius_status_code == 200:
             logger.info(f"Putting data in cache with key: {key}")
-            put_sirius_data_in_cache(key, sirius_data)
+            put_sirius_data_in_cache(
+                redis_conn=get_redis_client(), key=key, data=sirius_data
+            )
 
         return sirius_status_code, sirius_data
     else:
         if cache_enabled and method == "GET":
             logger.info(f"Getting data from cache with key: {key}")
-            sirius_status_code, sirius_data = get_sirius_data_from_cache(key)
+            sirius_status_code, sirius_data = get_sirius_data_from_cache(
+                redis_conn=get_redis_client(), key=key
+            )
 
             return sirius_status_code, sirius_data
         else:
@@ -187,8 +185,6 @@ def get_data_from_sirius(url, method, content_type=None, data=None):
         elif method == "GET":
             r = requests.get(url=url, headers=headers)
 
-            # get_data_from_cache(key=key, data=json.dumps(r.json()))
-
             return r.status_code, r.json()
         else:
             return handle_sirius_error(
@@ -202,26 +198,53 @@ def get_data_from_sirius(url, method, content_type=None, data=None):
         )
 
 
-def put_sirius_data_in_cache(key, data=None):
-    cache_name = os.environ["REQUEST_CACHING_NAME"]
+def get_redis_client():
+    redis_url = os.environ["REDIS_URL"]
+
+    r = redis.StrictRedis.from_url(
+        url=redis_url, charset="utf-8", decode_responses=True
+    )
+
+    return r
+
+
+def put_sirius_data_in_cache(redis_conn, key, data):
+
+    try:
+        cache_ttl = int(os.environ["REQUEST_CACHING_TTL"])
+    except KeyError:
+        cache_ttl = 48
+
+    try:
+        cache_name = os.environ["REQUEST_CACHING_NAME"]
+    except KeyError:
+        cache_name = "default_sirius_cache"
+
+    cache_ttl_in_seconds = cache_ttl * 60 * 60
 
     data = json.dumps(data)
 
-    redis.mset({f"{cache_name}-{key}": data})
+    redis_conn.set(name=f"{cache_name}-{key}", value=data, ex=cache_ttl_in_seconds)
 
     logger.info(f"setting redis: {cache_name}-{key}")
 
 
-def get_sirius_data_from_cache(key):
+def get_sirius_data_from_cache(redis_conn, key):
 
-    cache_name = os.environ["REQUEST_CACHING_NAME"]
+    try:
+        cache_name = os.environ["REQUEST_CACHING_NAME"]
+    except KeyError:
+        cache_name = "default_sirius_cache"
 
     logger.info(f"getting redis: {cache_name}-{key}")
+    logger.info(
+        f'redis_conn.exists(f"{cache_name}-{key}"): {redis_conn.exists(f"{cache_name}-{key}")}'
+    )
 
-    if redis.exists(f"{cache_name}-{key}"):
+    if redis_conn.exists(f"{cache_name}-{key}"):
         status_code = 200
-        result = redis.mget(f"{cache_name}-{key}")
-        result = json.loads(result[0])
+        result = redis_conn.get(f"{cache_name}-{key}")
+        result = json.loads(result)
     else:
         status_code = 500
         result = None
