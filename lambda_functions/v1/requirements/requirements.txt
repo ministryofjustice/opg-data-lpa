@@ -1,5 +1,6 @@
-#Update this date to trigger update of layers: 290418
+#Update this date to trigger update of layers: 20200807
 Flask
 Werkzeug
 pyjwt
 redis
+localstack-client
