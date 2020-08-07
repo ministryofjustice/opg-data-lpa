@@ -4,3 +4,4 @@ Werkzeug
 pyjwt
 redis
 localstack-client
+requests
