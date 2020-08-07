@@ -1,6 +1,8 @@
 import logging
 import os
 
+# from flask import current_app
+
 
 def custom_logger(name=None):
     """
@@ -25,6 +27,7 @@ def custom_logger(name=None):
 
     try:
         logger.setLevel(os.environ["LOGGER_LEVEL"])
+        # logger.setLevel(current_app.config['LOGGER_LEVEL'])
     except KeyError:
         logger.setLevel("INFO")
     logger.addHandler(handler)
