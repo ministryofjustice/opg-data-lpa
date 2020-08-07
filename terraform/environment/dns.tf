@@ -49,3 +49,12 @@ resource "aws_route53_record" "environment_record" {
     zone_id                = aws_api_gateway_domain_name.lpa_data.regional_zone_id
   }
 }
+
+resource "aws_route53_record" "lpa_redis" {
+  name     = "redis"
+  type     = "CNAME"
+  zone_id  = data.aws_route53_zone.environment_cert.id
+  records  = [aws_elasticache_replication_group.lpa_redis.primary_endpoint_address]
+  ttl      = 300
+  provider = aws.management
+}

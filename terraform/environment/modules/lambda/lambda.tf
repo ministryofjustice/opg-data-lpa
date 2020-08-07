@@ -18,8 +18,11 @@ resource "aws_lambda_function" "lambda_function" {
   depends_on       = [aws_cloudwatch_log_group.lambda]
   layers           = [aws_lambda_layer_version.lambda_layer.arn]
   vpc_config {
-    subnet_ids         = var.aws_subnet_ids
-    security_group_ids = [data.aws_security_group.lambda_api_ingress.id]
+    subnet_ids = var.aws_subnet_ids
+    security_group_ids = [
+      data.aws_security_group.lambda_api_ingress.id,
+      var.redis_sg_id
+    ]
   }
   environment {
     variables = {
@@ -49,7 +52,7 @@ resource "aws_lambda_permission" "lambda_permission" {
 resource "aws_lambda_layer_version" "lambda_layer" {
   filename         = data.archive_file.lambda_layer_archive.output_path
   source_code_hash = data.archive_file.lambda_layer_archive.output_base64sha256
-  layer_name       = "requirement_${var.account.target_environment}"
+  layer_name       = "lpa_requirements_${var.account.target_environment}"
 
   compatible_runtimes = ["python3.7"]
 
