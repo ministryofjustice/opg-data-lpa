@@ -11,13 +11,13 @@ from requests_aws4auth import AWS4Auth
 opg_sirius_api_gateway_dev_aws = {
     "name": "original collections api on aws dev",
     "online_tool_endpoint": {
-        "url": "https://3d9iqi6bq9.execute-api.eu-west-1.amazonaws.com/v1/lpa-online-tool/lpas",
+        "url": "https://api.dev.sirius.opg.digital/v1/lpa-online-tool/lpas",
         "method": "GET",
         "valid_lpa_online_tool_ids": ["A33718377316"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
-        "url": "https://3d9iqi6bq9.execute-api.eu-west-1.amazonaws.com/v1/use-an-lpa/lpas",
+        "url": "https://api.dev.sirius.opg.digital/v1/use-an-lpa/lpas",
         "method": "GET",
         "valid_sirius_uids": ["700000000013"],
         "invalid_sirius_uids": ["9"],

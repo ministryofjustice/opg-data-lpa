@@ -22,11 +22,20 @@ func main() {
 	domain := flag.String("domain", "lpa", "a string")
 	version := flag.String("version", "v1", "a string")
 	path := flag.String("path", "healthcheck", "a string")
+	full_url := flag.String("full_url", "", "a string")
 
 	flag.Parse()
 
   roleToAssume := "arn:aws:iam::" + *account + ":role/" + *role
-	url := "https://" + *branch + "dev." + *domain + ".api.opg.service.justice.gov.uk/" + *version + "/" + *path
+
+	var url string = ""
+
+	if *full_url != "" {
+		url = *full_url
+	} else {
+		url = "https://" + *branch + "dev." + *domain + ".api.opg.service.justice.gov.uk/" + *version + "/" + *path
+	}
+
 	mysession := session.Must(session.NewSession())
 	creds := stscreds.NewCredentials(mysession, roleToAssume)
 	cfg := aws.Config{Credentials: creds,Region: aws.String("eu-west-1")}
