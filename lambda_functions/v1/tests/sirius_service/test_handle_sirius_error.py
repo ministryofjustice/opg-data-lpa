@@ -4,8 +4,11 @@ import hypothesis.strategies as st
 import pytest
 from hypothesis import given, settings
 
-from lambda_functions.v1.functions.lpa.app.api import sirius_service
-from lambda_functions.v1.tests.sirius_service.conftest import max_examples
+
+from lambda_functions.v1.tests.sirius_service.conftest import (
+    max_examples,
+    test_sirius_service,
+)
 
 
 @given(
@@ -22,7 +25,7 @@ def test_handle_sirius_error_with_hypothesis(
     default_message = "Unknown error talking to Sirius"
     default_details = None
 
-    code, message = sirius_service.handle_sirius_error(
+    code, message = test_sirius_service._handle_sirius_error(
         error_code=test_error_code,
         error_message=test_error_message,
         error_details=test_error_details,

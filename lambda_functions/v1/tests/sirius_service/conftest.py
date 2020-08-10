@@ -1,16 +1,23 @@
 import os
 import string
 
+import fakeredis
 import pytest
 
-# Defaults to 50
+from lambda_functions.v1.functions.lpa.app.api.sirius_service import SiriusService
+from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
 import requests
 
-from lambda_functions.v1.functions.lpa.app.api import sirius_service
 
 # Defaults to 50
-max_examples = int(os.environ["HYPOTHESIS_MAX_EXAMPLES"])
+max_examples = 50
 alphabet = list(string.ascii_letters + string.digits + string.punctuation)
+
+
+test_redis_handler = fakeredis.FakeStrictRedis(charset="utf-8", decode_responses=True)
+test_sirius_service = SiriusService(
+    config_params=LocalTestingConfig, cache=test_redis_handler
+)
 
 
 @pytest.fixture()
@@ -19,7 +26,7 @@ def patched_get_secret(monkeypatch):
         print("patched_get_secret returning mock_secret")
         return "this_is_a_secret_string"
 
-    monkeypatch.setattr(sirius_service, "get_secret", mock_secret)
+    monkeypatch.setattr(test_sirius_service, "_get_secret", mock_secret)
 
 
 @pytest.fixture()
@@ -31,7 +38,7 @@ def patched_build_sirius_headers(monkeypatch):
             "Authorization": "Bearer not-a-real-token",
         }
 
-    monkeypatch.setattr(sirius_service, "build_sirius_headers", mock_headers)
+    monkeypatch.setattr(test_sirius_service, "_build_sirius_headers", mock_headers)
 
 
 @pytest.fixture()

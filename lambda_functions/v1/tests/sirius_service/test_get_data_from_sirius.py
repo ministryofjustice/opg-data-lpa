@@ -4,12 +4,14 @@ import logging
 import hypothesis.strategies as st
 import pytest
 from hypothesis import given, settings, example
-from lambda_functions.v1.functions.lpa.app.api import sirius_service
+
 from lambda_functions.v1.tests.sirius_service.conftest import max_examples
 from lambda_functions.v1.tests.sirius_service.strategies import (
     url_as_string,
     content_type,
 )
+
+from lambda_functions.v1.tests.sirius_service.conftest import test_sirius_service
 
 
 @given(
@@ -28,7 +30,7 @@ def test_get_data_from_sirius(
 
     default_content_type = "application/json"
 
-    result_status, result_data = sirius_service.get_data_from_sirius(
+    result_status, result_data = test_sirius_service._get_data_from_sirius(
         url=url, method=method, content_type=content_type, data=json.dumps(data)
     )
 
@@ -50,7 +52,7 @@ def test_get_data_from_sirius_bad_method(
     url = "http://not-an-url.com"
     method = "banana"
 
-    result_status, result_data = sirius_service.get_data_from_sirius(
+    result_status, result_data = test_sirius_service._get_data_from_sirius(
         url=url, method=method
     )
 
@@ -68,7 +70,7 @@ def test_get_data_from_sirius_exception(
     url = "http://not-an-url.com"
     method = "GET"
 
-    result_status, result_data = sirius_service.get_data_from_sirius(
+    result_status, result_data = test_sirius_service._get_data_from_sirius(
         url=url, method=method
     )
     assert result_status == 500

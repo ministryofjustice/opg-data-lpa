@@ -1,6 +1,5 @@
 import datetime
 import json
-import os
 from urllib.parse import urlencode, quote
 
 import boto3
@@ -9,24 +8,31 @@ import localstack_client.session
 import requests
 from botocore.exceptions import ClientError
 
-
 from .helpers import custom_logger
-import redis
 
 logger = custom_logger("sirius_service")
 
 
 class SiriusService:
-    def __init__(self, config_params):
+    def __init__(self, config_params, cache):
 
         try:
+            self.cache = cache
             self.sirius_base_url = config_params.SIRIUS_BASE_URL
             self.environment = config_params.ENVIRONMENT
             self.session_data = config_params.SESSION_DATA
             self.redis_url = config_params.REDIS_URL
             self.request_caching = config_params.REQUEST_CACHING
-            self.request_caching_name = config_params.REQUEST_CACHE_NAME
-            self.request_caching_ttl = config_params.REQUEST_CACHING_TTL
+            self.request_caching_name = (
+                config_params.REQUEST_CACHE_NAME
+                if config_params.REQUEST_CACHE_NAME
+                else "default_sirius_cache"
+            )
+            self.request_caching_ttl = (
+                config_params.REQUEST_CACHING_TTL
+                if config_params.REQUEST_CACHING_TTL
+                else 48
+            )
         except Exception as e:
             logger.info(f"Error loading config e: {e}")
 
@@ -42,11 +48,7 @@ class SiriusService:
             string: url
         """
 
-        try:
-            base_url = self.sirius_base_url
-        except KeyError as e:
-            logger.error(f"Unable to build Sirius URL {e}")
-            raise Exception
+        base_url = self.sirius_base_url
 
         sirius_url = f"{base_url}/{quote(endpoint)}"
 
@@ -75,9 +77,9 @@ class SiriusService:
         secret_name = f"{environment}/jwt-key"
         region_name = "eu-west-1"
 
-        if environment == "local":
-            logger.info("Using local AWS Secrets Manager")
-            current_session = localstack_client.session.Session()
+        if environment == "local":  # pragma: no cover
+            logger.info("Using local AWS Secrets Manager")  # pragma: no cover
+            current_session = localstack_client.session.Session()  # pragma: no cover
 
         else:
             current_session = boto3.session.Session()
@@ -146,27 +148,29 @@ class SiriusService:
         return error_code, message
 
     def _check_sirius_available(self):
-        # healthcheck_url = f"{self.sirius_base_url}/health-check"
-        # r = requests.get(url=healthcheck_url)
+        healthcheck_url = f"{self.sirius_base_url}/health-check"
+        r = requests.get(url=healthcheck_url)
 
-        # return True if r.status_code == 200 else False
-        return True
+        return True if r.status_code == 200 else False
+        # return True
 
     def send_request_to_sirius(self, key, url, method, content_type=None, data=None):
 
-        try:
-            cache_enabled = True if self.request_caching == "enabled" else False
-        except KeyError:
-            cache_enabled = False
+        cache_enabled = True if self.request_caching == "enabled" else False
+
+        redis_service = self.cache
 
         if self._check_sirius_available():
             sirius_status_code, sirius_data = self._get_data_from_sirius(
                 url, method, content_type, data
             )
+            logger.info(f"sirius_status_code: {sirius_status_code}")
+            logger.info(f"cache_enables: {cache_enabled}")
+            logger.info(f"method: {method}")
             if cache_enabled and method == "GET" and sirius_status_code == 200:
                 logger.info(f"Putting data in cache with key: {key}")
                 self._put_sirius_data_in_cache(
-                    redis_conn=self._get_redis_client(), key=key, data=sirius_data
+                    redis_conn=redis_service, key=key, data=sirius_data
                 )
 
             return sirius_status_code, sirius_data
@@ -174,7 +178,7 @@ class SiriusService:
             if cache_enabled and method == "GET":
                 logger.info(f"Getting data from cache with key: {key}")
                 sirius_status_code, sirius_data = self._get_sirius_data_from_cache(
-                    redis_conn=self._get_redis_client(), key=key
+                    redis_conn=redis_service, key=key
                 )
 
                 return sirius_status_code, sirius_data
@@ -211,17 +215,9 @@ class SiriusService:
                 error_message=f"Unable to send request to Sirius", error_details=e
             )
 
-    def _get_redis_client(self):
-        redis_url = self.redis_url
-
-        r = redis.StrictRedis.from_url(
-            url=redis_url, charset="utf-8", decode_responses=True
-        )
-
-        return r
-
     def _put_sirius_data_in_cache(self, redis_conn, key, data):
         cache_name = self.request_caching_name
+
         cache_ttl_in_seconds = self.request_caching_ttl * 60 * 60
 
         data = json.dumps(data)
@@ -232,7 +228,11 @@ class SiriusService:
 
     def _get_sirius_data_from_cache(self, redis_conn, key):
 
-        cache_name = self.request_caching_name
+        cache_name = (
+            self.request_caching_name
+            if self.request_caching_name
+            else self.default_caching_name
+        )
 
         logger.info(f"getting redis: {cache_name}-{key}")
         logger.info(

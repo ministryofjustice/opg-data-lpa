@@ -1,8 +1,7 @@
-from lambda_functions.v1.functions.lpa.app.api.sirius_service import (
-    check_sirius_available,
-)
 import pytest
 import requests
+
+from lambda_functions.v1.tests.sirius_service.conftest import test_sirius_service
 
 
 @pytest.fixture
@@ -28,12 +27,12 @@ def patched_sirius_heathcheck_broken(monkeypatch):
 
 
 def test_check_sirius_available(patched_sirius_heathcheck):
-    result = check_sirius_available()
+    result = test_sirius_service._check_sirius_available()
 
     assert result is True
 
 
 def test_check_sirius_not_available(patched_sirius_heathcheck_broken):
-    result = check_sirius_available()
+    result = test_sirius_service._check_sirius_available()
 
     assert result is False

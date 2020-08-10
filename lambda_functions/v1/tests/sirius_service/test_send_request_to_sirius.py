@@ -1,301 +1,211 @@
+import json
 import logging
 
+import fakeredis
 import pytest
 
-from lambda_functions.v1.functions.lpa.app.api import sirius_service
-from lambda_functions.v1.functions.lpa.app.api.sirius_service import (
-    send_request_to_sirius,
+from lambda_functions.v1.functions.lpa.app.api.sirius_service import SiriusService
+from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
+
+test_redis_handler = fakeredis.FakeStrictRedis(charset="utf-8", decode_responses=True)
+test_sirius_service = SiriusService(
+    config_params=LocalTestingConfig, cache=test_redis_handler
 )
 
 
-@pytest.fixture()
-def mock_caching_enabled(monkeypatch):
-    monkeypatch.setenv("REQUEST_CACHING", "enabled")
-
-
-@pytest.fixture()
-def mock_caching_disabled(monkeypatch):
-    monkeypatch.setenv("REQUEST_CACHING", "disabled")
+sirius_test_data = json.dumps({"sirius": "test_data"})
+key = "send_request_to_sirius"
+url = "http://not-an-url.com"
+full_key = f"{test_sirius_service.request_caching_name}-{key}"
+ttl = 48
+cache = test_sirius_service.cache
 
 
 @pytest.fixture()
 def mock_sirius_available(monkeypatch):
-    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: True)
+    monkeypatch.setattr(test_sirius_service, "_check_sirius_available", lambda: True)
 
 
 @pytest.fixture()
 def mock_sirius_not_available(monkeypatch):
-    monkeypatch.setattr(sirius_service, "check_sirius_available", lambda: False)
+    monkeypatch.setattr(test_sirius_service, "_check_sirius_available", lambda: False)
 
 
 @pytest.fixture()
 def mock_get_data_from_sirius_success(monkeypatch):
     monkeypatch.setattr(
-        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (200, "OK")
+        test_sirius_service,
+        "_get_data_from_sirius",
+        lambda x, y, z, p: (200, sirius_test_data),
     )
 
 
 @pytest.fixture()
 def mock_get_data_from_sirius_failed(monkeypatch):
     monkeypatch.setattr(
-        sirius_service, "get_data_from_sirius", lambda x, y, z, p: (500, "error")
-    )
-
-
-@pytest.fixture()
-def mock_put_data_in_cache_success(monkeypatch):
-    monkeypatch.setattr(
-        sirius_service, "put_sirius_data_in_cache", lambda redis_conn, key, data: True
-    )
-
-
-@pytest.fixture()
-def mock_put_data_in_cache_failed(monkeypatch):
-    monkeypatch.setattr(
-        sirius_service, "put_sirius_data_in_cache", lambda redis_conn, key, data: False
-    )
-
-
-@pytest.fixture()
-def mock_get_data_from_cache_success(monkeypatch):
-    monkeypatch.setattr(
-        sirius_service,
-        "get_sirius_data_from_cache",
-        lambda redis_conn, key: (200, {"test": "data"}),
-    )
-
-
-@pytest.fixture()
-def mock_get_data_from_cache_failed(monkeypatch):
-    monkeypatch.setattr(
-        sirius_service,
-        "get_sirius_data_from_cache",
-        lambda redis_conn, key: (500, None),
+        test_sirius_service, "_get_data_from_sirius", lambda x, y, z, p: (500, "error")
     )
 
 
 @pytest.mark.parametrize(
-    "method, expected_status_code", [("GET", 200), ("POST", 200), ("PUT", 200)]
+    "method, cache_enabled, expected_status_code, cache_expected",
+    [
+        ("GET", "enabled", 200, True),
+        ("POST", "enabled", 200, False),
+        ("PUT", "enabled", 200, False),
+        ("GET", "disabled", 200, False),
+        ("POST", "disabled", 200, False),
+        ("PUT", "disabled", 200, False),
+        ("GET", "banana", 200, False),
+        ("GET", None, 200, False),
+    ],
 )
 def test_send_request_to_sirius(
     monkeypatch,
     caplog,
-    mock_caching_enabled,
     mock_sirius_available,
     mock_get_data_from_sirius_success,
-    mock_put_data_in_cache_success,
     method,
+    cache_enabled,
     expected_status_code,
+    cache_expected,
 ):
+    test_sirius_service.request_caching = cache_enabled
 
-    key = "test_key"
-    url = "http://not-an-url.com"
-
-    result_status_code, result_data = send_request_to_sirius(
+    result_status_code, result_data = test_sirius_service.send_request_to_sirius(
         key, url, method, content_type=None, data=None
     )
 
     assert result_status_code == expected_status_code
 
-    with caplog.at_level(logging.INFO):
-        if method == "GET":
-            assert "Putting data in cache with key" in caplog.text
-        else:
-            assert "Putting data in cache with key" not in caplog.text
+    if cache_expected:
+        print(f"full_key: {full_key}")
+        print(f"cache.get(full_key): {cache.get(full_key)}")
+        # print(f"json.loads(cache.get(full_key)): {json.loads(cache.get(full_key))}")
+        print(f"cache.scan(): {cache.scan()}")
 
+        assert json.loads(cache.get(full_key)) == sirius_test_data
+        assert cache.ttl(full_key) == ttl * 60 * 60
 
-@pytest.mark.parametrize(
-    "method, expected_status_code", [("GET", 200), ("POST", 200), ("PUT", 200)]
-)
-def test_send_request_to_sirius_no_cache(
-    monkeypatch,
-    caplog,
-    mock_caching_disabled,
-    mock_sirius_available,
-    mock_get_data_from_sirius_success,
-    mock_put_data_in_cache_success,
-    method,
-    expected_status_code,
-):
+    else:
+        assert cache.exists(full_key) == 0
 
-    key = "test_key"
-    url = "http://not-an-url.com"
-
-    result_status_code, result_data = send_request_to_sirius(
-        key, url, method, content_type=None, data=None
-    )
-
-    assert result_status_code == expected_status_code
-
-    with caplog.at_level(logging.INFO):
-        assert "Putting data in cache with key" not in caplog.text
-
-
-@pytest.mark.parametrize(
-    "method, expected_status_code", [("GET", 200), ("POST", 200), ("PUT", 200)]
-)
-def test_send_request_to_sirius_no_cache_env_var(
-    monkeypatch,
-    caplog,
-    mock_sirius_available,
-    mock_get_data_from_sirius_success,
-    mock_put_data_in_cache_success,
-    method,
-    expected_status_code,
-):
-
-    monkeypatch.delenv("REQUEST_CACHING")
-
-    key = "test_key"
-    url = "http://not-an-url.com"
-
-    result_status_code, result_data = send_request_to_sirius(
-        key, url, method, content_type=None, data=None
-    )
-
-    assert result_status_code == expected_status_code
-
-    with caplog.at_level(logging.INFO):
-        assert "Putting data in cache with key" not in caplog.text
+    cache.flushall()
 
 
 # TODO should this 500 when the GET fails or should it try the cache?
 @pytest.mark.parametrize(
-    "method, expected_status_code", [("GET", 500), ("POST", 500), ("PUT", 500)]
+    "method, cache_enabled, expected_status_code, cache_expected",
+    [
+        ("GET", "enabled", 500, False),
+        ("POST", "enabled", 500, False),
+        ("PUT", "enabled", 500, False),
+        ("GET", "disabled", 500, False),
+        ("POST", "disabled", 500, False),
+        ("PUT", "disabled", 500, False),
+    ],
 )
 def test_send_request_to_sirius_request_fails(
     monkeypatch,
     caplog,
-    mock_caching_enabled,
     mock_sirius_available,
     mock_get_data_from_sirius_failed,
-    mock_put_data_in_cache_success,
     method,
+    cache_enabled,
     expected_status_code,
+    cache_expected,
 ):
-
-    key = "test_key"
-    url = "http://not-an-url.com"
-
-    result_status_code, result_data = send_request_to_sirius(
+    test_sirius_service.request_caching = cache_enabled
+    result_status_code, result_data = test_sirius_service.send_request_to_sirius(
         key, url, method, content_type=None, data=None
     )
 
     assert result_status_code == expected_status_code
+    if cache_expected:
 
-    with caplog.at_level(logging.INFO):
-        "Putting data in cache with key" not in caplog.text
+        assert json.loads(cache.get(full_key)) == json.loads(sirius_test_data)
+        assert cache.ttl(full_key) == ttl * 60 * 60
 
-
-@pytest.mark.parametrize(
-    "method, expected_status_code", [("GET", 500), ("POST", 500), ("PUT", 500)]
-)
-def test_send_request_to_sirius_no_cache_request_fails(
-    monkeypatch,
-    caplog,
-    mock_caching_disabled,
-    mock_sirius_available,
-    mock_get_data_from_sirius_failed,
-    mock_put_data_in_cache_success,
-    method,
-    expected_status_code,
-):
-
-    key = "test_key"
-    url = "http://not-an-url.com"
-
-    result_status_code, result_data = send_request_to_sirius(
-        key, url, method, content_type=None, data=None
-    )
-
-    assert result_status_code == expected_status_code
-
-    with caplog.at_level(logging.INFO):
-        assert "Putting data in cache with key" not in caplog.text
+    else:
+        assert cache.exists(full_key) == 0
+    cache.flushall()
 
 
 @pytest.mark.parametrize(
-    "method, expected_status_code", [("GET", 200), ("POST", 500), ("PUT", 500)]
+    "method, cache_enabled, expected_status_code, cache_expected",
+    [
+        ("GET", "enabled", 200, True),
+        ("POST", "enabled", 500, False),
+        ("PUT", "enabled", 500, False),
+        ("GET", "disabled", 500, False),
+        ("POST", "disabled", 500, False),
+        ("PUT", "disabled", 500, False),
+    ],
 )
-def test_send_request_to_sirius_but_sirius_is_broken(
+def test_send_request_to_sirius_but_sirius_is_broken_value_in_cache(
     monkeypatch,
     caplog,
-    mock_caching_enabled,
     mock_sirius_not_available,
     mock_get_data_from_sirius_failed,
-    mock_get_data_from_cache_success,
     method,
+    cache_enabled,
     expected_status_code,
+    cache_expected,
 ):
 
-    key = "test_key"
-    url = "http://not-an-url.com"
+    cache.set(name=f"{full_key}", value=sirius_test_data, ex=ttl * 60 * 60)
+    print(f"cache.scan(): {cache.scan()}")
 
-    result_status_code, result_data = send_request_to_sirius(
+    test_sirius_service.request_caching = cache_enabled
+
+    result_status_code, result_data = test_sirius_service.send_request_to_sirius(
         key, url, method, content_type=None, data=None
     )
 
     assert result_status_code == expected_status_code
+    if cache_expected:
+        print(f"json.loads(cache.get(full_key)): {json.loads(cache.get(full_key))}")
 
-    with caplog.at_level(logging.INFO):
-        if method == "GET":
-            assert "Getting data from cache with key" in caplog.text
-        else:
-            assert "Getting data from cache with key" not in caplog.text
+        assert json.loads(cache.get(full_key)) == json.loads(sirius_test_data)
+        assert cache.ttl(full_key) == ttl * 60 * 60
+
+    cache.flushall()
 
 
 @pytest.mark.parametrize(
-    "method, expected_status_code", [("GET", 500), ("POST", 500), ("PUT", 500)]
+    "method, cache_enabled, expected_status_code, cache_expected",
+    [
+        ("GET", "enabled", 500, False),
+        ("POST", "enabled", 500, False),
+        ("PUT", "enabled", 500, False),
+        ("GET", "disabled", 500, False),
+        ("POST", "disabled", 500, False),
+        ("PUT", "disabled", 500, False),
+    ],
 )
 def test_send_request_to_sirius_but_sirius_is_broken_value_not_in_cache(
     monkeypatch,
     caplog,
-    mock_caching_enabled,
     mock_sirius_not_available,
     mock_get_data_from_sirius_failed,
-    mock_get_data_from_cache_failed,
     method,
+    cache_enabled,
     expected_status_code,
+    cache_expected,
 ):
+    test_sirius_service.request_caching = cache_enabled
 
-    key = "test_key"
-    url = "http://not-an-url.com"
-
-    result_status_code, result_data = send_request_to_sirius(
+    result_status_code, result_data = test_sirius_service.send_request_to_sirius(
         key, url, method, content_type=None, data=None
     )
 
     assert result_status_code == expected_status_code
+    if cache_expected:
 
-    with caplog.at_level(logging.INFO):
-        if method == "GET":
-            assert "Getting data from cache with key" in caplog.text
-        else:
-            assert "Getting data from cache with key" not in caplog.text
+        assert json.loads(cache.get(full_key)) == sirius_test_data
+        assert cache.ttl(full_key) == ttl * 60 * 60
 
+    else:
+        assert cache.exists(full_key) == 0
 
-@pytest.mark.parametrize(
-    "method, expected_status_code", [("GET", 500), ("POST", 500), ("PUT", 500)]
-)
-def test_send_request_to_sirius_but_sirius_is_broken_and_cache_disabled(
-    monkeypatch,
-    caplog,
-    mock_caching_disabled,
-    mock_sirius_not_available,
-    mock_get_data_from_sirius_failed,
-    mock_get_data_from_cache_success,
-    method,
-    expected_status_code,
-):
-
-    key = "test_key"
-    url = "http://not-an-url.com"
-
-    result_status_code, result_data = send_request_to_sirius(
-        key, url, method, content_type=None, data=None
-    )
-
-    assert result_status_code == expected_status_code
-
-    with caplog.at_level(logging.INFO):
-        assert "Getting data from cache with key" not in caplog.text
+    cache.flushall()
