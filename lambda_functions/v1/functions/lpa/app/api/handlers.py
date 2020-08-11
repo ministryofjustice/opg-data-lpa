@@ -1,8 +1,3 @@
-import json
-import os
-
-import urllib3
-
 # from flask import current_app
 from flask import current_app
 from werkzeug.exceptions import abort
@@ -11,7 +6,6 @@ from .helpers import custom_logger
 
 # from .sirius import build_sirius_url, send_request_to_sirius
 # from . import sirius
-from .sirius_service import SiriusService
 
 logger = custom_logger()
 
@@ -27,7 +21,7 @@ def get_by_online_tool_id(lpa_online_tool_id):
     if sirius_status_code in [200]:
         if len(sirius_response) > 0:
             try:
-                return format_response(sirius_response=sirius_response), 200
+                return format_online_tool_response(sirius_response=sirius_response), 200
             except Exception as e:
                 logger.error(f"Error formatting sirius response: {e}")
                 abort(404)
@@ -43,12 +37,12 @@ def get_by_sirius_uid(sirius_uid):
     sirius_url = generate_sirius_url(sirius_uid=sirius_uid)
 
     sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
-        key=sirius_url, url=sirius_url, method="GET"
+        key=sirius_uid, url=sirius_url, method="GET"
     )
     if sirius_status_code in [200]:
         if len(sirius_response) > 0:
             try:
-                return sirius_response, 200
+                return format_uid_response(sirius_response=sirius_response), 200
             except Exception as e:
                 logger.error(f"Error formatting sirius response: {e}")
                 abort(404)
@@ -77,7 +71,11 @@ def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
     return url
 
 
-def format_response(sirius_response):
+def format_uid_response(sirius_response):
+    return sirius_response[0]
+
+
+def format_online_tool_response(sirius_response):
 
     logger.info(f"type(sirius_response): {type(sirius_response)}")
     lpa_data = sirius_response[0]

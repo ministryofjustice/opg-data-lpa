@@ -32,6 +32,8 @@ resource "aws_lambda_function" "lambda_function" {
       LOGGER_LEVEL       = var.account.logger_level
       API_VERSION        = var.openapi_version
       SESSION_DATA       = var.account.session_data
+      REQUEST_CACHING    = "disabled"
+      REDIS_URL          = "mystery"
     }
   }
   tracing_config {

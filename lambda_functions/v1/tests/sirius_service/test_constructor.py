@@ -1,11 +1,9 @@
-import json
-import logging
-
 import fakeredis
-import pytest
 
-from lambda_functions.v1.functions.lpa.app.api.sirius_service import SiriusService
-from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig, Config
+from lambda_functions.v1.functions.lpa.app.sirius_service.sirius_handler import (
+    SiriusService,
+)
+from lambda_functions.v1.config import LocalTestingConfig
 
 
 def test_constructor():
@@ -25,27 +23,11 @@ def test_constructor():
     assert test_sirius_service.request_caching_ttl is not None
 
 
-class BrokenConfig(Config):
-    del Config.SIRIUS_BASE_URL
-
-
-def test_constructor_broken(caplog):
-
-    test_redis_handler = fakeredis.FakeStrictRedis(
-        charset="utf-8", decode_responses=True
-    )
-    SiriusService(config_params=BrokenConfig, cache=test_redis_handler)
-
-    with caplog.at_level("INFO"):
-        assert "Error loading config" in caplog.text
-
-
-class EmptyConfig(LocalTestingConfig):
-    REQUEST_CACHE_NAME = None
-    REQUEST_CACHING_TTL = None
-
-
 def test_constructor_defaults():
+    class EmptyConfig(LocalTestingConfig):
+        REQUEST_CACHE_NAME = None
+        REQUEST_CACHING_TTL = None
+
     test_redis_handler = fakeredis.FakeStrictRedis(
         charset="utf-8", decode_responses=True
     )

@@ -1,11 +1,12 @@
 import json
-import logging
 
 import fakeredis
 import pytest
 
-from lambda_functions.v1.functions.lpa.app.api.sirius_service import SiriusService
-from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
+from lambda_functions.v1.functions.lpa.app.sirius_service.sirius_handler import (
+    SiriusService,
+)
+from lambda_functions.v1.config import LocalTestingConfig
 
 test_redis_handler = fakeredis.FakeStrictRedis(charset="utf-8", decode_responses=True)
 test_sirius_service = SiriusService(

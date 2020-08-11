@@ -1,11 +1,12 @@
-import os
 import string
 
 import fakeredis
 import pytest
 
-from lambda_functions.v1.functions.lpa.app.api.sirius_service import SiriusService
-from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
+from lambda_functions.v1.functions.lpa.app.sirius_service.sirius_handler import (
+    SiriusService,
+)
+from lambda_functions.v1.config import LocalTestingConfig
 import requests
 
 

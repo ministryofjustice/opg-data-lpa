@@ -30,7 +30,7 @@ def test_put_sirius_data_in_cache(test_key_name, test_key, test_data, test_ttl):
     test_sirius_service.request_caching_ttl = test_ttl
 
     test_sirius_service._put_sirius_data_in_cache(
-        redis_conn=test_cache, key=test_key, data=json.dumps(test_data)
+        key=test_key, data=json.dumps(test_data)
     )
 
     full_key = f"{test_key_name}-{test_key}"

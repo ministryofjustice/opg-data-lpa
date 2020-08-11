@@ -3,7 +3,7 @@ from flask import Flask
 
 
 from .api.resources import api as api_blueprint
-from .api.sirius_service import SiriusService
+from .sirius_service.sirius_handler import SiriusService
 from .config import Config
 
 

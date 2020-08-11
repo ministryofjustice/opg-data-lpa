@@ -5,17 +5,17 @@ WORKDIR /var/www/lambda_functions/v1
 
 # Install Python Dependencies
 
-COPY requirements requirements
+COPY ./requirements requirements
 RUN cat ./requirements/*.txt | uniq | grep -v "#" > ./requirements/local-requirements.txt
 RUN pip install -r ./requirements/local-requirements.txt
 
 EXPOSE 4343
 
-WORKDIR /var/www/lambda_functions/v1/functions/lpa/app
+WORKDIR /var/www/lambda_functions/v1
 
 
 
-ENV FLASK_APP "lpa_local.py"
+ENV FLASK_APP "mock_lambda.py"
 ENV FLASK_ENV "development"
 ENV FLASK_DEBUG True
 

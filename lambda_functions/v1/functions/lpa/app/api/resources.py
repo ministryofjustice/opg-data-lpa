@@ -62,11 +62,6 @@ def handle504(error=None):
 def handle_healthcheck_route():
     response_message = "OK"
 
-    from flask import current_app
-
-    logger.info(f"current_app: {current_app}")
-    logger.info(f"current_app.config: {current_app.config}")
-
     return jsonify(response_message), 200
 
 
@@ -75,8 +70,6 @@ def handle_lpa_online_tool(lpa_online_tool_id):
     logger.info(f"lpa_online_tool_id: {lpa_online_tool_id}")
 
     response, status = get_by_online_tool_id(lpa_online_tool_id=lpa_online_tool_id)
-    print(f"response: {response}")
-    print(f"status: {status}")
 
     return jsonify(response), status
 

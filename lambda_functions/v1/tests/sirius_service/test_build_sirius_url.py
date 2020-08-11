@@ -28,13 +28,3 @@ def test_build_sirius_url_with_hypothesis(endpoint, url_params, caplog):
     url = test_sirius_service.build_sirius_url(endpoint, url_params)
 
     assert validators.url(url)
-
-
-def test_build_sirius_url_missing_env_var(monkeypatch, caplog):
-    monkeypatch.delenv("SIRIUS_BASE_URL")
-
-    with pytest.raises(Exception):
-        test_sirius_service.build_sirius_url(endpoint="")
-
-        with caplog.at_level(logging.ERROR):
-            assert "Unable to build Sirius URL" in caplog.text
