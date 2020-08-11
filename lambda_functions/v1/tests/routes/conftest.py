@@ -5,12 +5,13 @@ from flask import Flask
 
 from lambda_functions.v1.functions.lpa.app import api
 from lambda_functions.v1.functions.lpa.app import create_app
+from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
 from lambda_functions.v1.tests.helpers import load_data
 
 
 @pytest.fixture(scope="session")
 def app(*args, **kwargs):
-    app = create_app(Flask)
+    app = create_app(config=LocalTestingConfig)
 
     routes = [str(p) for p in app.url_map.iter_rules()]
     print(f"routes: {routes}")
@@ -30,7 +31,7 @@ def patched_get_secret(monkeypatch):
         print("patched_get_secret returning mock_secret")
         return "this_is_a_secret_string"
 
-    monkeypatch.setattr(api.sirius_service, "get_secret", mock_secret)
+    monkeypatch.setattr(api.sirius_service.SiriusService, "_get_secret", mock_secret)
 
 
 @pytest.fixture()
@@ -74,4 +75,6 @@ def patched_send_request_to_sirius(monkeypatch):
             print("test_id is not a valid sirius_uid or lpa-online-tool id")
             return 404, ""
 
-    monkeypatch.setattr(api.sirius_service, "send_request_to_sirius", mock_get)
+    monkeypatch.setattr(
+        api.sirius_service.SiriusService, "send_request_to_sirius", mock_get
+    )

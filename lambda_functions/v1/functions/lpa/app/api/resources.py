@@ -7,6 +7,7 @@ from .errors import error_message
 from .handlers import get_by_online_tool_id, get_by_sirius_uid
 from .helpers import custom_logger
 
+
 logger = custom_logger("")
 
 version = "v1"
@@ -60,6 +61,11 @@ def handle504(error=None):
 @api.route("/healthcheck", methods=["HEAD", "GET"])
 def handle_healthcheck_route():
     response_message = "OK"
+
+    from flask import current_app
+
+    logger.info(f"current_app: {current_app}")
+    logger.info(f"current_app.config: {current_app.config}")
 
     return jsonify(response_message), 200
 

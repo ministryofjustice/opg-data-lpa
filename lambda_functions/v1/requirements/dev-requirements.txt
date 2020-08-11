@@ -15,3 +15,5 @@ validators
 yarl
 localstack-client
 tenacity
+redis
+fakeredis

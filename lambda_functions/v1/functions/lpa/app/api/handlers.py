@@ -2,25 +2,27 @@ import json
 import os
 
 import urllib3
+
+# from flask import current_app
+from flask import current_app
 from werkzeug.exceptions import abort
 
 from .helpers import custom_logger
 
-# from .sirius_service import build_sirius_url, send_request_to_sirius
-from . import sirius_service
+# from .sirius import build_sirius_url, send_request_to_sirius
+# from . import sirius
+from .sirius_service import SiriusService
 
 logger = custom_logger()
 
 
 def get_by_online_tool_id(lpa_online_tool_id):
+
     sirius_url = generate_sirius_url(lpa_online_tool_id=lpa_online_tool_id)
 
-    sirius_status_code, sirius_response = sirius_service.send_request_to_sirius(
-        url=sirius_url, method="GET"
+    sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
+        key=lpa_online_tool_id, url=sirius_url, method="GET"
     )
-
-    logger.info(f"sirius_status_code: {sirius_status_code}")
-    logger.info(f"sirius_response: {sirius_response}")
 
     if sirius_status_code in [200]:
         if len(sirius_response) > 0:
@@ -40,8 +42,8 @@ def get_by_online_tool_id(lpa_online_tool_id):
 def get_by_sirius_uid(sirius_uid):
     sirius_url = generate_sirius_url(sirius_uid=sirius_uid)
 
-    sirius_status_code, sirius_response = sirius_service.send_request_to_sirius(
-        url=sirius_url, method="GET"
+    sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
+        key=sirius_url, url=sirius_url, method="GET"
     )
     if sirius_status_code in [200]:
         if len(sirius_response) > 0:
@@ -59,14 +61,16 @@ def get_by_sirius_uid(sirius_uid):
 
 
 def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
-    sirius_api_version = os.environ["SIRIUS_API_VERSION"]
+    sirius_api_version = "v1"
     sirius_api_url = f"api/public/{sirius_api_version}/lpas"
     if lpa_online_tool_id:
         sirius_url_params = {"lpa-online-tool-id": lpa_online_tool_id}
     elif sirius_uid:
         sirius_url_params = {"uid": sirius_uid}
 
-    url = sirius_service.build_sirius_url(
+    logger.info(f"sirius_api_url: {sirius_api_url}")
+
+    url = current_app.sirius.build_sirius_url(
         endpoint=sirius_api_url, url_params=sirius_url_params,
     )
 
