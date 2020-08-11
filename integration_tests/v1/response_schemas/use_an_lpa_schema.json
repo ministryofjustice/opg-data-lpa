@@ -131,7 +131,7 @@
       "type": "boolean"
     },
     "onlineLpaId": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "cancellationDate": {
       "type": "null"
