@@ -33,7 +33,10 @@ To set up for the integration tests you should check a few things first:
 
  ### Gotchas
 
- Make sure you are able to assume digideps dev role with your credentials or tests will not work.
-You may need to update some Sirius data. This is temporary, we're going to get them to create some stable
+* Make sure you are able to assume digideps dev role with your credentials or tests will not work.
+
+* You may need to update some Sirius data. This is temporary, we're going to get them to create some stable
 test data for us, but for now, you need to log into Cloud9 and run:
 `UPDATE cases SET onlinelpaid = 'A33718377316' WHERE uid = 700000000013;`
+
+* If that doesn't work, check there are some cases to update using `SELECT uid as case_number, onlinelpaid, casetype, casesubtype, donor_id FROM cases WHERE casetype = 'LPA';`
