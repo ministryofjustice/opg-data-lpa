@@ -20,7 +20,6 @@ def test_constructor():
     assert test_sirius_service.sirius_base_url is not None
     assert test_sirius_service.environment is not None
     assert test_sirius_service.session_data is not None
-    assert test_sirius_service.redis_url is not None
     assert test_sirius_service.request_caching is not None
     assert test_sirius_service.request_caching_name is not None
     assert test_sirius_service.request_caching_ttl is not None
