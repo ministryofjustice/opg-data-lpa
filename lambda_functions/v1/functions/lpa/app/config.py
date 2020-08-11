@@ -17,8 +17,12 @@ class Config(object):
     REQUEST_CACHE_NAME = API_NAME
     REQUEST_CACHING_TTL = 48
 
-    REQUEST_CACHING = os.environ.get("REQUEST_CACHING", default="disabled")
     REDIS_URL = os.environ.get("REDIS_URL")
+    REQUEST_CACHING = os.environ.get("REQUEST_CACHING", default="disabled")
+
+
+class ProductionConfig(Config):
+    pass
 
 
 class LocalMockConfig(Config):

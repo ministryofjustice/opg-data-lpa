@@ -21,8 +21,9 @@ class SiriusService:
             self.sirius_base_url = config_params.SIRIUS_BASE_URL
             self.environment = config_params.ENVIRONMENT
             self.session_data = config_params.SESSION_DATA
-            self.redis_url = config_params.REDIS_URL
-            self.request_caching = config_params.REQUEST_CACHING
+            self.request_caching = (
+                config_params.REQUEST_CACHING if cache else "disabled"
+            )
             self.request_caching_name = (
                 config_params.REQUEST_CACHE_NAME
                 if config_params.REQUEST_CACHE_NAME
@@ -148,7 +149,7 @@ class SiriusService:
         return error_code, message
 
     def _check_sirius_available(self):
-        healthcheck_url = f"{self.sirius_base_url}/health-check"
+        healthcheck_url = f"{self.sirius_base_url}/api/health-check"
         r = requests.get(url=healthcheck_url)
 
         return True if r.status_code == 200 else False
@@ -189,7 +190,7 @@ class SiriusService:
                 )
 
     def _get_data_from_sirius(self, url, method, content_type=None, data=None):
-
+        logger.info("_get_data_from_sirius")
         headers = self._build_sirius_headers(content_type)
 
         try:
@@ -216,6 +217,7 @@ class SiriusService:
             )
 
     def _put_sirius_data_in_cache(self, redis_conn, key, data):
+        logger.info(f"_put_sirius_data_in_cache")
         cache_name = self.request_caching_name
 
         cache_ttl_in_seconds = self.request_caching_ttl * 60 * 60
@@ -228,11 +230,7 @@ class SiriusService:
 
     def _get_sirius_data_from_cache(self, redis_conn, key):
 
-        cache_name = (
-            self.request_caching_name
-            if self.request_caching_name
-            else self.default_caching_name
-        )
+        cache_name = self.request_caching_name
 
         logger.info(f"getting redis: {cache_name}-{key}")
         logger.info(

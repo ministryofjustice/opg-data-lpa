@@ -43,7 +43,7 @@ def get_by_sirius_uid(sirius_uid):
     sirius_url = generate_sirius_url(sirius_uid=sirius_uid)
 
     sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
-        url=sirius_url, method="GET"
+        key=sirius_url, url=sirius_url, method="GET"
     )
     if sirius_status_code in [200]:
         if len(sirius_response) > 0:

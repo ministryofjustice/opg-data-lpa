@@ -56,3 +56,11 @@ def test_constructor_defaults():
 
     assert test_sirius_service.request_caching_name == "default_sirius_cache"
     assert test_sirius_service.request_caching_ttl == 48
+
+
+def test_constructor_redis_not_connected():
+
+    test_sirius_service = SiriusService(config_params=LocalTestingConfig, cache=None)
+
+    print(f"test_sirius_service: {test_sirius_service}")
+    assert test_sirius_service.request_caching == "disabled"

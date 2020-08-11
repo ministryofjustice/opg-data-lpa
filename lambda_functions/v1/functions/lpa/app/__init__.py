@@ -7,8 +7,8 @@ from .api.sirius_service import SiriusService
 from .config import Config
 
 
-def create_app(config=Config):
-    app = Flask(__name__)
+def create_app(flask=Flask, config=Config):
+    app = flask(__name__)
 
     app.config.from_object(config)
 
@@ -18,6 +18,8 @@ def create_app(config=Config):
         url=config.REDIS_URL, charset="utf-8", decode_responses=True
     )
 
-    app.sirius = SiriusService(config_params=config, cache=app.redis)
+    redis_cache = app.redis
+
+    app.sirius = SiriusService(config_params=config, cache=redis_cache)
 
     return app
