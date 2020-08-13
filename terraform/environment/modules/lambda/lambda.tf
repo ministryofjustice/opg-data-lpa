@@ -33,7 +33,7 @@ resource "aws_lambda_function" "lambda_function" {
       API_VERSION        = var.openapi_version
       SESSION_DATA       = var.account.session_data
       REQUEST_CACHING    = "disabled"
-      REDIS_URL          = "mystery"
+      REDIS_URL          = var.redis_url
     }
   }
   tracing_config {
