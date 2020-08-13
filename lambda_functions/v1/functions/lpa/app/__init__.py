@@ -15,8 +15,9 @@ def create_app(flask=Flask, config=Config):
     app.register_blueprint(api_blueprint)
 
     if config.REQUEST_CACHING == "enabled":
+
         app.redis = redis.StrictRedis.from_url(
-            url=config.REDIS_URL, charset="utf-8", decode_responses=True
+            url=f"redis://{config.REDIS_URL}", charset="utf-8", decode_responses=True
         )
 
         redis_cache = app.redis
