@@ -17,8 +17,8 @@ def test_use_an_lpa_route(test_config):
         assert status == 200
         response_dict = json.loads(response)
         # TODO we are getting a list from sirius?
-        assert is_valid_schema(response_dict[0], "use_an_lpa_schema.json")
-        assert response_dict[0]["uId"].replace("-", "") == valid_id
+        assert is_valid_schema(response_dict, "use_an_lpa_schema.json")
+        assert response_dict["uId"].replace("-", "") == valid_id
 
 
 @pytest.mark.smoke_test

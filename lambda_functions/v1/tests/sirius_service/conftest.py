@@ -1,22 +1,28 @@
-import os
 import string
 
 import fakeredis
 import pytest
 
-from lambda_functions.v1.functions.lpa.app.api.sirius_service import SiriusService
-from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
+
+from lambda_functions.v1.functions.lpa.app.sirius_service.sirius_handler import (
+    SiriusService,
+)
+
 import requests
 
 
 # Defaults to 50
+from lambda_functions.v1.tests.sirius_service.default_config import (
+    SiriusServiceTestConfig,
+)
+
 max_examples = 50
 alphabet = list(string.ascii_letters + string.digits + string.punctuation)
 
 
 test_redis_handler = fakeredis.FakeStrictRedis(charset="utf-8", decode_responses=True)
 test_sirius_service = SiriusService(
-    config_params=LocalTestingConfig, cache=test_redis_handler
+    config_params=SiriusServiceTestConfig, cache=test_redis_handler
 )
 
 

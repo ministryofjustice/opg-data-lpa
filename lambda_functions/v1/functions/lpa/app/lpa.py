@@ -1,5 +1,5 @@
 from .flask_lambda import FlaskLambda
 from . import create_app
-from .config import ProductionConfig
+from .config import Config
 
-lambda_handler = create_app(flask=FlaskLambda, config=ProductionConfig)
+lambda_handler = create_app(flask=FlaskLambda, config=Config)

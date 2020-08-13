@@ -27,3 +27,5 @@ variable "rest_api" {}
 variable "account" {}
 
 variable "redis_sg_id" {}
+
+variable "redis_url" {}

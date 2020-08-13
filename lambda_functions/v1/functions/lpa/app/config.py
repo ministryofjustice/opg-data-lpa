@@ -21,10 +21,6 @@ class Config(object):
     REQUEST_CACHING = os.environ.get("REQUEST_CACHING", default="disabled")
 
 
-class ProductionConfig(Config):
-    pass
-
-
 class LocalMockConfig(Config):
     # override prod values
     DEBUG = True

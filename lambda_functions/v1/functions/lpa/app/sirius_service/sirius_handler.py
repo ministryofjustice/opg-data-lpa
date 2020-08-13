@@ -8,7 +8,7 @@ import localstack_client.session
 import requests
 from botocore.exceptions import ClientError
 
-from .helpers import custom_logger
+from ..api.helpers import custom_logger
 
 logger = custom_logger("sirius_service")
 
@@ -159,8 +159,6 @@ class SiriusService:
 
         cache_enabled = True if self.request_caching == "enabled" else False
 
-        redis_service = self.cache
-
         if self._check_sirius_available():
             sirius_status_code, sirius_data = self._get_data_from_sirius(
                 url, method, content_type, data
@@ -170,16 +168,14 @@ class SiriusService:
             logger.info(f"method: {method}")
             if cache_enabled and method == "GET" and sirius_status_code == 200:
                 logger.info(f"Putting data in cache with key: {key}")
-                self._put_sirius_data_in_cache(
-                    redis_conn=redis_service, key=key, data=sirius_data
-                )
+                self._put_sirius_data_in_cache(key=key, data=sirius_data)
 
             return sirius_status_code, sirius_data
         else:
             if cache_enabled and method == "GET":
                 logger.info(f"Getting data from cache with key: {key}")
                 sirius_status_code, sirius_data = self._get_sirius_data_from_cache(
-                    redis_conn=redis_service, key=key
+                    key=key
                 )
 
                 return sirius_status_code, sirius_data
@@ -216,7 +212,7 @@ class SiriusService:
                 error_message=f"Unable to send request to Sirius", error_details=e
             )
 
-    def _put_sirius_data_in_cache(self, redis_conn, key, data):
+    def _put_sirius_data_in_cache(self, key, data):
         logger.info(f"_put_sirius_data_in_cache")
         cache_name = self.request_caching_name
 
@@ -224,22 +220,19 @@ class SiriusService:
 
         data = json.dumps(data)
 
-        redis_conn.set(name=f"{cache_name}-{key}", value=data, ex=cache_ttl_in_seconds)
+        self.cache.set(name=f"{cache_name}-{key}", value=data, ex=cache_ttl_in_seconds)
 
         logger.info(f"setting redis: {cache_name}-{key}")
 
-    def _get_sirius_data_from_cache(self, redis_conn, key):
+    def _get_sirius_data_from_cache(self, key):
 
         cache_name = self.request_caching_name
 
         logger.info(f"getting redis: {cache_name}-{key}")
-        logger.info(
-            f'redis_conn.exists(f"{cache_name}-{key}"): {redis_conn.exists(f"{cache_name}-{key}")}'
-        )
 
-        if redis_conn.exists(f"{cache_name}-{key}"):
+        if self.cache.exists(f"{cache_name}-{key}"):
             status_code = 200
-            result = redis_conn.get(f"{cache_name}-{key}")
+            result = self.cache.get(f"{cache_name}-{key}")
             result = json.loads(result)
         else:
             status_code = 500

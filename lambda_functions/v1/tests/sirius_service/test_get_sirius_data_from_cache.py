@@ -27,7 +27,7 @@ def test_get_sirius_data_from_cache(monkeypatch, test_key_name, test_key, test_d
     test_cache.set(name=full_key, value=json.dumps(test_data))
 
     status_code, result_data = test_sirius_service._get_sirius_data_from_cache(
-        redis_conn=test_cache, key=test_key
+        key=test_key
     )
 
     assert status_code == 200
@@ -46,7 +46,7 @@ def test_get_sirius_data_from_cache_redis_ded(monkeypatch):
     test_cache = test_sirius_service.cache
 
     status_code, result_data = test_sirius_service._get_sirius_data_from_cache(
-        redis_conn=test_cache, key=test_key
+        key=test_key
     )
 
     assert status_code == 500
