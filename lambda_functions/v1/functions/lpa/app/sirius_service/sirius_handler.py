@@ -156,9 +156,10 @@ class SiriusService:
         # return True
 
     def check_cache_available(self):
-        if self.cache is not None:
+        try:
             return self.cache.ping()
-        else:
+        except Exception as e:
+            logger.error(f"Unable to connect to cache: {e}")
             return False
 
     def send_request_to_sirius(self, key, url, method, content_type=None, data=None):
@@ -226,21 +227,29 @@ class SiriusService:
 
         data = json.dumps(data)
 
-        self.cache.set(name=f"{cache_name}-{key}", value=data, ex=cache_ttl_in_seconds)
-
-        logger.info(f"setting redis: {cache_name}-{key}")
+        try:
+            self.cache.set(
+                name=f"{cache_name}-{key}", value=data, ex=cache_ttl_in_seconds
+            )
+            logger.info(f"setting redis: {cache_name}-{key}")
+        except Exception as e:
+            logger.error(f"Unable to set cache: {cache_name}-{key}, error {e}")
 
     def _get_sirius_data_from_cache(self, key):
 
         cache_name = self.request_caching_name
 
-        logger.info(f"getting redis: {cache_name}-{key}")
-
-        if self.cache.exists(f"{cache_name}-{key}"):
-            status_code = 200
-            result = self.cache.get(f"{cache_name}-{key}")
-            result = json.loads(result)
-        else:
+        try:
+            logger.info(f"getting redis: {cache_name}-{key}")
+            if self.cache.exists(f"{cache_name}-{key}"):
+                status_code = 200
+                result = self.cache.get(f"{cache_name}-{key}")
+                result = json.loads(result)
+            else:
+                status_code = 500
+                result = None
+        except Exception as e:
+            logger.error(f"Unable to get from cache: {cache_name}-{key}, error {e}")
             status_code = 500
             result = None
 
