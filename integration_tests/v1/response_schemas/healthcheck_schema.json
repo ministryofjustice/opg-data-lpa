@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "object",
+      "properties": {
+        "api-status": {
+          "type": "string"
+        },
+        "sirius-status": {
+          "type": "string"
+        },
+        "cache-status": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "api-status",
+        "sirius-status",
+        "cache-status"
+      ]
+    },
+    "meta": {
+      "oneOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "data"
+  ]
+}

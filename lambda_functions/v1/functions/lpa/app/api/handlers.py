@@ -1,11 +1,14 @@
-# from flask import current_app
 from flask import current_app
 from werkzeug.exceptions import abort
 
 from .helpers import custom_logger
 
-# from .sirius import build_sirius_url, send_request_to_sirius
-# from . import sirius
+
+from .sirius_helpers import (
+    format_uid_response,
+    format_online_tool_response,
+    generate_sirius_url,
+)
 
 logger = custom_logger()
 
@@ -54,38 +57,24 @@ def get_by_sirius_uid(sirius_uid):
         abort(404)
 
 
-def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
-    sirius_api_version = "v1"
-    sirius_api_url = f"api/public/{sirius_api_version}/lpas"
-    if lpa_online_tool_id:
-        sirius_url_params = {"lpa-online-tool-id": lpa_online_tool_id}
-    elif sirius_uid:
-        sirius_url_params = {"uid": sirius_uid}
+def get_service_status():
 
-    logger.info(f"sirius_api_url: {sirius_api_url}")
-
-    url = current_app.sirius.build_sirius_url(
-        endpoint=sirius_api_url, url_params=sirius_url_params,
+    sirius_status = (
+        "OK" if current_app.sirius.check_sirius_available() is True else "Unavailable"
     )
 
-    return url
+    if current_app.sirius.request_caching == "enabled":
+        cache_status = (
+            "OK" if current_app.sirius.check_cache_available() else "Unavailable"
+        )
+    else:
+        cache_status = "Not enabled"
 
-
-def format_uid_response(sirius_response):
-    return sirius_response[0]
-
-
-def format_online_tool_response(sirius_response):
-
-    logger.info(f"type(sirius_response): {type(sirius_response)}")
-    lpa_data = sirius_response[0]
-
-    result = {
-        "onlineLpaId": lpa_data["onlineLpaId"],
-        "receiptDate": lpa_data["receiptDate"],
-        "registrationDate": lpa_data["registrationDate"],
-        "rejectedDate": lpa_data["rejectedDate"],
-        "status": lpa_data["status"],
+    return {
+        "data": {
+            "api-status": "OK",
+            "sirius-status": sirius_status,
+            "cache-status": cache_status,
+        },
+        "meta": None,
     }
-
-    return result

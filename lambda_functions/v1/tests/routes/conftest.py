@@ -118,12 +118,12 @@ def patched_send_request_to_sirius(monkeypatch):
 @pytest.fixture
 def patched_send_request_to_sirius_available(monkeypatch):
     monkeypatch.setattr(
-        sirius_handler.SiriusService, "_check_sirius_available", lambda x: True
+        sirius_handler.SiriusService, "check_sirius_available", lambda x: True
     )
 
 
 @pytest.fixture
 def patched_send_request_to_sirius_unavailable(monkeypatch):
     monkeypatch.setattr(
-        sirius_handler.SiriusService, "_check_sirius_available", lambda x: False
+        sirius_handler.SiriusService, "check_sirius_available", lambda x: False
     )
