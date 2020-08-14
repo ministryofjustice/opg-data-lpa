@@ -1,6 +1,6 @@
 from flask import current_app
 
-from lambda_functions.v1.functions.lpa.app.api.helpers import custom_logger
+from .helpers import custom_logger
 
 logger = custom_logger()
 

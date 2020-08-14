@@ -22,11 +22,17 @@
       ]
     },
     "meta": {
-      "type": "object"
+      "oneOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
-    "data",
-    "meta"
+    "data"
   ]
 }
