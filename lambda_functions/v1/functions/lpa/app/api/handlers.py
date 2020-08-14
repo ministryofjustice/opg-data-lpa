@@ -63,7 +63,7 @@ def get_service_status():
         "OK" if current_app.sirius.check_sirius_available() is True else "Unavailable"
     )
 
-    if current_app.sirius.cache is not None:
+    if current_app.sirius.request_caching == "enabled":
         cache_status = (
             "OK" if current_app.sirius.check_cache_available() else "Unavailable"
         )
