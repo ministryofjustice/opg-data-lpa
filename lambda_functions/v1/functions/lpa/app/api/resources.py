@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask import request, jsonify
 
 from .errors import error_message
-from .handlers import get_by_online_tool_id, get_by_sirius_uid
+from .handlers import get_by_online_tool_id, get_by_sirius_uid, get_service_status
 from .helpers import custom_logger
 
 
@@ -60,7 +60,7 @@ def handle504(error=None):
 
 @api.route("/healthcheck", methods=["HEAD", "GET"])
 def handle_healthcheck_route():
-    response_message = "OK"
+    response_message = get_service_status()
 
     return jsonify(response_message), 200
 

@@ -27,12 +27,12 @@ def patched_sirius_heathcheck_broken(monkeypatch):
 
 
 def test_check_sirius_available(patched_sirius_heathcheck):
-    result = test_sirius_service._check_sirius_available()
+    result = test_sirius_service.check_sirius_available()
 
     assert result is True
 
 
 def test_check_sirius_not_available(patched_sirius_heathcheck_broken):
-    result = test_sirius_service._check_sirius_available()
+    result = test_sirius_service.check_sirius_available()
 
     assert result is False

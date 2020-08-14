@@ -148,18 +148,24 @@ class SiriusService:
         logger.error(message)
         return error_code, message
 
-    def _check_sirius_available(self):
+    def check_sirius_available(self):
         healthcheck_url = f"{self.sirius_base_url}/api/health-check"
         r = requests.get(url=healthcheck_url)
 
         return True if r.status_code == 200 else False
         # return True
 
+    def check_cache_available(self):
+        if self.cache is not None:
+            return self.cache.ping()
+        else:
+            return False
+
     def send_request_to_sirius(self, key, url, method, content_type=None, data=None):
 
         cache_enabled = True if self.request_caching == "enabled" else False
 
-        if self._check_sirius_available():
+        if self.check_sirius_available():
             sirius_status_code, sirius_data = self._get_data_from_sirius(
                 url, method, content_type, data
             )
