@@ -19,3 +19,5 @@ def test_healthcheck_route(test_config):
         )
 
         assert status == 200
+        response_dict = json.loads(response)
+        assert is_valid_schema(response_dict, "healthcheck_schema.json")

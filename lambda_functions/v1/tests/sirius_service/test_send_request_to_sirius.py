@@ -23,12 +23,12 @@ cache = test_sirius_service.cache
 
 @pytest.fixture()
 def mock_sirius_available(monkeypatch):
-    monkeypatch.setattr(test_sirius_service, "_check_sirius_available", lambda: True)
+    monkeypatch.setattr(test_sirius_service, "check_sirius_available", lambda: True)
 
 
 @pytest.fixture()
 def mock_sirius_not_available(monkeypatch):
-    monkeypatch.setattr(test_sirius_service, "_check_sirius_available", lambda: False)
+    monkeypatch.setattr(test_sirius_service, "check_sirius_available", lambda: False)
 
 
 @pytest.fixture()

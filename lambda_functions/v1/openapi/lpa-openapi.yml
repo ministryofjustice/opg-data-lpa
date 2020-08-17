@@ -77,31 +77,17 @@ x-amazon-apigateway-gateway-responses:
     responseTemplates:
       application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-WAF_FILTERED", "title":$context.error.messageString, "detail": "", "meta": {"x-ray": "$context.xrayTraceId"} }}'
 
-"x-amazon-apigateway-policy": {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-              "AWS": [${allowed_roles}]
-            },
-            "Action": "execute-api:Invoke",
-            "Resource": [
-                "arn:aws:execute-api:eu-west-1:${account_id}:*/*/*/*"
-            ]
-        }
-    ]
-}
+
 
 paths:
   /healthcheck:
-    description: Sirius healthcheck
+    description: opg-data-lpa healthcheck
     get:
-      summary: Sirius healthcheck
-      description: Client report
+      summary: opg-data-lpa healthcheck
+      description: Check if required services are available
       operationId: app.healthcheck
       tags:
-        - "deputy-reporting"
+        - "opg-data-lpa"
       security:
         - sigv4: []
       x-amazon-apigateway-request-validator: "all"
@@ -116,7 +102,7 @@ paths:
         type: "aws_proxy"
       responses:
         200:
-          description: Sirius healthcheck
+          description: opg-data-lpa healthcheck
           content:
             application/json:
               schema:
@@ -341,6 +327,16 @@ components:
   schemas:
     Healthcheck:
       type: object
+      properties:
+        api-status:
+          type: string
+          example: "OK"
+        sirius-status:
+          type: string
+          example: "OK"
+        cache-status:
+          type: string
+          example: "OK"
     Error400:
       type: object
       required:

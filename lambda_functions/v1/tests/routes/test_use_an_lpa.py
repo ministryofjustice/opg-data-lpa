@@ -31,7 +31,7 @@ def test_use_an_lpa_route_with_cache(
 
     monkeypatch.setattr(
         sirius_handler.SiriusService,
-        "_check_sirius_available",
+        "check_sirius_available",
         lambda x: sirius_available,
     )
 
@@ -70,7 +70,7 @@ def test_use_an_lpa_route_no_cache(
 
     monkeypatch.setattr(
         sirius_handler.SiriusService,
-        "_check_sirius_available",
+        "check_sirius_available",
         lambda x: sirius_available,
     )
 
