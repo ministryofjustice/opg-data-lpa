@@ -51,7 +51,7 @@ resource "aws_route53_record" "environment_record" {
 }
 
 resource "aws_route53_record" "lpa_redis" {
-  name     = "${local.redis_c_name}"
+  name     = local.redis_c_name
   type     = "CNAME"
   zone_id  = data.aws_route53_zone.environment_cert.id
   records  = [aws_elasticache_replication_group.lpa_redis.primary_endpoint_address]
