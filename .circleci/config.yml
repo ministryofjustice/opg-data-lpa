@@ -10,7 +10,7 @@ parameters:
     default: true
   run_verify_pact:
     type: boolean
-    default: true
+    default: false
   consumerversion:
     type: string
     default: ""
@@ -61,7 +61,6 @@ workflows:
           requires: [build and artifact]
           tf_command: apply --auto-approve
           tf_workspace: development
-          apply_check: true
           filters: {branches:{only:[master]}}
 
       - terraform_action:
@@ -69,7 +68,6 @@ workflows:
          requires: [development apply]
          tf_command: apply --auto-approve
          tf_workspace: preproduction
-         apply_check: true
          filters: {branches:{only:[master]}}
 
       - approve:
@@ -83,7 +81,6 @@ workflows:
           requires: [approve release to production]
           tf_command: apply --auto-approve
           tf_workspace: integration
-          apply_check: true
           filters: {branches:{only:[master]}}
 
       - terraform_action:
@@ -91,7 +88,6 @@ workflows:
           requires: [approve release to production]
           tf_command: apply --auto-approve
           tf_workspace: integration
-          apply_check: true
           filters: {branches:{only:[master]}}
 
       - terraform_action:
@@ -99,15 +95,14 @@ workflows:
          requires: [approve release to production]
          tf_command: apply --auto-approve
          tf_workspace: production
-         apply_check: true
          filters: {branches:{only:[master]}}
          pact_tag_production: true
 
-#  verify_pact:
-#    when: << pipeline.parameters.run_verify_pact >>
-#    jobs:
-#      - pact_verification:
-#          name: verify the latest pact
+  verify_pact:
+    when: << pipeline.parameters.run_verify_pact >>
+    jobs:
+      - pact_verification:
+          name: verify the latest pact
 
 orbs:
   lpa-data:
@@ -156,7 +151,7 @@ orbs:
                 wget https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.82.3/pact-1.82.3-linux-x86_64.tar.gz
                 tar xzf pact-1.82.3-linux-x86_64.tar.gz
               working_directory: ~/project
-      cancel_redundant_builds:
+      login_codeartifact:
         steps:
           - run:
               name: install aws cli
@@ -166,6 +161,8 @@ orbs:
               name: login to code artifact for pip
               command: ./login_code_artifact.sh -a 288342028542 -t pip
               working_directory: ~/project/docs/ci_scripts
+      cancel_redundant_builds:
+        steps:
           - run:
               name: install cancel build requirements
               command: pip3 install -r requirements.txt
@@ -188,6 +185,8 @@ jobs:
     resource_class: small
     steps:
       - checkout
+      - lpa-data/login_codeartifact
+      - lpa-data/cancel_redundant_builds
       - run:
           name: install all requirements locally
           command: ./install_requirements.sh -d lambda_functions -r dev-requirements.txt
@@ -282,10 +281,6 @@ jobs:
         description: terraform command
         default: plan
         type: string
-      apply_check:
-        description: workaround for rest api provider
-        type: boolean
-        default: false
       pact_tag_production:
         description: to tag the production commit
         type: boolean
@@ -314,22 +309,13 @@ jobs:
           working_directory: ~/project/terraform/environment
           command: terraform << parameters.tf_command >>
       - when:
-          condition: << parameters.apply_check >>
-          steps:
-            - run:
-                name: conditionally reapply if gateway policy is missing
-                working_directory: ~/project/terraform/environment
-                command: |
-                  if [ $(terraform output policy | wc -m) -gt 1 ]
-                  then echo "policy attached, doing nothing"
-                  else terraform << parameters.tf_command >>
-                  fi
-      - when:
           condition: << parameters.pact_tag_production >>
           steps:
+            - lpa-data/login_codeartifact
             - run:
-                name: install all requirements locally
-                command: install_requirements.sh -d lambda_functions -r dev-requirements.txt
+                name: install ci requirements
+                command: pip3 install -r requirements.txt
+                working_directory: ~/project/pact
             - run:
                 name: tag pact commit with v<x>_production
                 command: |
@@ -340,8 +326,8 @@ jobs:
                   --broker_secret_name="pactbroker_admin" \
                   --pacticipant="${PACT_PROVIDER}" \
                   --tag="${API_VERSION}_production" \
-                  --git_commit="${GIT_COMMIT_PROVIDER}"
-                working_directory: ~/project/pact_provider
+                  --git_commit="${GIT_COMMIT_PROVIDER}" || echo "Failed but because consumer pacts not set up yet"
+                working_directory: ~/project/pact
   pact_verification:
     docker:
       # Primary container image where all the steps run.
@@ -368,6 +354,11 @@ jobs:
             sleep 3
             echo "Insert commands to check mock env running correctly here"
       - lpa-data/pact_install
+      - lpa-data/login_codeartifact
+      - run:
+          name: install ci requirements
+          command: pip3 install -r requirements.txt
+          working_directory: ~/project/pact
       - run:
           name: verify pact
           command: |
@@ -381,5 +372,5 @@ jobs:
             --provider_pacticipant="${PACT_PROVIDER}" \
             --api_version="${API_VERSION}" \
             --git_commit_consumer="${GIT_COMMIT_CONSUMER}" \
-            --git_commit_provider="${GIT_COMMIT_PROVIDER}" || echo "Failed but because no mocks set up yet"
-          working_directory: ~/project/pact_provider
+            --git_commit_provider="${GIT_COMMIT_PROVIDER}" || echo "Failed but because consumer pacts not set up yet"
+          working_directory: ~/project/pact
