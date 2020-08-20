@@ -12,7 +12,7 @@ LPA related functions.
 
 - API Gateway
 - Lambda
-- Dynamodb
+- Redis
 
 ## Languages used
 
@@ -48,8 +48,6 @@ Information on running unit tests
 Information on running integration tests
 
 ## PACT
-
-### PACT
 
 To run pact locally, the easiest way to interact with it is to use the client tools.
 
