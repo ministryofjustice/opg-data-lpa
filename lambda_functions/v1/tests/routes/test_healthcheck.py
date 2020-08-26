@@ -1,5 +1,5 @@
-from lambda_functions.v1.functions.lpa.app.sirius_service import sirius_handler
 import pytest
+from opg_sirius_service import sirius_handler
 
 
 @pytest.mark.parametrize(
