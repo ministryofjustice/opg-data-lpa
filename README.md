@@ -20,32 +20,88 @@ LPA related functions.
 - Python (for lambda code)
 - OpenApi spec (for building the REST API against API Gateway)
 
-## Local Environment
+## Running the API locally
+
+### Set up
+
+1. Create a virtual environment
+    ```bash
+   python3 -m venv
+   ```
+1. Start the virtual env
+    ```bash
+    source venv/bin/activate
+    ```
+
+1. Add all the env vars:
+    ```bash
+    source .env
+    ```
+1. Install the dev requirements
+    * Log into CodeArtifact
+    ```bash
+    aws-vault exec sirius-dev -- aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
+   ```
+
+   * Install the the requirements
+   ```bash
+   pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt
+   ```
+
+
 
 #### Running flask app locally, aka the quick way
 
-1. Start a virtual environment
-1. Add all the env vars: `source .env`
 1. `cd lambda_functions/v1/functions/lpa/app`
-1. flask run
+1. `flask run`
 1. Endpoints should be available on `http://localhost:5000`
 
 #### Running everything in Docker
 
-1. In the root folder: `docker-compose up`
-1. Wait a minute
-1. `cd mock_aws_services`
-1. `python create_secret.py`
-    * steps 3 & 4 are temporary, test data will soon be inserted automatically
+1. Get your AWS credentials
+    ```bash
+   cd docs/support_scripts/aws
+
+   aws-vault exec identity -- go run ./getcreds.go
+    ```
+1. Copy & paste the output to set your AWS details as env vars
+    * This is because we are using custom packages hosted in AWS CodeArtifact and we need to log in to be able to pip install them
+1. In the root folder: `make everything` (you can also use `make just_api` if you are not interested in Pact)
 1. Endpoints should be available on `http://0.0.0.0:4343`
 
 ## Unit Tests
 
-Information on running unit tests
+1. [Set up local environment](#Set up)
+
+1. Run the tests command-line style
+    ```bash
+    python -m pytest -m "not (smoke_test or pact_test)"
+    ```
+
+1. Run the tests command-line style with coverage
+    ```bash
+    python -m pytest lambda_functions/v1/tests --cov=lambda_functions/v1/functions/lpa/app/api --cov-fail-under=80
+    ```
+1. Run the tests in PyCharm
+
+    *  Go to PyCharm > Preferences > Tools > Python Integrated Tools
+    * Set the Default Test Runner to 'pytest'
+    * Right click on the tests folder (or single file) > 'Run pytest in tests'
 
 ## Integration Tests
+1. [Set up local environment](#Set up)
 
-Information on running integration tests
+1. Setup the tests:
+     - In `integration_tests/v1/conftest.py`, check that the url you are pointing to is correct.
+     - In `integration_tests/v1/conftest.py`, check that the `configs_to_test` is set to what you want to test against.
+     - In `integration_tests/v1/conftest.py`, take note of the ids you will be testing against.
+
+1.  Run the tests
+    ```bash
+    aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
+    ```
+
+
 
 ## PACT
 

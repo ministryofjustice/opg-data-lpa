@@ -5,3 +5,4 @@ pyjwt
 redis
 localstack-client
 requests
+opg-sirius-service==0.0.1

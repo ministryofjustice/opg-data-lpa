@@ -7,7 +7,7 @@ from flask import Flask
 from lambda_functions.v1.functions.lpa.app import create_app
 from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
 
-from lambda_functions.v1.functions.lpa.app.sirius_service import sirius_handler
+from opg_sirius_service import sirius_handler
 from lambda_functions.v1.tests.helpers import load_data
 
 mock_redis_server = fakeredis.FakeServer()

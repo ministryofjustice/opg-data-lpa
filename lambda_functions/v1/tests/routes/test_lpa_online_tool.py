@@ -1,7 +1,7 @@
 import fakeredis
 import pytest
 
-from lambda_functions.v1.functions.lpa.app.sirius_service import sirius_handler
+from opg_sirius_service import sirius_handler
 
 from lambda_functions.v1.tests.routes.conftest import mock_redis_server
 
