@@ -39,6 +39,7 @@ workflows:
 
       - thing_to_cancel:
           name: thing to cancel
+          requires: [apply branch environment]
           filters: {branches:{ignore:[master]}}
 
       - cleanup:
