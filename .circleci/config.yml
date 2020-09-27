@@ -270,7 +270,7 @@ jobs:
           working_directory: ~/project/docs/ci_scripts
       - run:
           name: wait for ages
-          command: sleep 900
+          command: sleep 90
 
   terraform_action:
     executor: lpa-data/python_with_tfvars
