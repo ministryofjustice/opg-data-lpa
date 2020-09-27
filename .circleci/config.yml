@@ -232,7 +232,7 @@ jobs:
     steps:
       - run:
           name: wait for 30 secs
-          command: sleep 30
+          command: sleep 31
 
   pact_verification:
     docker:
