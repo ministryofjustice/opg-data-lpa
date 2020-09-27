@@ -22,31 +22,8 @@ workflows:
   pull_request:
     when: << pipeline.parameters.run_pull_request >>
     jobs:
-      - build_and_test:
-          name: build and artifact
-          filters: {branches:{ignore:[master]}}
-
-      - terraform_preflight:
-          name: terraform preflight checks
-          requires: [build and artifact]
-          filters: {branches:{ignore:[master]}}
-
-      - terraform_action:
-          name: apply branch environment
-          requires: [terraform preflight checks]
-          tf_command: apply
-          filters: {branches:{ignore:[master]}}
-
-      - cleanup:
-          name: approve destroy environment
-          type: approval
-          requires: [apply branch environment]
-          filters: {branches:{ignore:[master]}}
-
-      - terraform_action:
-          name: destroy branch environment
-          requires: [approve destroy environment]
-          tf_command: destroy
+      - prod:
+          name: production test
           filters: {branches:{ignore:[master]}}
 
   commit_to_master:
@@ -180,6 +157,13 @@ orbs:
               working_directory: ~/project/docs/ci_scripts
 
 jobs:
+  prod:
+    executor: lpa-data/python
+    resource_class: small
+    steps:
+      - run:
+          name: wait a really really long time
+          command: sleep 900
   build_and_test:
     executor: lpa-data/python
     resource_class: small
