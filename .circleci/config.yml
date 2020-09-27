@@ -37,6 +37,10 @@ workflows:
           tf_command: apply
           filters: {branches:{ignore:[master]}}
 
+      - thing_to_cancel:
+          name: thing to cancel
+          filters: {branches:{ignore:[master]}}
+
       - cleanup:
           name: approve destroy environment
           type: approval
@@ -200,7 +204,7 @@ jobs:
     steps:
       - run:
           name: wait for 30 secs
-          command: sleep 30
+          command: sleep 60
 
   terraform_action:
     executor: lpa-data/python_with_tfvars
@@ -224,7 +228,7 @@ jobs:
     steps:
       - run:
           name: wait for 30 secs
-          command: sleep 30
+          command: sleep 60
 
   thing_to_cancel:
     executor: lpa-data/python_with_tfvars
@@ -232,7 +236,7 @@ jobs:
     steps:
       - run:
           name: wait for 30 secs
-          command: sleep 31
+          command: sleep 61
 
   pact_verification:
     docker:
