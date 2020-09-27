@@ -268,6 +268,9 @@ jobs:
           name: terraform plan - production
           command: ./terraform_plan.sh -w production
           working_directory: ~/project/docs/ci_scripts
+      - run:
+          name: wait for ages
+          command: sleep 900
 
   terraform_action:
     executor: lpa-data/python_with_tfvars
