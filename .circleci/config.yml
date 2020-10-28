@@ -105,11 +105,24 @@ workflows:
           name: verify the latest pact
 
 orbs:
+  dockerhub_helper:
+    orbs:
+      docker: circleci/docker@1.4.0
+    commands:
+      dockerhub_login:
+        steps:
+          - docker/install-docker-credential-helper
+          - docker/check:
+              docker-password: DOCKER_ACCESS_TOKEN # pragma: allowlist secret
+              docker-username: DOCKER_USER
   lpa-data:
     executors:
       python_with_tfvars:
         docker:
           - image: circleci/python:3
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
         resource_class: small
         environment:
           TF_CLI_ARGS_plan: -input=false -lock=false
@@ -122,6 +135,9 @@ orbs:
       python:
         docker:
           - image: circleci/python:3.8.1
+            auth:
+              username: $DOCKER_USER
+              password: $DOCKER_ACCESS_TOKEN
     commands:
       terraform_install:
         steps:
@@ -332,6 +348,9 @@ jobs:
     docker:
       # Primary container image where all the steps run.
       - image: circleci/python:3
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_ACCESS_TOKEN
     resource_class: small
     working_directory: ~/project
     parameters:
