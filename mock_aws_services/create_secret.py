@@ -2,7 +2,7 @@ import json
 from tenacity import retry
 import requests
 
-url = "http://0.0.0.0:4584/?Action=CreateSecret"
+url = "http://0.0.0.0:4566/?Action=CreateSecret"
 
 
 payload = {

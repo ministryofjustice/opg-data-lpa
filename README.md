@@ -22,7 +22,33 @@ LPA related functions.
 
 ## Running the API locally
 
-### Set up
+To run the API locally you should have aws-vault installed and have an account that has access to assume
+the operator role in sirius dev.
+
+- Run full setup script from the make file:
+```
+make setup
+```
+or if you want pact as well:
+```
+make setup-all
+```
+- Test the setup
+
+```
+curl -X GET http://localhost:4343/v1/healthcheck
+curl -X GET http://localhost:4343/v1/lpa-online-tool/lpas/A39721583862
+curl -X GET http://localhost:4343/v1/use-an-lpa/lpas/700000000013
+```
+
+That should be all you need to set it up locally.
+
+## Manual setup
+
+#### Set up local development environment outside of docker
+
+If you wish to develop against this environment and don't want to be dealing with docker containers then there
+is a bit more of an in depth set up process required.
 
 1. Create a virtual environment
     ```bash
@@ -48,30 +74,19 @@ LPA related functions.
    pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt
    ```
 
-
-
-#### Running flask app locally, aka the quick way
+1. Remove the codeartifact login
+   ```bash
+   rm ~/.pypirc
+   ```
+#### Running flask app locally
 
 1. `cd lambda_functions/v1/functions/lpa/app`
 1. `flask run`
 1. Endpoints should be available on `http://localhost:5000`
 
-#### Running everything in Docker
-
-1. Get your AWS credentials
-    ```bash
-   cd docs/support_scripts/aws
-
-   aws-vault exec identity -- go run ./getcreds.go
-    ```
-1. Copy & paste the output to set your AWS details as env vars
-    * This is because we are using custom packages hosted in AWS CodeArtifact and we need to log in to be able to pip install them
-1. In the root folder: `make everything` (you can also use `make just_api` if you are not interested in Pact)
-1. Endpoints should be available on `http://0.0.0.0:4343`
-
 ## Unit Tests
 
-1. [Set up local environment](#Set up)
+1. [Set up local environment](#set-up-local-development-environment-outside-of-docker)
 
 1. Run the tests command-line style
     ```bash
@@ -84,12 +99,12 @@ LPA related functions.
     ```
 1. Run the tests in PyCharm
 
-    *  Go to PyCharm > Preferences > Tools > Python Integrated Tools
+    * Go to PyCharm > Preferences > Tools > Python Integrated Tools
     * Set the Default Test Runner to 'pytest'
     * Right click on the tests folder (or single file) > 'Run pytest in tests'
 
 ## Integration Tests
-1. [Set up local environment](#Set up)
+1. [Set up local environment](#set-up-local-development-environment-outside-of-docker)
 
 1. Setup the tests:
      - In `integration_tests/v1/conftest.py`, check that the url you are pointing to is correct.
@@ -100,8 +115,6 @@ LPA related functions.
     ```bash
     aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
     ```
-
-
 
 ## PACT
 
@@ -135,7 +148,7 @@ http://localhost:9292/pacticipants/lpa_data/versions/x12345/tags/v1
 
 You can check it has worked here:
 
-`http://localhost:9292/matrix/provider/OPG%20Data/consumer/Complete%20the%20deputy%20report`
+`http://localhost:9292/matrix/provider/lpa_data_sirius/consumer/lpa_data`
 
 Run the secret creation against mock
 

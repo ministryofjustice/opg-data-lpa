@@ -3,23 +3,36 @@ THIS_FILE := $(lastword $(MAKEFILE_LIST))
 help:
 	make -pRrq  -f $(THIS_FILE) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
 
-everything:
-	docker-compose -f docker-compose.yml up -d --build
+create_secrets:
 	chmod +x mock_aws_services/create_secret.sh
+	sleep 5
 	mock_aws_services/create_secret.sh
-just_api:
-	docker-compose -f docker-compose.yml up --build -d mock-sirius motoserver api_gateway
-	chmod +x mock_aws_services/create_secret.sh
-	mock_aws_services/create_secret.sh
+	python3 mock_aws_services/create_secret.py
+
+build:
+	./build.sh
+
+up:
+	docker-compose -f docker-compose.yml up -d mock-sirius motoserver api_gateway
+
+up-all:
+	docker-compose -f docker-compose.yml up -d
 
 down:
 	docker-compose -f docker-compose.yml down $(c)
 
+setup: build up create_secrets
+
+setup-all: build up-all create_secrets
+
 destroy:
 	docker-compose down -v --rmi all --remove-orphans
+
 ps:
 	docker-compose -f docker-compose.yml ps
+
 login-api-gateway:
 	docker-compose -f docker-compose.yml exec api_gateway /bin/bash
+
 logs:
 	docker-compose -f docker-compose.yml logs --tail=100 -f $(c)

@@ -40,6 +40,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4584:4584"
+      - "4566:4566"
   redis:
     image: "redis:alpine"
     ports:
