@@ -12,11 +12,10 @@ import (
 func main() {
 
     roletoassume := "arn:aws:iam::288342028542:role/operator"
-//     roletoassume := "arn:aws:iam::492687888235:role/operator"
 
 	mysession := session.Must(session.NewSession())
-	digidepcreds := stscreds.NewCredentials(mysession, roletoassume)
-	cfg := aws.Config{Credentials: digidepcreds,Region: aws.String("eu-west-1")}
+	creds := stscreds.NewCredentials(mysession, roletoassume)
+	cfg := aws.Config{Credentials: creds,Region: aws.String("eu-west-1")}
 	sess := session.Must(session.NewSession(&cfg))
 	sessionstring, err := sess.Config.Credentials.Get()
 
@@ -30,7 +29,6 @@ func main() {
 	fmt.Println(accesskey)
 	fmt.Println(secret)
 	fmt.Println(session)
-	fmt.Println("Provider Name: ",sessionstring.ProviderName)
 
 }
 
