@@ -1,4 +1,4 @@
-version: '3'
+version: "3.8"
 
 services:
   postgres:
@@ -14,8 +14,8 @@ services:
     ports:
       - "9293:80"
       - "9292:9292"
-    links:
-      - postgres
+    # links:
+    #   - postgres
     environment:
       PACT_BROKER_DATABASE_USERNAME: postgres
       PACT_BROKER_DATABASE_PASSWORD: password
@@ -53,10 +53,10 @@ services:
         AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
         AWS_SESSION_TOKEN: $AWS_SESSION_TOKEN
     ports:
-      - "4343:4343"
-    links:
-      - mock-sirius
-      - motoserver
+      - "4242:4343"
+    # links:
+    #   - mock-sirius
+    #   - motoserver
     depends_on:
       - mock-sirius
       - motoserver
@@ -78,7 +78,3 @@ services:
       REQUEST_CACHING_TTL: 48
       REQUEST_CACHING_NAME: opg-data-lpa
       REDIS_URL: redis://redis:6379
-    networks:
-      default:
-        aliases:
-          - lpa.local

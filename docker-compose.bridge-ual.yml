@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  api_gateway:
+    networks:
+      - default
+      - opg-use-an-lpa_lpas-collection
+
+networks:
+  opg-use-an-lpa_lpas-collection:
+    external: true
