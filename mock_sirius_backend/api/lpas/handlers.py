@@ -48,7 +48,6 @@ def handle_lpa_get(query_params):
                 parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
             )
             case_id = "-".join(wrap(sirius_uid, 4))
-            print(case_id)
             for result in response_data["results"]:
                 if result["uId"] in case_id:
                     return 200, result
