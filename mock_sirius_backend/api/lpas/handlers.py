@@ -50,7 +50,8 @@ def handle_lpa_get(query_params):
             case_id = "-".join(wrap(sirius_uid, 4))
             for result in response_data["results"]:
                 if result["uId"] in case_id:
-                    return 200, result
+                    response = [result]
+                    return 200, response
 
         elif len(sirius_uid) == 3:
             print("oh no you crashed sirius")
