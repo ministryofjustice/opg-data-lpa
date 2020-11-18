@@ -18,11 +18,10 @@ def handle_lpa_get(query_params):
                 as_json=False,
             )
 
-            response_data["onlineLpaId"] = lpa_online_tool_id
-
-            response_data = [response_data]
-
-            return 200, response_data
+            for result in response_data["results"]:
+                if result["onlineLpaId"] in lpa_online_tool_id:
+                    response = [result]
+                    return 200, response
 
         elif lpa_online_tool_id[:5] == "crash":
             print("oh no you crashed sirius")
@@ -47,7 +46,9 @@ def handle_lpa_get(query_params):
             response_data = load_data(
                 parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
             )
+
             case_id = "-".join(wrap(sirius_uid, 4))
+
             for result in response_data["results"]:
                 if result["uId"] in case_id:
                     response = [result]
