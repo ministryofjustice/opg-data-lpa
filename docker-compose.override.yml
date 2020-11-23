@@ -1,0 +1,6 @@
+version: "3.8"
+
+services:
+  api_gateway:
+    ports:
+      - "4343:4343"
