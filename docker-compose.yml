@@ -76,3 +76,7 @@ services:
       REQUEST_CACHING_TTL: 48
       REQUEST_CACHING_NAME: opg-data-lpa
       REDIS_URL: redis://redis:6379
+    networks:
+      default:
+        aliases:
+          - lpa.local
