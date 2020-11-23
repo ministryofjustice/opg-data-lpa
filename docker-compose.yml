@@ -14,8 +14,8 @@ services:
     ports:
       - "9293:80"
       - "9292:9292"
-    # links:
-    #   - postgres
+    links:
+      - postgres
     environment:
       PACT_BROKER_DATABASE_USERNAME: postgres
       PACT_BROKER_DATABASE_PASSWORD: password
@@ -54,9 +54,9 @@ services:
         AWS_SESSION_TOKEN: $AWS_SESSION_TOKEN
     ports:
       - "4242:4343"
-    # links:
-    #   - mock-sirius
-    #   - motoserver
+    links:
+      - mock-sirius
+      - motoserver
     depends_on:
       - mock-sirius
       - motoserver
