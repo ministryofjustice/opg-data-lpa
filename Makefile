@@ -13,7 +13,7 @@ build:
 	./build.sh
 
 up:
-	docker-compose -f docker-compose.yml up -d --no-recreate mock-sirius motoserver api_gateway
+	docker-compose -f docker-compose.yml up -d mock-sirius motoserver api_gateway
 
 up-bridge-ual:
 	docker-compose -f docker-compose.yml -f docker-compose.bridge-ual.yml up -d --no-recreate mock-sirius motoserver api_gateway
@@ -40,4 +40,4 @@ login-api-gateway:
 	docker-compose -f docker-compose.yml exec api_gateway /bin/bash
 
 logs:
-	docker-compose -f docker-compose.yml logs -f $(c)
+	docker-compose -f docker-compose.yml logs --tail=100 -f $(c)
