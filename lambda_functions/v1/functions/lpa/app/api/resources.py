@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask import request, jsonify
 
 from .errors import error_message
-from .handlers import get_by_online_tool_id, get_by_sirius_uid, get_service_status
+from .handlers import get_by_online_tool_id, get_by_sirius_uid, get_service_status, request_code
 from .helpers import custom_logger
 
 
@@ -81,3 +81,11 @@ def handle_use_an_lpa(sirius_uid):
     response, status = get_by_sirius_uid(sirius_uid=sirius_uid)
 
     return jsonify(response), status
+
+
+@api.route("/use-an-lpa/lpas/requestCode", methods=["POST"])
+def handle_request_code():
+    body = request.json
+    logger.info(f"body: {body}")
+
+    return request_code(body)
