@@ -57,6 +57,24 @@ def get_by_sirius_uid(sirius_uid):
         abort(404)
 
 
+def request_code(body):
+    sirius_url = current_app.sirius.build_sirius_url(
+        endpoint="api/public/v1/lpas/requestCode"
+    )
+
+    sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
+        key=None,
+        url=sirius_url,
+        method="POST",
+        content_type="application/json",
+        data=body
+    )
+    if sirius_status_code != 204:
+        logger.error(f"Sirius error: {sirius_status_code}")
+
+    return sirius_response, sirius_status_code
+
+
 def get_service_status():
 
     sirius_status = (
