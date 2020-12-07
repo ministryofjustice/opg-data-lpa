@@ -64,8 +64,15 @@ workflows:
           filters: {branches:{only:[master]}}
 
       - terraform_action:
+          name: integration apply
+          requires: [development apply]
+          tf_command: apply --auto-approve
+          tf_workspace: integration
+          filters: {branches:{only:[master]}}
+
+      - terraform_action:
          name: preprod apply
-         requires: [development apply]
+         requires: [integration apply]
          tf_command: apply --auto-approve
          tf_workspace: preproduction
          filters: {branches:{only:[master]}}
@@ -75,20 +82,6 @@ workflows:
          type: approval
          requires: [preprod apply]
          filters: {branches:{only:[master]}}
-
-      - terraform_action:
-          name: integration apply
-          requires: [approve release to production]
-          tf_command: apply --auto-approve
-          tf_workspace: integration
-          filters: {branches:{only:[master]}}
-
-      - terraform_action:
-          name: integration apply
-          requires: [approve release to production]
-          tf_command: apply --auto-approve
-          tf_workspace: integration
-          filters: {branches:{only:[master]}}
 
       - terraform_action:
          name: production apply
