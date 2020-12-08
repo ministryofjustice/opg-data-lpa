@@ -22,8 +22,12 @@ LPA related functions.
 
 ## Running the API locally
 
-To run the API locally you should have aws-vault installed and have an account that has access to assume
-the operator role in sirius dev.
+To run the API locally you should have aws-vault installed and have an account that has any user in identity
+account (if you have access to aws then you have this).
+
+You also should have identity as an entry in your `~/.aws/config` file (opg staff will have set this up by default).
+
+You also need to have the AWS go sdk installed. If you do not then run `go get -u github.com/aws/aws-sdk-go/...`
 
 - Run full setup script from the make file:
 ```

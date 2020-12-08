@@ -60,6 +60,7 @@ services:
       - motoserver
     volumes:
       - ./lambda_functions/v1/:/var/www/lambda_functions/v1/
+      - ./mock_aws_services/create_secret.py:/var/www/mock_aws_services/create_secret.py
     environment:
       LOCAL_URL: host.docker.internal
       ENVIRONMENT: local

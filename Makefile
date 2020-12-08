@@ -7,7 +7,7 @@ create_secrets:
 	chmod +x mock_aws_services/create_secret.sh
 	sleep 5
 	mock_aws_services/create_secret.sh
-	python3 mock_aws_services/create_secret.py
+	docker-compose exec api_gateway python3 /var/www/mock_aws_services/create_secret.py
 
 build:
 	./build.sh

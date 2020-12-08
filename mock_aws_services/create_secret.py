@@ -2,7 +2,7 @@ import json
 from tenacity import retry
 import requests
 
-url = "http://0.0.0.0:4566/?Action=CreateSecret"
+url = "http://motoserver:4566/?Action=CreateSecret"
 
 
 payload = {
@@ -26,4 +26,9 @@ def insert_secret():
         print(response.text.encode("utf8"))
 
 
-insert_secret()
+def main():
+    insert_secret()
+
+
+if __name__ == "__main__":
+    main()

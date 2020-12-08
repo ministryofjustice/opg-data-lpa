@@ -1,4 +1,5 @@
 cd $(dirname $BASH_SOURCE)
+docker-compose down
 $(aws-vault exec identity -- go run ./docs/support_scripts/aws/getcreds.go)
 docker-compose -f docker-compose.yml build \
 --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
