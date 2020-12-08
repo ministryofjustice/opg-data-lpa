@@ -15,7 +15,6 @@ RUN aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --dom
 # Install Python Dependencies
 COPY requirements requirements
 RUN cat ./requirements/*.txt | uniq | grep -v "#" > ./requirements/local-requirements.txt
-RUN python -m pip install --upgrade pip
 RUN pip install -r ./requirements/local-requirements.txt
 
 EXPOSE 4343
