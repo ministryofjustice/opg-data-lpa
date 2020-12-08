@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-    roletoassume := "arn:aws:iam::288342028542:role/operator"
+    roletoassume := "arn:aws:iam::288342028542:role/code-artifact-development"
 
 	mysession := session.Must(session.NewSession())
 	creds := stscreds.NewCredentials(mysession, roletoassume)
