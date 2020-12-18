@@ -5,7 +5,7 @@ from flask import Response, jsonify, request
 import requests
 import logging
 
-from api.lpas.handlers import handle_lpa_get
+from api.lpas.handlers import handle_lpa_get, handle_request_letter
 
 
 def healthcheck():
@@ -13,12 +13,20 @@ def healthcheck():
 
 
 def getLpas(*args, **kwargs):
-
     status_code, response_message = handle_lpa_get(query_params=kwargs)
     logging.info(f"status_code: {status_code}")
     logging.info(f"response_message: {response_message}")
 
     return response_message, int(status_code)
+
+
+def requestCode(request):
+    status_code, response_message = handle_request_letter(caseUid=request['case_uid'], actorUid=request['actor_uid'])
+    logging.info(f"status_code: {status_code}")
+    logging.info(f"response_message: {response_message}")
+
+    return response_message, int(status_code)
+    return "", 204
 
 
 def createOrder():

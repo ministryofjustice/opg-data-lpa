@@ -64,3 +64,6 @@ def handle_lpa_get(query_params):
         else:
             print(f"{sirius_uid} is not a sirius uid")
             return 404, ""
+
+def handle_request_letter(caseUid, actorUid):
+    return 204, "{}"
