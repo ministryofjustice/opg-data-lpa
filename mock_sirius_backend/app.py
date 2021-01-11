@@ -26,7 +26,6 @@ def requestCode(request):
     logging.info(f"response_message: {response_message}")
 
     return response_message, int(status_code)
-    return "", 204
 
 
 def createOrder():
