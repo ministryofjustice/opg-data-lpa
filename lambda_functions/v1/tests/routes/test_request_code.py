@@ -29,7 +29,7 @@ def test_dict_body_works_as_json(
         lambda x: True,
     )
 
-    response = test_server_no_cache.post("/v1/use-an-lpa/lpas/requestCode", method='POST', data={"case_uid":70001,"actor_uid":70005})
+    response = test_server_no_cache.post("/v1/use-an-lpa/lpas/requestCode", method='POST', data={"case_uid": 70001, "actor_uid": 70005})
 
     assert response.status_code == 204
 
