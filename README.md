@@ -42,7 +42,7 @@ make setup-all
 ```
 curl -X GET http://localhost:4343/v1/healthcheck
 curl -X GET http://localhost:4343/v1/lpa-online-tool/lpas/A39721583862
-curl -X GET http://localhost:4343/v1/use-an-lpa/lpas/700000000013
+curl -X GET http://localhost:4343/v1/use-an-lpa/lpas/700000000047
 ```
 
 That should be all you need to set it up locally.
