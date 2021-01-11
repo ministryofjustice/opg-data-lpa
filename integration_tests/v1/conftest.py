@@ -22,6 +22,12 @@ opg_sirius_api_gateway_dev_aws = {
         "valid_sirius_uids": ["700000000013"],
         "invalid_sirius_uids": ["9"],
     },
+    "request_code_endpoint": {
+        "url": "https://3d9iqi6bq9.execute-api.eu-west-1.amazonaws.com/v1/lpas/requestCode",
+        "method": "POST",
+        "valid_sirius_uids": ["700000000013"],
+        "invalid_sirius_uids": ["9"],
+    },
 }
 
 
@@ -45,6 +51,12 @@ opg_data_lpa_dev_aws = {
         "valid_sirius_uids": ["700000000013"],
         "invalid_sirius_uids": ["9"],
     },
+    "request_code_endpoint": {
+        "url": "https://in318configobj.dev.lpa.api.opg.service.justice.gov.uk/v1/lpas/requestCode",
+        "method": "POST",
+        "valid_sirius_uids": ["700000000013"],
+        "invalid_sirius_uids": ["9"],
+    },
 }
 
 
@@ -57,18 +69,24 @@ opg_data_lpa_local_mock = {
     "online_tool_endpoint": {
         "url": "http://0.0.0.0:4343/v1/lpa-online-tool/lpas",
         "method": "GET",
-        "valid_lpa_online_tool_ids": ["A33718377316"],
+        "valid_lpa_online_tool_ids": ["A39721583862"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
         "url": "http://0.0.0.0:4343/v1/use-an-lpa/lpas",
         "method": "GET",
-        "valid_sirius_uids": ["700000000013"],
+        "valid_sirius_uids": ["700000000138"],
+        "invalid_sirius_uids": ["9"],
+    },
+    "request_code_endpoint": {
+        "url": "http://0.0.0.0:4343/v1/lpas/requestCode",
+        "method": "POST",
+        "valid_sirius_uids": ["700000000138"],
         "invalid_sirius_uids": ["9"],
     },
 }
 
-configs_to_test = [opg_data_lpa_dev_aws]
+configs_to_test = [opg_data_lpa_local_mock]
 
 
 def pytest_html_report_title(report):
