@@ -12,7 +12,7 @@ def test_request_code_route(test_config):
             test_config=test_config,
             url=f"{test_config['request_code_endpoint']['url']}",
             method=test_config["request_code_endpoint"]["method"],
-            payload={"case_uid": valid_id, "actor_uid": 70005}
+            payload={"case_uid": int(valid_id), "actor_uid": 70005}
         )
 
         assert status == 204
