@@ -79,7 +79,7 @@ opg_data_lpa_local_mock = {
         "invalid_sirius_uids": ["9"],
     },
     "request_code_endpoint": {
-        "url": "http://0.0.0.0:4343/v1/lpas/requestCode",
+        "url": "http://0.0.0.0:4343/v1/use-an-lpa/lpas/requestCode",
         "method": "POST",
         "valid_sirius_uids": ["700000000138"],
         "invalid_sirius_uids": ["9"],
@@ -155,7 +155,7 @@ def send_a_request(
     response = requests.request(method, url, auth=auth, data=body, headers=headers)
 
     print(f"response.status_code: {response.status_code}")
-    print(f"response: {json.dumps(response.json(), indent=4)}")
+    print(f"response: {json.dumps(response.json(), indent=4) if len(response.text) > 0 else ''}")
 
     return response.status_code, response.text
 
