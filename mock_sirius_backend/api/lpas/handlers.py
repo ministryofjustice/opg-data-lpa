@@ -85,5 +85,5 @@ def handle_request_letter(caseUid, actorUid):
                 if  attorney['uId'] == actor_id:
                     return 204, "{}"
 
-    return 404, "{}"
+    return 400, "{}"
     
