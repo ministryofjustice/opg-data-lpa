@@ -65,5 +65,25 @@ def handle_lpa_get(query_params):
             print(f"{sirius_uid} is not a sirius uid")
             return 404, ""
 
+
 def handle_request_letter(caseUid, actorUid):
-    return 204, "{}"
+
+    response_data = load_data(
+        parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
+    )
+
+    case_id = "-".join(wrap(str(caseUid), 4))
+    actor_id = "-".join(wrap(str(actorUid), 4))
+
+    for result in response_data["results"]:
+        if result["uId"] in case_id:
+
+            if result['donor']['uId'] == actor_id:
+                return 204, "{}"
+
+            for attorney in result['attorneys']:
+                if  attorney['uId'] == actor_id:
+                    return 204, "{}"
+
+    return 404, "{}"
+    
