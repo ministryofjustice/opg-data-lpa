@@ -106,7 +106,7 @@ class FlaskLambda(Flask):
             print("call as aws lambda")
             response = LambdaResponse()
 
-            body = next(self.wsgi_app(make_environ(event), response.start_response))
+            body = b''.join(self.wsgi_app(make_environ(event), response.start_response))
 
             return {
                 "statusCode": response.status,

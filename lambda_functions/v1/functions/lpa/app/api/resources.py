@@ -50,7 +50,7 @@ def handle500(error=None):
 
 @api.app_errorhandler(502)
 def handle502(error=None):
-    return error_message(500, "Unhandeled internal exception within OPG Gateway")
+    return error_message(500, "Unhandled internal exception within OPG Gateway")
 
 
 @api.app_errorhandler(504)
@@ -88,4 +88,6 @@ def handle_request_code():
     body = request.json
     logger.info(f"body: {body}")
 
-    return request_code(body)
+    response, status = request_code(body)
+    
+    return jsonify(response), status
