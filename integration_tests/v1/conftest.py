@@ -22,6 +22,14 @@ opg_sirius_api_gateway_dev_aws = {
         "valid_sirius_uids": ["700000000013"],
         "invalid_sirius_uids": ["9"],
     },
+    "request_code_endpoint": {
+        "url": "https://3d9iqi6bq9.execute-api.eu-west-1.amazonaws.com/v1/lpas/requestCode",
+        "method": "POST",
+        "valid_sirius_lpas": [
+            {"caseUid": 700000000013, "actorUid": 700000000997},
+            {"caseUid": 700000000013, "actorUid": 700000000971}
+        ],
+    },
 }
 
 
@@ -45,6 +53,14 @@ opg_data_lpa_dev_aws = {
         "valid_sirius_uids": ["700000000013"],
         "invalid_sirius_uids": ["9"],
     },
+    "request_code_endpoint": {
+        "url": "https://in318configobj.dev.lpa.api.opg.service.justice.gov.uk/v1/lpas/requestCode",
+        "method": "POST",
+        "valid_sirius_lpas": [
+            {"caseUid": 700000000013, "actorUid": 700000000997},
+            {"caseUid": 700000000013, "actorUid": 700000000971}
+        ],
+    },
 }
 
 
@@ -57,18 +73,26 @@ opg_data_lpa_local_mock = {
     "online_tool_endpoint": {
         "url": "http://0.0.0.0:4343/v1/lpa-online-tool/lpas",
         "method": "GET",
-        "valid_lpa_online_tool_ids": ["A33718377316"],
+        "valid_lpa_online_tool_ids": ["A39721583862"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
         "url": "http://0.0.0.0:4343/v1/use-an-lpa/lpas",
         "method": "GET",
-        "valid_sirius_uids": ["700000000013"],
+        "valid_sirius_uids": ["700000000138"],
         "invalid_sirius_uids": ["9"],
+    },
+    "request_code_endpoint": {
+        "url": "http://0.0.0.0:4343/v1/use-an-lpa/lpas/requestCode",
+        "method": "POST",
+        "valid_sirius_lpas": [
+            {"caseUid": 700000000138, "actorUid": 700000000997},
+            {"caseUid": 700000000138, "actorUid": 700000000971}
+        ],
     },
 }
 
-configs_to_test = [opg_data_lpa_dev_aws]
+configs_to_test = [opg_data_lpa_local_mock]
 
 
 def pytest_html_report_title(report):
@@ -137,7 +161,7 @@ def send_a_request(
     response = requests.request(method, url, auth=auth, data=body, headers=headers)
 
     print(f"response.status_code: {response.status_code}")
-    print(f"response: {json.dumps(response.json(), indent=4)}")
+    print(f"response: {json.dumps(response.json(), indent=4) if len(response.text) > 0 else ''}")
 
     return response.status_code, response.text
 

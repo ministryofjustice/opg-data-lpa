@@ -52,6 +52,34 @@ paths:
             $ref: '#/definitions/Error'
         '500':
           description: Unexpected error
+  /lpas/requestCode:
+    post:
+      x-swagger-router-controller: app
+      operationId: requestCode
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: request
+          schema:
+            type: object
+            required:
+              - case_uid
+              - actor_uid
+            properties:
+              actor_uid:
+                type: integer
+              case_uid:
+                type: integer
+      responses:
+        '204':
+          description: Letter was successfully enqueued
+          schema:
+            type: object
+        '400':
+          description: Invalid request
+        '500':
+          description: Unexpected error
   /orders:
     post:
       description: |

@@ -58,22 +58,28 @@ is a bit more of an in depth set up process required.
     ```bash
    python3 -m venv
    ```
+   
 1. Start the virtual env
-    ```bash
-    source venv/bin/activate
-    ```
-
-1. Add all the env vars:
-    ```bash
-    source .env
-    ```
-1. Install the dev requirements
-    * Log into CodeArtifact
-    ```bash
-    aws-vault exec sirius-dev -- aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
+   ```bash
+   source venv/bin/activate
    ```
 
-   * Install the the requirements
+1. Add all the env vars:
+   ```bash
+   source .env
+   ```
+1. Install the dev requirements
+   * Log into CodeArtifact
+   ```bash
+   aws-vault exec identity -- go run ./docs/support_scripts/aws/getcreds.go
+   aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
+   
+   # Or if you have stronger permissions
+   
+   aws-vault exec sirius-dev -- aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
+   ```
+
+   * Install the dev requirements
    ```bash
    pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt
    ```

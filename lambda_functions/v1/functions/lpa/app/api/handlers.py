@@ -2,6 +2,7 @@ from flask import current_app
 from werkzeug.exceptions import abort
 
 from .helpers import custom_logger
+import json
 
 
 from .sirius_helpers import (
@@ -67,7 +68,7 @@ def request_code(body):
         url=sirius_url,
         method="POST",
         content_type="application/json",
-        data=body
+        data=json.dumps(body) if isinstance(body, dict) else body
     )
     if sirius_status_code != 204:
         logger.error(f"Sirius error: {sirius_status_code}")

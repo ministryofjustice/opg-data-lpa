@@ -9,13 +9,13 @@
       "type": "string"
     },
     "receiptDate": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "registrationDate": {
-      "type": "null"
+      "type": ["string", "null"]
     },
     "rejectedDate": {
-      "type": "null"
+      "type": ["string", "null"]
     },
     "donor": {
       "type": "object",
@@ -39,7 +39,7 @@
           "type": "string"
         },
         "middlenames": {
-          "type": "string"
+          "type": ["string", "null"]
         },
         "surname": {
           "type": "string"
@@ -134,7 +134,7 @@
       "type": ["string", "null"]
     },
     "cancellationDate": {
-      "type": "null"
+      "type": ["string", "null"]
     },
     "attorneys": {
       "type": "array",
@@ -161,7 +161,7 @@
               "type": "string"
             },
             "middlenames": {
-              "type": "null"
+              "type": ["string", "null"]
             },
             "surname": {
               "type": "string"
@@ -218,7 +218,7 @@
               "type": "boolean"
             },
             "companyName": {
-              "type": "null"
+              "type": ["string", "null"]
             }
           },
           "required": [
@@ -270,7 +270,7 @@
               "type": "string"
             },
             "middlenames": {
-              "type": "null"
+              "type": ["string", "null"]
             },
             "surname": {
               "type": "string"
@@ -351,7 +351,7 @@
       "type": "string"
     },
     "lifeSustainingTreatment": {
-      "type": "null"
+      "type": ["string", "null"]
     }
   },
   "required": [
