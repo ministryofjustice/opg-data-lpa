@@ -89,5 +89,5 @@ def handle_request_code():
     logger.info(f"body: {body}")
 
     response, status = request_code(body)
-    
+
     return jsonify(response), status
