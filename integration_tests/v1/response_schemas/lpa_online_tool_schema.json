@@ -2,6 +2,12 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
+    "cancellationDate": {
+      "type": "string"
+    },
+    "invalidDate": {
+      "type": "string"
+    },
     "onlineLpaId": {
       "type": "string"
     },
@@ -16,13 +22,18 @@
     },
     "status": {
       "type": "string"
+    },
+    "withdrawnDate": {
+      "type": "string"
     }
   },
   "required": [
+    "invalidDate",
     "onlineLpaId",
     "receiptDate",
     "registrationDate",
     "rejectedDate",
-    "status"
+    "status",
+    "withdrawnDate"
   ]
 }
