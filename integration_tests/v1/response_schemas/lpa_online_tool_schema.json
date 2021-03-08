@@ -3,10 +3,10 @@
   "type": "object",
   "properties": {
     "cancellationDate": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "invalidDate": {
-      "type": "string"
+      "type": ["string", "null"]
     },
     "onlineLpaId": {
       "type": "string"
@@ -24,7 +24,7 @@
       "type": "string"
     },
     "withdrawnDate": {
-      "type": "string"
+      "type": ["string", "null"]
     }
   },
   "required": [
