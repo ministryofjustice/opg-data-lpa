@@ -79,6 +79,8 @@ is a bit more of an in depth set up process required.
    aws-vault exec sirius-dev -- aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
    ```
 
+   * Copy the output `export` statements into your shell to set AWS_* environment variables
+
    * Install the dev requirements
    ```bash
    pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt
