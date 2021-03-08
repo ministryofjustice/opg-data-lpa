@@ -31,11 +31,14 @@ def format_online_tool_response(sirius_response):
     lpa_data = sirius_response[0]
 
     result = {
+        "cancellationDate": lpa_data["cancellationDate"],
+        "invalidDate": lpa_data["invalidDate"],
         "onlineLpaId": lpa_data["onlineLpaId"],
         "receiptDate": lpa_data["receiptDate"],
         "registrationDate": lpa_data["registrationDate"],
         "rejectedDate": lpa_data["rejectedDate"],
         "status": lpa_data["status"],
+        "withdrawnDate": lpa_data["withdrawnDate"],
     }
 
     return result

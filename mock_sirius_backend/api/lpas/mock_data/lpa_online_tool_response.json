@@ -88,6 +88,7 @@
             "uId": "7000-0000-0047"
         },
         "id": 1,
+        "invalidDate": null,
         "lifeSustainingTreatment": null,
         "lpaDonorSignatureDate": "2020-07-15",
         "onlineLpaId": "A39721583862",
@@ -123,7 +124,8 @@
                 "uId": "7000-0000-0096"
             }
         ],
-        "uId": "7000-0000-0013"
+        "uId": "7000-0000-0013",
+        "withdrawnDate": null
     }
   ]
 }
