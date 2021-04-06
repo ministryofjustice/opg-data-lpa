@@ -1,3 +1,6 @@
+data "aws_availability_zones" "available" {
+}
+
 resource "aws_elasticache_replication_group" "lpa_redis" {
   automatic_failover_enabled    = local.account.elasticache_count == 1 ? false : true
   engine                        = "redis"
@@ -5,6 +8,8 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   replication_group_id          = "lpa-data-redis-${local.environment}"
   replication_group_description = "Replication Group for LPA Data"
   node_type                     = "cache.t2.small"
+  multi_az_enabled              = local.account.elasticache_count == 1 ? false : true
+  availability_zones            = data.aws_availability_zones.available.zone_ids
   number_cache_clusters         = local.account.elasticache_count
   parameter_group_name          = "default.redis5.0"
   port                          = 6379
