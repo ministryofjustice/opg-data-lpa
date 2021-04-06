@@ -90,9 +90,9 @@ func getFilePath(urlSuffix string) string {
 }
 
 func main() {
-	baseUrl := flag.String("base_url", "api.dev.sirius.opg.digital/v1", "a string")
+	baseUrl := flag.String("base_url", "dev.lpa.api.opg.service.justice.gov.uk/v1", "a string")
 	urlSuffix := flag.String("url_suffix", "lpa-online-tool/lpas", "a string")
-	batchSize := flag.Int("batch_size", 5, "an int")
+	batchSize := flag.Int("batch_size", 1, "an int")
 	numberOfBatches := flag.Int("number_of_batches", 2, "an int")
 	waitBetweenBatches := flag.Int("wait_between_batches", 2, "an int")
 	flag.Parse()

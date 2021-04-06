@@ -9,7 +9,7 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   replication_group_description = "Replication Group for LPA Data"
   node_type                     = "cache.t2.small"
   multi_az_enabled              = local.account.elasticache_count == 1 ? false : true
-  availability_zones            = data.aws_availability_zones.available.zone_ids
+  availability_zones            = local.account.elasticache_count == 1 ? ["eu-west-1a"] : data.aws_availability_zones.available.names
   number_cache_clusters         = local.account.elasticache_count
   parameter_group_name          = "default.redis5.0"
   port                          = 6379
@@ -17,10 +17,6 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   security_group_ids            = [aws_security_group.lpa_redis_sg.id]
   tags                          = local.default_tags
   apply_immediately             = true
-
-  lifecycle {
-    ignore_changes = [number_cache_clusters]
-  }
 }
 
 resource "aws_security_group" "lpa_redis_sg" {

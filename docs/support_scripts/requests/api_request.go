@@ -26,7 +26,7 @@ func main() {
 
 	flag.Parse()
 
-  roleToAssume := "arn:aws:iam::" + *account + ":role/" + *role
+    roleToAssume := "arn:aws:iam::" + *account + ":role/" + *role
 
 	var url string = ""
 
