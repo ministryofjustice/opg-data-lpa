@@ -32,6 +32,7 @@ def format_online_tool_response(sirius_response):
 
     result = {
         "cancellationDate": lpa_data["cancellationDate"],
+        "dispatchDate": lpa_data["dispatchDate"],
         "invalidDate": lpa_data["invalidDate"],
         "onlineLpaId": lpa_data["onlineLpaId"],
         "receiptDate": lpa_data["receiptDate"],
