@@ -355,7 +355,7 @@ definitions:
         example: '2018-06-30'
       status:
         type: string
-        enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Suspended, With COP, Withdrawn, Registered]
+        enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Suspended, With COP, Withdrawn, Registered, Payment Pending]
         minLength: 1
         maxLength: 10
       caseAttorneySingular:
