@@ -260,7 +260,7 @@ paths:
                     example: '2018-06-30'
                   status:
                     type: string
-                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered]
+                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered, Payment Pending]
         '404':
           description: An LPA with the passed ID Not Found
         '400':
@@ -360,7 +360,7 @@ paths:
                     example: '2018-06-30'
                   status:
                     type: string
-                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered]
+                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered, Payment Pending]
         '404':
           description: An LPA with the passed ID Not Found
         '400':
