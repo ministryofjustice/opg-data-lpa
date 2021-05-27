@@ -28,7 +28,7 @@
           "middlenames": "",
           "salutation": "",
           "surname": "sanderson",
-          "systemStatus": true,
+          "systemStatus": false,
           "uId": "7000-0000-0815"
         },
         {
@@ -126,7 +126,7 @@
       "registrationDate": "2020-05-14",
       "rejectedDate": null,
       "replacementAttorneys": [],
-      "status": "Perfect",
+      "status": "Registered",
       "trustCorporations": [],
       "uId": "7000-0000-0047"
     },
@@ -158,7 +158,7 @@
           "middlenames": "",
           "salutation": "Mr",
           "surname": "Matthews",
-          "systemStatus": true,
+          "systemStatus": false,
           "uId": "7000-0000-0997"
         },
         {
@@ -183,7 +183,7 @@
           "middlenames": "",
           "salutation": "Miss",
           "surname": "Matthews",
-          "systemStatus": true,
+          "systemStatus": false,
           "uId": "7000-0011-6322"
         }
       ],
@@ -340,7 +340,7 @@
         "companyName": null,
         "dob": "1948-11-01",
         "email": "orethalang@opgtest.com",
-        "firstname": "Oretha",
+        "firstname": "Babara",
         "id": 43,
         "linked": [
           {
@@ -348,9 +348,9 @@
             "uId": "7000-0000-1219"
           }
         ],
-        "middlenames": "Veronica",
-        "salutation": "Mr",
-        "surname": "Lang",
+        "middlenames": "Suzanne",
+        "salutation": "Mrs",
+        "surname": "Gilson",
         "uId": "7000-0000-1219"
       },
       "id": 9,
@@ -358,7 +358,7 @@
       "lpaDonorSignatureDate": "2019-10-05",
       "onlineLpaId": "A48218451245",
       "receiptDate": "2014-09-26",
-      "registrationDate": null,
+      "registrationDate": "2020-09-26",
       "rejectedDate": null,
       "replacementAttorneys": [],
       "status": "Cancelled",

@@ -211,6 +211,7 @@ paths:
                   - rejectedDate
                   - status
                   - withdrawnDate
+                  - dispatchDate
                 properties:
                   cancellationDate:
                     type: string
@@ -249,11 +250,17 @@ paths:
                     type: string
                     format: date
                     nullable: true
-                    description: The date the LPA was registered
+                    description: The date the LPA was withdrawn
+                    example: '2018-06-30'
+                  dispatchDate:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: The date the LPA was dispatched
                     example: '2018-06-30'
                   status:
                     type: string
-                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered]
+                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered, Payment Pending]
         '404':
           description: An LPA with the passed ID Not Found
         '400':
@@ -316,6 +323,7 @@ paths:
                   - rejectedDate
                   - status
                   - withdrawnDate
+                  - dispatchDate
                 properties:
                   onlineLpaId:
                     type: string
@@ -338,9 +346,21 @@ paths:
                     nullable: true
                     description: The date the LPA was registered
                     example: '2018-06-30'
+                  withdrawnDate:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: The date the LPA was withdrawn
+                    example: '2018-06-30'
+                  dispatchDate:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: The date the LPA was dispatched
+                    example: '2018-06-30'
                   status:
                     type: string
-                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered]
+                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered, Payment Pending]
         '404':
           description: An LPA with the passed ID Not Found
         '400':
