@@ -6,7 +6,7 @@ on:
       - "main"
   schedule:
     # Every Monday, at 15:40 UTC
-    - cron: '40 15 * * 1'
+    - cron: '40 15 * * 2'
 
 jobs:
   run:
