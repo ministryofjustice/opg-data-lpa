@@ -1,6 +1,6 @@
 # opg-data-lpa
 
-[![CircleCI](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/master.svg?style=svg))](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/master)
+[![CircleCI](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/master.svg?style=svg)](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/master)
 
 ## Purpose
 
