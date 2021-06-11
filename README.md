@@ -1,5 +1,7 @@
 # opg-data-lpa
 
+[![CircleCI](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/master.svg?style=svg)](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/master)
+
 ## Purpose
 
 OPG Data LPA is a repo to build a rest API for interactions with LPA. Currently it includes GET endpoints for
@@ -46,6 +48,26 @@ curl -X GET http://localhost:4343/v1/use-an-lpa/lpas/700000000047
 ```
 
 That should be all you need to set it up locally.
+
+## CI Pipeline
+
+When working on a ticket you should name your branch as the jira identifier of the ticket you are working on.
+
+When you push your changes to your branch and create a PR then the CircleCi workflow will run and create a branch
+based environment in aws. This includes an api gateway instance, the lambda function and all the relevant DNS to access
+the environment.
+
+You can test against the endpoints by assuming a sirius dev role and hitting the following endpoint (replacing branch_name and api_path:
+
+```
+https://branch_name.dev.lpa.api.opg.service.justice.gov.uk/v1/api_path
+```
+
+Once merged you can do the same tests against dev by removing the branch_name portion of above url.
+
+Environments get destroyed overnight and by default your environment is protected for the first night's destroy but
+will be cleaned up on the subsequent night. If you want to work on it longer either recreate it by rerunning the workflow
+or  change the protection TTL in dynamodb.
 
 ## Manual setup
 
