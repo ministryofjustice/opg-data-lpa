@@ -93,7 +93,8 @@ is a bit more of an in depth set up process required.
 1. Install the dev requirements
    * Log into CodeArtifact
    ```bash
-   aws-vault exec identity -- go run ./docs/support_scripts/aws/getcreds.go
+   cd ./docs/support_scripts/aws
+   aws-vault exec identity -- go run ./getcreds.go
    aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
 
    # Or if you have stronger permissions
@@ -102,6 +103,8 @@ is a bit more of an in depth set up process required.
    ```
 
    * Copy the output `export` statements into your shell to set AWS_* environment variables
+
+   * Return to the root directory
 
    * Install the dev requirements
    ```bash
