@@ -27,7 +27,7 @@ opg_sirius_api_gateway_dev_aws = {
         "method": "POST",
         "valid_sirius_lpas": [
             {"caseUid": 700000000013, "actorUid": 700000000997},
-            {"caseUid": 700000000013, "actorUid": 700000000971}
+            {"caseUid": 700000000013, "actorUid": 700000000971},
         ],
     },
 }
@@ -58,7 +58,7 @@ opg_data_lpa_dev_aws = {
         "method": "POST",
         "valid_sirius_lpas": [
             {"caseUid": 700000000013, "actorUid": 700000000997},
-            {"caseUid": 700000000013, "actorUid": 700000000971}
+            {"caseUid": 700000000013, "actorUid": 700000000971},
         ],
     },
 }
@@ -87,7 +87,7 @@ opg_data_lpa_local_mock = {
         "method": "POST",
         "valid_sirius_lpas": [
             {"caseUid": 700000000138, "actorUid": 700000000997},
-            {"caseUid": 700000000138, "actorUid": 700000000971}
+            {"caseUid": 700000000138, "actorUid": 700000000971},
         ],
     },
 }
@@ -123,11 +123,13 @@ def send_a_request(
         body = None
 
     if "CI" in os.environ:
-        role_name = "sirius-ci"
+        role_name = "integrations-ci"
     else:
         role_name = "operator"
 
-    boto3.setup_default_session(region_name="eu-west-1",)
+    boto3.setup_default_session(
+        region_name="eu-west-1",
+    )
 
     client = boto3.client("sts")
     client.get_caller_identity()["Account"]
@@ -155,13 +157,19 @@ def send_a_request(
     token = credentials.token
 
     auth = AWS4Auth(
-        access_key, secret_key, "eu-west-1", "execute-api", session_token=token,
+        access_key,
+        secret_key,
+        "eu-west-1",
+        "execute-api",
+        session_token=token,
     )
 
     response = requests.request(method, url, auth=auth, data=body, headers=headers)
 
     print(f"response.status_code: {response.status_code}")
-    print(f"response: {json.dumps(response.json(), indent=4) if len(response.text) > 0 else ''}")
+    print(
+        f"response: {json.dumps(response.json(), indent=4) if len(response.text) > 0 else ''}"
+    )
 
     return response.status_code, response.text
 
