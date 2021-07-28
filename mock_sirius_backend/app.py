@@ -21,7 +21,11 @@ def getLpas(*args, **kwargs):
 
 
 def requestCode(request):
-    status_code, response_message = handle_request_letter(caseUid=request['case_uid'], actorUid=request['actor_uid'])
+    status_code, response_message = handle_request_letter(
+        caseUid=request.get('case_uid', None),
+        actorUid=request.get('actor_uid', None),
+        notes=request.get('notes', None)
+    )
     logging.info(f"status_code: {status_code}")
     logging.info(f"response_message: {response_message}")
 

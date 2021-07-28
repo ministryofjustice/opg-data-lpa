@@ -66,7 +66,7 @@ def handle_lpa_get(query_params):
             return 404, ""
 
 
-def handle_request_letter(caseUid, actorUid):
+def handle_request_letter(caseUid, actorUid, notes):
 
     response_data = load_data(
         parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
@@ -78,6 +78,9 @@ def handle_request_letter(caseUid, actorUid):
     for result in response_data["results"]:
         if result["uId"] in case_id:
 
+            if notes != None:
+                return 200, "{\"queuedForCleansing\":true}"
+
             if result['donor']['uId'] == actor_id:
                 return 204, "{}"
 
@@ -86,4 +89,3 @@ def handle_request_letter(caseUid, actorUid):
                     return 204, "{}"
 
     return 400, "{}"
-    

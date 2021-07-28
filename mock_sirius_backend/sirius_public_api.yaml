@@ -65,13 +65,24 @@ paths:
             type: object
             required:
               - case_uid
-              - actor_uid
             properties:
-              actor_uid:
-                type: integer
               case_uid:
                 type: integer
+              actor_uid:
+                type: integer
+              notes:
+                type: string
       responses:
+        '200':
+          description: Letter was successfully enqueued or cleanse process started
+          schema:
+            type: object
+            required:
+              - queuedForCleansing
+            properties:
+              queuedForCleansing:
+                type: boolean
+                description: Whether the request was queued for cleansing
         '204':
           description: Letter was successfully enqueued
           schema:
