@@ -1,6 +1,6 @@
 # opg-data-lpa
 
-[![CircleCI](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/master.svg?style=svg)](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/master)
+[![CircleCI](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/main)
 
 ## Purpose
 
@@ -118,8 +118,8 @@ is a bit more of an in depth set up process required.
 #### Running flask app locally
 
 1. `cd lambda_functions/v1/functions/lpa/app`
-1. `flask run`
-1. Endpoints should be available on `http://localhost:5000`
+2. `FLASK_APP=lpa SIRIUS_BASE_URL=http://localhost:5001 flask run`
+3. Endpoints should be available on `http://localhost:5000`
 
 ## Unit Tests
 
