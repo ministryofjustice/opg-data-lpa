@@ -277,6 +277,8 @@ paths:
           description: The Sirius data provider timed out
   /use-an-lpa/lpas/{lpa_online_tool_id}:
     get:
+      tags:
+        - "use-a-lpa"
       security:
         - sigv4: []
       x-amazon-apigateway-request-validator: "all"
@@ -377,6 +379,8 @@ paths:
           description: The Sirius data provider timed out
   /use-an-lpa/lpas/requestCode:
     post:
+      tags:
+        - "use-a-lpa"
       security:
         - sigv4: []
       x-amazon-apigateway-request-validator: "all"
@@ -393,23 +397,39 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              type: object
-              required:
-                - case_uid
-                - actor_uid
-              properties:
-                actor_uid:
-                  type: integer
-                case_uid:
-                  type: integer
+            schema: 
+              oneOf:
+                - $ref: "#/components/schemas/LetterRequest"
+                - $ref: "#/components/schemas/LetterRequestWithCleanse"
+            examples:
+              request:
+                summary: as letter request
+                value:
+                  case_uid: 700000000000
+                  actor_uid: 700000000000
+              cleanse:
+                summary: as cleanse request
+                value:
+                  case_uid: 700000000000
+                  notes: "Name: Example\nPostcode: EX4 MPL\nEmail: example@example.org"
       responses:
+        '200':
+          description: Letter was successfully enqueued or cleanse process started
+          schema:
+            type: object
+            required:
+              - queuedForCleansing
+            properties:
+              queuedForCleansing:
+                type: boolean
+                description: Whether the request was queued for cleansing
         '204':
           description: Letter was successfully enqueued
         '400':
           description: Invalid request
         '500':
           description: Unexpected error
+          
 components:
   securitySchemes:
     sigv4:
@@ -430,6 +450,27 @@ components:
         cache-status:
           type: string
           example: "OK"
+    LetterRequest:
+      type: object
+      required:
+        - case_uid
+        - actor_uid
+      properties:
+        actor_uid:
+          type: integer
+        case_uid:
+          type: integer
+    LetterRequestWithCleanse:
+      type: object
+      required:
+        - case_uid
+        - notes
+      properties:
+        notes:
+          type: string
+          maxLength: 1000
+        case_uid:
+          type: integer      
     Error400:
       type: object
       required:

@@ -70,7 +70,7 @@ def request_code(body):
         content_type="application/json",
         data=json.dumps(body) if isinstance(body, dict) else body
     )
-    if sirius_status_code != 204:
+    if sirius_status_code != 204 and sirius_status_code != 200:
         logger.error(f"Sirius error: {sirius_status_code}")
 
     return sirius_response, sirius_status_code
