@@ -10,7 +10,7 @@ create_secrets:
 	docker-compose exec api_gateway python3 /var/www/mock_aws_services/create_secret.py
 
 build:
-	./build.sh
+	docker-compose build
 
 up:
 	docker-compose up -d mock-sirius motoserver api_gateway
