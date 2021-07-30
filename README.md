@@ -24,13 +24,6 @@ LPA related functions.
 
 ## Running the API locally
 
-To run the API locally you should have aws-vault installed and have an account that has any user in identity
-account (if you have access to aws then you have this).
-
-You also should have identity as an entry in your `~/.aws/config` file (opg staff will have set this up by default).
-
-You also need to have the AWS go sdk installed. If you do not then run `go get -u github.com/aws/aws-sdk-go/...`
-
 - Run full setup script from the make file:
 ```
 make setup
@@ -91,30 +84,11 @@ is a bit more of an in depth set up process required.
    source .env
    ```
 1. Install the dev requirements
-   * Log into CodeArtifact
-   ```bash
-   cd ./docs/support_scripts/aws
-   aws-vault exec identity -- go run ./getcreds.go
-   aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
-
-   # Or if you have stronger permissions
-
-   aws-vault exec sirius-dev -- aws codeartifact login --tool pip --repository opg-pip-shared-code-dev --domain opg-moj --domain-owner 288342028542 --region eu-west-1
-   ```
-
-   * Copy the output `export` statements into your shell to set AWS_* environment variables
-
-   * Return to the root directory
-
    * Install the dev requirements
    ```bash
    pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt
    ```
 
-1. Remove the codeartifact login
-   ```bash
-   rm ~/.pypirc
-   ```
 #### Running flask app locally
 
 1. `cd lambda_functions/v1/functions/lpa/app`
