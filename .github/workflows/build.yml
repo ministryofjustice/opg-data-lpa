@@ -102,8 +102,9 @@ jobs:
         run: |
           terraform plan -input=false
   
-    pact_verification:
-    parameters:
+  pact_verification:
+    runs-on: ubuntu-latest
+    needs: terraform_checks
     env:
       # GIT_CONSUMER: << pipeline.parameters.consumer >>
       # GIT_COMMIT_CONSUMER: << pipeline.parameters.consumerversion >>
@@ -113,19 +114,6 @@ jobs:
       PACT_BROKER_HTTP_AUTH_USER: admin
     steps:
       - uses: actions/checkout@v2
-      - run:
-          name: Set BASH_ENV
-          command: ./set_env.sh >> $BASH_ENV
-          working_directory: ~/project/.circleci
-      - run:
-          name: spin up mock rest api
-          command: echo "Insert command to spin up env here"
-          background: true
-      - run:
-          name: check mock env started correctly
-          command: |
-            sleep 3
-            echo "Insert commands to check mock env running correctly here"
       - name: Pact Install
         run: |
           wget https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.82.3/pact-1.82.3-linux-x86_64.tar.gz
@@ -136,7 +124,7 @@ jobs:
           ./login_code_artifact.sh -a 288342028542 -t pip
 
       - name: install ci requirements
-        working_directory: ~/project/pact
+        working-directory: ./pact
         run: | 
           pip3 install -r requirements.txt
           
