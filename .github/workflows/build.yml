@@ -1,0 +1,157 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - main
+
+defaults:
+ run:
+  shell: bash
+
+jobs:
+  build_and_test:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: unfor19/install-aws-cli-action@v1
+
+      - name: Code Artifact login
+        run: |
+          ./login_code_artifact.sh -a 288342028542 -t pip
+      - name: Install requirements
+        working-directory: ./docs/ci_scripts
+        run: |
+          ./install_requirements.sh -d lambda_functions -r dev-requirements.txt
+
+      - name: Run Flask8
+        run: |
+          flake8 --ignore Q000 lambda_functions
+      - name: Test Coverage
+        run: |
+          python -m pytest lambda_functions/v1/tests --cov=lambda_functions/v1/functions/lpa/app/api --cov-fail-under=80
+      - name: Run unit tests
+        run: |
+          python -m pytest -m "not (smoke_test or pact_test)"
+      
+      - name: Install lambda requirements
+        working-directory: ./docs/ci_scripts
+        run: |
+          ./install_requirements.sh \
+          -d lambda_functions \
+          -r requirements.txt \
+          -p lambda_layers/python/lib/python3.7/site-packages
+      
+      - name: Create Artifact
+        run: |
+          chmod -R 755 ./lambda_functions
+          zip -r9 /tmp/opg-data-lpa.zip .
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: opg-data-lpa
+          path: /tmp/opg-data-lpa.zip
+
+  terraform_checks:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    env:
+      TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - environment: "development"
+
+          - environment: "preproduction"
+
+          - environment: "production"
+    steps:
+      - name: Retrieve Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: opg-data-lpa
+      - name: unzip
+        run: |
+          unzip ./opg-data-lpa.zip -d .
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.14.11
+      
+      - name: Setup environment
+        run: |
+          echo TF_WORKSPACE=${{ matrix.environment }} >> $GITHUB_ENV
+      - name: Terraform init
+        working-directory: ./terraform/environment
+        run: |
+          terraform init
+      
+      - name: Terraform formatting
+        working-directory: ./terraform/environment
+        run: |
+          terraform fmt -diff -check -recursive
+      - name: Validate Terraform
+        working-directory: ./terraform/environment
+        run: |
+          terraform validate
+      
+      - name: Terraform plan
+        working-directory: ./terraform/environment
+        run: |
+          terraform plan -input=false
+  
+    pact_verification:
+    parameters:
+    env:
+      # GIT_CONSUMER: << pipeline.parameters.consumer >>
+      # GIT_COMMIT_CONSUMER: << pipeline.parameters.consumerversion >>
+      PACT_PROVIDER: lpa
+      PACT_CONSUMER: sirius
+      PACT_BROKER_BASE_URL: https://pact-broker.api.opg.service.justice.gov.uk
+      PACT_BROKER_HTTP_AUTH_USER: admin
+    steps:
+      - uses: actions/checkout@v2
+      - run:
+          name: Set BASH_ENV
+          command: ./set_env.sh >> $BASH_ENV
+          working_directory: ~/project/.circleci
+      - run:
+          name: spin up mock rest api
+          command: echo "Insert command to spin up env here"
+          background: true
+      - run:
+          name: check mock env started correctly
+          command: |
+            sleep 3
+            echo "Insert commands to check mock env running correctly here"
+      - name: Pact Install
+        run: |
+          wget https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.82.3/pact-1.82.3-linux-x86_64.tar.gz
+          tar xzf pact-1.82.3-linux-x86_64.tar.gz
+      - name: Code artifact login
+        working-directory: ./docs/ci_scripts
+        run: |
+          ./login_code_artifact.sh -a 288342028542 -t pip
+
+      - name: install ci requirements
+        working_directory: ~/project/pact
+        run: | 
+          pip3 install -r requirements.txt
+          
+      - name: verify pact
+        working-directory: ./pact
+        run: |
+          echo ${API_VERSION}
+          python check_pact_deployable.py \
+          --provider_base_url="http://localhost:4343" \
+          --pact_broker_url="${PACT_BROKER_BASE_URL}" \
+          --broker_user_name="admin" \
+          --broker_secret_name="pactbroker_admin" \
+          --consumer_pacticipant="${PACT_CONSUMER}" \
+          --provider_pacticipant="${PACT_PROVIDER}" \
+          --api_version="${API_VERSION}" \
+          --git_commit_consumer="${GIT_COMMIT_CONSUMER}" \
+          --git_commit_provider="${GIT_COMMIT_PROVIDER}" || echo "Failed but because consumer pacts not set up yet"
+         
