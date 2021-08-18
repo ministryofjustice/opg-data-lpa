@@ -46,16 +46,14 @@ jobs:
       - name: Setup Workspace
         run: echo TF_WORKSPACE=${{ matrix.tf_workspace }} >> $GITHUB_ENV
       
-      - name: Terraform init
-        working-directory: ./infrastructure/terraform
-        run: |
-          terraform init
       - name: Plan ${{ matrix.tf_workspace }}
+        working-directory: ./terraform/environment
         run: |
           terraform init -input=false
           terraform plan -lock-timeout=300s -input=false -parallelism=30
 
       - name: Apply ${{ matrix.tf_workspace }}
+        working-directory: ./terraform/environment
         if: github.ref == 'refs/heads/main'
         run: |
           terraform apply -lock-timeout=300s -input=false -auto-approve -parallelism=30
