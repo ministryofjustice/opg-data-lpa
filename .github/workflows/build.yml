@@ -17,9 +17,11 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: unfor19/install-aws-cli-action@v1
       - name: Install requirements
-        working-directory: ./docs/ci_scripts
         run: |
-          ./install_requirements.sh -d lambda_functions -r dev-requirements.txt
+          for i in $(ls -d lambda_functions/*/ | awk -F'/' '{print $2}')
+          do
+            pip3 install -r ./lambda_functions/"${i}"/requirements/dev-requirements.txt
+          done
 
       - name: Run Flask8
         run: |
@@ -32,16 +34,17 @@ jobs:
           python -m pytest -m "not (smoke_test or pact_test)"
       
       - name: Install lambda requirements
-        working-directory: ./docs/ci_scripts
         run: |
-          ./install_requirements.sh \
-          -d lambda_functions \
-          -r requirements.txt \
-          -p lambda_layers/python/lib/python3.7/site-packages
+          for i in $(ls -d lambda_functions/*/ | awk -F'/' '{print $2}' | grep '^v[1-9]\+')
+          do
+            export LAYER_PATH=lambda_functions/"${i}"/lambda_layers/python/lib/python3.7/site-packages
+            pip3 install -r lambda_functions/"${i}"/requirements/requirements.txt --target ./$LAYER_PATH/
+          done
       
       - name: Create Artifact
         run: |
           chmod -R 755 ./lambda_functions
+          cd ./lambda_functions
           zip -r9 /tmp/opg-data-lpa.zip .
       
       - name: Upload artifact
@@ -65,14 +68,8 @@ jobs:
 
           - environment: "production"
     steps:
-      - name: Retrieve Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: opg-data-lpa
-      - name: unzip
-        run: |
-          unzip ./opg-data-lpa.zip -d .
-
+      - uses: actions/checkout@v2 
+      
       - name: Configure AWS Credentials For Terraform
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -84,7 +81,14 @@ jobs:
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 0.14.11
-      
+      - name: Retrieve Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: opg-data-lpa
+      - name: unzip
+        run: |
+          unzip ./opg-data-lpa.zip -d .
+
       - name: Setup environment
         run: |
           echo TF_WORKSPACE=${{ matrix.environment }} >> $GITHUB_ENV
@@ -173,12 +177,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
           role-session-name: GitHubActionsTerraform
-      - name: Download Artifact
+      - name: Retrieve Artifact
         uses: actions/download-artifact@v2
         with:
           name: opg-data-lpa
       - name: Unzip Artifact
-        run: unzip ./opg-data-lpa-codes.zip -d .
+        run: unzip ./opg-data-lpa.zip -d .
       - name: Setup Workspace
         run: echo TF_WORKSPACE= ${{ steps.extract_branch.outputs.branch }}
       - name: Terraform init

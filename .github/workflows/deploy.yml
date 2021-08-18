@@ -27,12 +27,12 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - name: Install lambda requirements
-        working-directory: ./docs/ci_scripts
         run: |
-          ./install_requirements.sh \
-          -d lambda_functions \
-          -r requirements.txt \
-          -p lambda_layers/python/lib/python3.7/site-packages
+          for i in $(ls -d lambda_functions/*/ | awk -F'/' '{print $2}' | grep '^v[1-9]\+')
+          do
+            export LAYER_PATH=lambda_functions/"${i}"/lambda_layers/python/lib/python3.7/site-packages
+            pip3 install -r lambda_functions/"${i}"/requirements/requirements.txt --target ./$LAYER_PATH/
+          done
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 0.14.11
