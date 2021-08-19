@@ -1,0 +1,60 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+defaults:
+ run:
+  shell: bash
+
+jobs:
+  terraform_apply:
+    runs-on: "ubuntu-latest"
+    env:
+      TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - tf_workspace: "development"
+
+          - tf_workspace: "preproduction"
+
+          - tf_workspace: "production"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install lambda requirements
+        run: |
+          for i in $(ls -d lambda_functions/*/ | awk -F'/' '{print $2}' | grep '^v[1-9]\+')
+          do
+            export LAYER_PATH=lambda_functions/"${i}"/lambda_layers/python/lib/python3.7/site-packages
+            pip3 install -r lambda_functions/"${i}"/requirements/requirements.txt --target ./$LAYER_PATH/
+          done
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.14.11
+      - name: Configure AWS Credentials For Terraform
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+          role-session-name: GitHubActionsTerraform
+      - name: Setup Workspace
+        run: echo TF_WORKSPACE=${{ matrix.tf_workspace }} >> $GITHUB_ENV
+      
+      - name: Plan ${{ matrix.tf_workspace }}
+        working-directory: ./terraform/environment
+        run: |
+          terraform init -input=false
+          terraform plan -lock-timeout=300s -input=false -parallelism=30
+
+      - name: Apply ${{ matrix.tf_workspace }}
+        working-directory: ./terraform/environment
+        if: github.ref == 'refs/heads/main'
+        run: |
+          terraform apply -lock-timeout=300s -input=false -auto-approve -parallelism=30
+
