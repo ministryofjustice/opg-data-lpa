@@ -18,7 +18,6 @@ variable "accounts" {
       vpc_id             = string
       session_data       = string
       target_environment = string
-      threshold          = number
       elasticache_count  = number
     })
   )
