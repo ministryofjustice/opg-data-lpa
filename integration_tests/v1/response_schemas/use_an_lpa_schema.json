@@ -352,6 +352,9 @@
     },
     "lifeSustainingTreatment": {
       "type": ["string", "null"]
+    },
+    "lpaIsCleansed": {
+      "type": "boolean"
     }
   },
   "required": [
@@ -378,6 +381,7 @@
     "applicationHasRestrictions",
     "applicationHasGuidance",
     "lpaDonorSignatureDate",
-    "lifeSustainingTreatment"
+    "lifeSustainingTreatment",
+    "lpaIsCleansed"
   ]
 }

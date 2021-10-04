@@ -313,6 +313,7 @@ definitions:
       - applicationHasGuidance
       - lpaDonorSignatureDate
       - lifeSustainingTreatment
+      - lpaIsCleansed
       - onlineLpaId
       - attorneyActDecisions
       - donor
@@ -394,6 +395,8 @@ definitions:
       lifeSustainingTreatment:
         type: string
         enum: ['Option A', 'Option B', null]
+      lpaIsCleansed:
+        type: boolean
       onlineLpaId:
         type: string
         example: ABC123
