@@ -260,7 +260,7 @@ paths:
                     example: '2018-06-30'
                   status:
                     type: string
-                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered, Payment Pending]
+                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered, Payment Pending, Return - unpaid]
         '404':
           description: An LPA with the passed ID Not Found
         '400':
@@ -362,7 +362,7 @@ paths:
                     example: '2018-06-30'
                   status:
                     type: string
-                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered, Payment Pending]
+                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered, Payment Pending, Return - unpaid]
         '404':
           description: An LPA with the passed ID Not Found
         '400':
@@ -397,7 +397,7 @@ paths:
         required: true
         content:
           application/json:
-            schema: 
+            schema:
               oneOf:
                 - $ref: "#/components/schemas/LetterRequest"
                 - $ref: "#/components/schemas/LetterRequestWithCleanse"
@@ -429,7 +429,7 @@ paths:
           description: Invalid request
         '500':
           description: Unexpected error
-          
+
 components:
   securitySchemes:
     sigv4:
@@ -470,7 +470,7 @@ components:
           type: string
           maxLength: 1000
         case_uid:
-          type: integer      
+          type: integer
     Error400:
       type: object
       required:
