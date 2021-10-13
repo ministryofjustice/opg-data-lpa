@@ -2,6 +2,7 @@ from ..utilities import load_data
 
 from textwrap import wrap
 
+import json
 
 def handle_lpa_get(query_params):
 
@@ -79,7 +80,7 @@ def handle_request_letter(caseUid, actorUid, notes):
         if result["uId"] in case_id:
 
             if notes != None:
-                return 200, "{\"queuedForCleansing\":true}"
+                return 200, json.loads('{"queuedForCleansing":true}')
 
             if result['donor']['uId'] == actor_id:
                 return 204, "{}"
