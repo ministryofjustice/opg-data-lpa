@@ -98,6 +98,7 @@
         "rejectedDate": null,
         "replacementAttorneys": [],
         "status": "Pending",
+        "statusDate": "2014-10-15",
         "trustCorporations": [
             {
                 "addresses": [

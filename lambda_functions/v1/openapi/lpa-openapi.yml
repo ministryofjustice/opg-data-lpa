@@ -210,6 +210,7 @@ paths:
                   - registrationDate
                   - rejectedDate
                   - status
+                  - statusDate
                   - withdrawnDate
                   - dispatchDate
                 properties:
@@ -245,6 +246,12 @@ paths:
                     format: date
                     nullable: true
                     description: The date the LPA was registered
+                    example: '2018-06-30'
+                  statusDate:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: The date the LPA's status was last changed
                     example: '2018-06-30'
                   withdrawnDate:
                     type: string
@@ -324,6 +331,7 @@ paths:
                   - registrationDate
                   - rejectedDate
                   - status
+                  - statusDate
                   - withdrawnDate
                   - dispatchDate
                 properties:
@@ -347,6 +355,12 @@ paths:
                     format: date
                     nullable: true
                     description: The date the LPA was registered
+                    example: '2018-06-30'
+                  statusDate:
+                    type: string
+                    format: date
+                    nullable: true
+                    description: The date the LPA's status was last changed
                     example: '2018-06-30'
                   withdrawnDate:
                     type: string
