@@ -305,6 +305,7 @@ definitions:
       - withdrawnDate
       - dispatchDate
       - status
+      - statusDate
       - caseAttorneySingular
       - caseAttorneyJointlyAndSeverally
       - caseAttorneyJointly
@@ -360,6 +361,11 @@ definitions:
         type: string
         format: date
         description: The date the LPA was marked invalid
+        example: '2018-06-30'
+      statusDate:
+        type: string
+        format: date
+        description: The date the LPA's status was last changed
         example: '2018-06-30'
       withdrawnDate:
         type: string

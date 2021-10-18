@@ -26,6 +26,9 @@
     "status": {
       "type": "string"
     },
+    "statusDate": {
+      "type": ["string", "null"]
+    },
     "withdrawnDate": {
       "type": ["string", "null"]
     }
@@ -38,6 +41,7 @@
     "registrationDate",
     "rejectedDate",
     "status",
+    "statusDate",
     "withdrawnDate"
   ]
 }
