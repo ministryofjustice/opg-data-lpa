@@ -39,6 +39,7 @@ def format_online_tool_response(sirius_response):
         "registrationDate": lpa_data["registrationDate"],
         "rejectedDate": lpa_data["rejectedDate"],
         "status": lpa_data["status"],
+        "statusDate": lpa_data["statusDate"],
         "withdrawnDate": lpa_data["withdrawnDate"],
     }
 
