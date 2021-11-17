@@ -6,8 +6,8 @@ on:
 
 
 defaults:
-  working-directory: ./terraform/Environment
   run:
+    working-directory: ./terraform/Environment
     shell: bash
 
 jobs:
