@@ -184,7 +184,7 @@ jobs:
         with:
           name: opg-data-lpa
       - name: Unzip Artifact
-        run: unzip ./opg-data-lpa.zip -d .
+        run: unzip -o ./opg-data-lpa.zip -d ./lambda_functions
       - name: Terraform init
         working-directory: ./terraform/environment
         env:

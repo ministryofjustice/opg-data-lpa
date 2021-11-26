@@ -54,7 +54,7 @@ resource "aws_lambda_permission" "lambda_permission" {
 resource "aws_lambda_layer_version" "lambda_layer" {
   filename         = data.archive_file.lambda_layer_archive.output_path
   source_code_hash = data.archive_file.lambda_layer_archive.output_base64sha256
-  layer_name       = "lpa_requirements_${var.account.target_environment}"
+  layer_name       = "lpa_requirements_${var.environment}"
 
   compatible_runtimes = ["python3.7"]
 
