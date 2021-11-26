@@ -19,6 +19,7 @@ resource "aws_api_gateway_method_settings" "global_gateway_settings" {
 resource "aws_api_gateway_domain_name" "lpa_data" {
   domain_name              = trimsuffix(local.a_record, ".")
   regional_certificate_arn = local.certificate_arn
+  security_policy          = "TLS_1_2"
 
   depends_on = [local.certificate]
   endpoint_configuration {
@@ -51,4 +52,3 @@ resource "aws_api_gateway_base_path_mapping" "mapping" {
   domain_name = aws_api_gateway_domain_name.lpa_data.domain_name
   base_path   = module.deploy_v1.deployment.stage_name
 }
-
