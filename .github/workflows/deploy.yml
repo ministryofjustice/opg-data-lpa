@@ -26,6 +26,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
       - name: Install lambda requirements
         run: |
           for i in $(ls -d lambda_functions/*/ | awk -F'/' '{print $2}' | grep '^v[1-9]\+')
@@ -45,7 +47,7 @@ jobs:
           role-session-name: GitHubActionsTerraform
       - name: Setup Workspace
         run: echo TF_WORKSPACE=${{ matrix.tf_workspace }} >> $GITHUB_ENV
-      
+
       - name: Plan ${{ matrix.tf_workspace }}
         working-directory: ./terraform/environment
         run: |
@@ -57,4 +59,3 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           terraform apply -lock-timeout=300s -input=false -auto-approve -parallelism=30
-
