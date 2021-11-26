@@ -165,7 +165,7 @@ jobs:
           terraform_version: 1.0.0
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_HEAD_REF#refs/heads/})"
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_HEAD_REF#refs/heads/} | tr '[:upper:]' '[:lower:]')"
         id: extract_branch
       - name: Install workspace manager
         run: |
@@ -185,14 +185,16 @@ jobs:
           name: opg-data-lpa
       - name: Unzip Artifact
         run: unzip ./opg-data-lpa.zip -d .
-      - name: Setup Workspace
-        run: echo TF_WORKSPACE= ${{ steps.extract_branch.outputs.branch }}
       - name: Terraform init
         working-directory: ./terraform/environment
+        env:
+          TF_WORKSPACE: default
         run: |
           terraform init
       - name: Terraform apply
         working-directory: ./terraform/environment
+        env:
+          TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch }}
         run: |
           terraform apply --auto-approve
       - name: Protect Workspace
