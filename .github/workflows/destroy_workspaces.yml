@@ -6,15 +6,14 @@ on:
 
 
 defaults:
-  working-directory: ./terraform/Environment
   run:
     shell: bash
+    working-directory: ./terraform/environment
 
 jobs:
   destroy_workspace:
     name: Destroy
     runs-on: "ubuntu-latest"
-    needs: terraform_checks
     steps:
       - uses: actions/checkout@v2
       - uses: hashicorp/setup-terraform@v1
