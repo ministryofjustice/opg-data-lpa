@@ -101,12 +101,12 @@ is a bit more of an in depth set up process required.
 
 1. Run the tests command-line style
     ```bash
-    python -m pytest -m "not (smoke_test or pact_test)"
+    python3 -m pytest -m "not (smoke_test or pact_test)"
     ```
 
 1. Run the tests command-line style with coverage
     ```bash
-    python -m pytest lambda_functions/v1/tests --cov=lambda_functions/v1/functions/lpa/app/api --cov-fail-under=80
+    python3 -m pytest lambda_functions/v1/tests --cov=lambda_functions/v1/functions/lpa/app/api --cov-fail-under=80
     ```
 1. Run the tests in PyCharm
 
