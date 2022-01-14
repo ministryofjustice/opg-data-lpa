@@ -37,6 +37,9 @@ x-amazon-apigateway-gateway-responses:
   DEFAULT_5XX:
     responseTemplates:
       application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-SERVERERROR", "title":$context.error.messageString, "detail":"Something unexpected happened internally", "meta": {"x-ray": "$context.xrayTraceId"} }}'
+  DELETED_RECORD:
+    responseTemplates:
+      application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-DELETED_RECORD", "title":$context.error.messageString, "detail": "", "meta": {"x-ray": "$context.xrayTraceId"} }}'
   EXPIRED_TOKEN:
     responseTemplates:
       application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-EXPIRED_TOKEN", "title":$context.error.messageString, "detail": "", "meta": {"x-ray": "$context.xrayTraceId"} }}'
@@ -274,6 +277,8 @@ paths:
           description: Bad request
         '403':
           description: Authentication failed
+        '410':
+          description: An LPA with the passed ID has been deleted from The Sirius data provider
         '429':
           description: API Gateway throttling limit exceeded
         '500':
@@ -383,6 +388,8 @@ paths:
           description: Bad request
         '403':
           description: Authentication failed
+        '410':
+          description: An LPA with the passed ID has been deleted from The Sirius data provider
         '429':
           description: API Gateway throttling limit exceeded
         '500':
@@ -603,6 +610,37 @@ components:
               detail:
                 type: string
                 example: "That URL is not a valid route, or the item resource does not exist"
+              meta:
+                type: object
+                properties:
+                  x-ray:
+                    type: string
+                    example: "93c330d4-7d84-4c1b-8fdb-54cec5bfe747"
+    Error410:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+              - code
+              - title
+            properties:
+              id:
+                type: string
+                example: "A123BCD"
+              code:
+                type: string
+                example: "OPGDATA-API-DELETED_RECORD"
+              title:
+                type: string
+                example: "An LPA with the passed ID has been deleted from The Sirius data provider"
+              detail:
+                type: string
+                example: ""
               meta:
                 type: object
                 properties:

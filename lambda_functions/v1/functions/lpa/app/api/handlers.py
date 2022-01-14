@@ -32,6 +32,8 @@ def get_by_online_tool_id(lpa_online_tool_id):
         else:
             logger.error(f"Sirius data empty")
             abort(404)
+    elif sirius_status_code in [410]:
+            return {}, 410
     else:
         logger.error(f"Sirius error: {sirius_status_code}")
         abort(404)
@@ -53,6 +55,8 @@ def get_by_sirius_uid(sirius_uid):
         else:
             logger.error(f"Sirius data empty")
             abort(404)
+    elif sirius_status_code in [410]:
+            return {}, 410
     else:
         logger.error(f"Sirius error: {sirius_status_code}")
         abort(404)
