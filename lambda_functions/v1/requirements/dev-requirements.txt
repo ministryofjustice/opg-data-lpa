@@ -14,4 +14,4 @@ localstack-client==1.10
 tenacity==6.3.1
 redis==3.5.3
 fakeredis==1.4.5
-opg-sirius-service==0.1.0
+opg-sirius-service==0.1.1
