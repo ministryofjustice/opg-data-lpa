@@ -14,7 +14,7 @@ resource "aws_lambda_function" "lambda_function" {
   role             = aws_iam_role.lambda_role.arn
   handler          = var.handler
   runtime          = "python3.7"
-  timeout          = 10
+  timeout          = 15
   depends_on       = [aws_cloudwatch_log_group.lambda]
   layers           = [aws_lambda_layer_version.lambda_layer.arn]
   vpc_config {
@@ -33,6 +33,7 @@ resource "aws_lambda_function" "lambda_function" {
       API_VERSION        = var.openapi_version
       SESSION_DATA       = var.account.session_data
       REQUEST_CACHING    = "enabled"
+      REQUEST_TIMEOUT    = "10"
       REDIS_URL          = var.redis_url
     }
   }
