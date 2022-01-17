@@ -1,7 +1,7 @@
-#Update this date to trigger update of layers: 20200807
+#Update this date to trigger update of layers: 20220117
 Flask==1.1.2
-Werkzeug==1.0.1
-redis==3.5.3
 localstack-client==1.10
+opg-sirius-service==2.0.0
+redis==3.5.3
 requests==2.25.1
-opg-sirius-service==0.1.1
+Werkzeug==1.0.1
