@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask import request, jsonify
 
 from .errors import error_message
-from .handlers import get_by_online_tool_id, get_by_sirius_uid, get_service_status, request_code
+from .handlers import get_by_online_tool_id, get_by_sirius_uid, get_by_meris_id, get_service_status, request_code
 from .helpers import custom_logger
 
 
