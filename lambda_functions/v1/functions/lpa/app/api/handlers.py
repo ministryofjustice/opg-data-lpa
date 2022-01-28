@@ -57,6 +57,7 @@ def get_by_sirius_uid(sirius_uid):
         logger.error(f"Sirius error: {sirius_status_code}")
         abort(404)
 
+
 def get_by_meris_id(meris_id):
     sirius_url = generate_sirius_url(meris_id=meris_id)
 
@@ -76,6 +77,7 @@ def get_by_meris_id(meris_id):
     else:
         logger.error(f"Sirius error: {sirius_status_code}")
         abort(404)
+
 
 def request_code(body):
     sirius_url = current_app.sirius.build_sirius_url(
