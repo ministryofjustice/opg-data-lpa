@@ -57,6 +57,25 @@ def get_by_sirius_uid(sirius_uid):
         logger.error(f"Sirius error: {sirius_status_code}")
         abort(404)
 
+def get_by_meris_id(meris_id):
+    sirius_url = generate_sirius_url(meris_id=meris_id)
+
+    sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
+        key=meris_id, url=sirius_url, method="GET"
+    )
+    if sirius_status_code in [200]:
+        if len(sirius_response) > 0:
+            try:
+                return format_uid_response(sirius_response=sirius_response), 200
+            except Exception as e:
+                logger.error(f"Error formatting sirius response: {e}")
+                abort(404)
+        else:
+            logger.error(f"Sirius data empty")
+            abort(404)
+    else:
+        logger.error(f"Sirius error: {sirius_status_code}")
+        abort(404)
 
 def request_code(body):
     sirius_url = current_app.sirius.build_sirius_url(

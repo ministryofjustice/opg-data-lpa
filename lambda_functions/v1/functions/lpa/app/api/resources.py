@@ -78,7 +78,10 @@ def handle_lpa_online_tool(lpa_online_tool_id):
 def handle_use_an_lpa(sirius_uid):
     logger.info(f"sirius_uid: {sirius_uid}")
 
-    response, status = get_by_sirius_uid(sirius_uid=sirius_uid)
+    if len(sirius_uid) == 7:
+        response, status = get_by_meris_id(meris_id=sirius_uid)
+    else:
+        response, status = get_by_sirius_uid(sirius_uid=sirius_uid)
 
     return jsonify(response), status
 

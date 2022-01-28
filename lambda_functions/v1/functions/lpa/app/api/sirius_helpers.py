@@ -5,13 +5,15 @@ from .helpers import custom_logger
 logger = custom_logger()
 
 
-def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
+def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None, meris_id=None):
     sirius_api_version = "v1"
     sirius_api_url = f"api/public/{sirius_api_version}/lpas"
     if lpa_online_tool_id:
         sirius_url_params = {"lpa-online-tool-id": lpa_online_tool_id}
     elif sirius_uid:
         sirius_url_params = {"uid": sirius_uid}
+    elif meris_id:
+        sirius_url_params = {"meris-id": meris_id}
 
     logger.info(f"sirius_api_url: {sirius_api_url}")
 
