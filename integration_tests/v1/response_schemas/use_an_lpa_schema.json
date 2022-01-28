@@ -355,6 +355,9 @@
     },
     "lpaIsCleansed": {
       "type": "boolean"
+    },
+    "caseRecNumber": {
+      "type": ["string", "null"]
     }
   },
   "required": [
@@ -382,6 +385,7 @@
     "applicationHasGuidance",
     "lpaDonorSignatureDate",
     "lifeSustainingTreatment",
-    "lpaIsCleansed"
+    "lpaIsCleansed",
+    "caseRecNumber"
   ]
 }

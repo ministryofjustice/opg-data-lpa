@@ -322,6 +322,7 @@ definitions:
       - replacementAttorneys
       - certificateProviders
       - trustCorporations
+      - caseRecNumber
     properties:
       id:
         type: integer
@@ -427,6 +428,9 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/CaseActor'
+      caseRecNumber:
+        type: string
+        example: '2000001'
   CaseActor:
     type: object
     required:
