@@ -93,6 +93,17 @@ def patched_send_request_to_sirius(monkeypatch):
 
             return 200, response_data
 
+        elif test_id[0] == "2":
+            print(f"test_id is a valid sirius uid: {test_id}")
+
+            response_data = load_data("use_an_lpa_response.json", as_json=False)
+
+            response_data["uid"] = "-".join(wrap(test_id, 4))
+
+            response_data = [response_data]
+
+            return 200, response_data
+
         elif test_id[0] == "A":
             print(f"test_id is a valid lpa-online-tool id: {test_id}")
 
