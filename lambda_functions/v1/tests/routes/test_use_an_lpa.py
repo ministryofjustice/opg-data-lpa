@@ -19,8 +19,8 @@ import json
         ("crash_sirius_with_500", False, 404, False),
         ("2000000", True, 200, True),
         ("2000000", False, 200, True),
-        ("3000000", True, 404, False),
-        ("3000000", False, 404, False),
+        ("4000000", True, 404, False),
+        ("4000000", False, 404, False),
     ],
 )
 def test_use_an_lpa_route_with_cache(
