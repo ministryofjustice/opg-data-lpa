@@ -83,7 +83,8 @@
         "middlenames": "Lucille",
         "salutation": "Mrs",
         "surname": "changeme",
-        "uId": "7000-0000-0047"
+        "uId": "7000-0000-0047",
+        "caseRecNumber": "2000000"
     },
     "id": 1,
     "lifeSustainingTreatment": null,
@@ -122,6 +123,5 @@
             "uId": "7000-0000-0096"
         }
     ],
-    "uId": "7000-0000-0013",
-    "caseRecNumber": "2000000"
+    "uId": "7000-0000-0013"
 }

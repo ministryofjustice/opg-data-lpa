@@ -10,7 +10,7 @@ def handle_lpa_get(query_params):
         meris_id = str(query_params["merisid"])
         print(f"using use my lpa with id {meris_id}")
 
-        if meris_id[0] == "2":
+        if meris_id[0] == "2" or meris_id[0] == "3":
             print(f"test_id is a valid meris id: {meris_id}")
 
             response_data = load_data(

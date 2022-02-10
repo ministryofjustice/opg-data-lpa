@@ -93,8 +93,8 @@ def patched_send_request_to_sirius(monkeypatch):
 
             return 200, response_data
 
-        elif test_id[0] == "2":
-            print(f"test_id is a valid sirius uid: {test_id}")
+        elif test_id[0] == "2" or test_id[0] == "3":
+            print(f"test_id is a valid meris id: {test_id}")
 
             response_data = load_data("use_an_lpa_response.json", as_json=False)
 
