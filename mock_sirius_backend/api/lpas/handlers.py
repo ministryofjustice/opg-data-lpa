@@ -1,9 +1,37 @@
 from ..utilities import load_data
 
 from textwrap import wrap
+import logging
 
 
 def handle_lpa_get(query_params):
+    if "merisid" in query_params:
+
+        meris_id = str(query_params["merisid"])
+        print(f"using use my lpa with id {meris_id}")
+
+        if meris_id[0] == "2":
+            print(f"test_id is a valid meris id: {meris_id}")
+
+            response_data = load_data(
+                parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
+            )
+            for result in response_data["results"]:
+                if result["donor"]["caseRecNumber"] in meris_id:
+                    response = [result]
+                    return 200, response
+
+        elif len(meris_id) == 3:
+            print("oh no you crashed sirius")
+
+            response_code = meris_id
+
+            return response_code, f"Sirius broke bad - error {response_code}"
+
+        else:
+            print(f"{meris_id} is not a found in Sirius")
+            return 404, ""
+
 
     if "lpaonlinetoolid" in query_params:
         lpa_online_tool_id = query_params["lpaonlinetoolid"]
@@ -35,7 +63,6 @@ def handle_lpa_get(query_params):
             return 404, ""
 
     elif "uid" in query_params:
-
         sirius_uid = str(query_params["uid"])
 
         print(f"using use my lpa with id {sirius_uid}")

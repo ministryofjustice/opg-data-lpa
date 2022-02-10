@@ -27,6 +27,8 @@ paths:
         <br />
         Retrieve LPA by Barcode: `/api/public/lpas?lpa-online-tool-id={barcode}&fields=status` e.g. `/api/public/lpas?lpa-online-tool-id=A12547854123&fields=status`
         <br />
+        Retrieve LPA by Meris ID:  `/api/public/lpas?meris-id={id}` e.g. `/api/public/lpas?meris-id=200001`
+        <br />
         Retrieve LPA by ID:  `/api/public/lpas?id={id}` e.g. `/api/public/lpas?id=1`
       x-swagger-router-controller: app
       operationId: getLpas
@@ -35,6 +37,11 @@ paths:
             in: query
             type: string
             description: Barcode ID related to LPA
+            required: false
+          - name: meris-id
+            in: query
+            type: integer
+            description: Meris IS related to LPA, example `200001`
             required: false
           - name: uid
             in: query
