@@ -438,7 +438,7 @@ components:
       type: array
       minItems: 0
       items:
-        $ref: '#/definitions/Lpa'
+        $ref: '#/components/schemas/Lpa'
     Lpa:
       type: object
       required:
@@ -553,26 +553,26 @@ components:
           type: string
           enum: ['When Registered', 'Loss of capacity', null]
         donor:
-          $ref: '#/definitions/Donor'
+          $ref: '#/components/schemas/Donor'
         attorneys:
           type: array
           items:
-            $ref: '#/definitions/CaseActor'
+            $ref: '#/components/schemas/CaseActor'
         replacementAttorneys:
           type: array
           items:
-            $ref: '#/definitions/CaseActor'
+            $ref: '#/components/schemas/CaseActor'
         trustCorporations:
           type: array
           items:
-            $ref: '#/definitions/CaseActor'
+            $ref: '#/components/schemas/CaseActor'
         certificateProviders:
           type: array
           items:
-            $ref: '#/definitions/CaseActor'
+            $ref: '#/components/schemas/CaseActor'
     Donor:
       allOf:
-        - $ref: '#/definitions/CaseActor'
+        - $ref: '#/components/schemas/CaseActor'
         - type: object
           required:
             - linked
@@ -652,7 +652,7 @@ components:
         addresses:
           type: array
           items:
-            $ref: '#/definitions/Address'
+            $ref: '#/components/schemas/Address'
     Address:
       required:
         - id
