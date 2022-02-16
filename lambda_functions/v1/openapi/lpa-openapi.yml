@@ -300,13 +300,15 @@ paths:
         type: "aws_proxy"
       parameters:
         - in: path
-          name: lpa_online_tool_id
+          name: uid
           schema:
             type: string
-            pattern: '^A\d{11}$'
+            pattern: '(^7\d{11}$|^(2|3)\d{6}$)'
           required: true
-          description: Online Tool ID
-          example: A12345678987
+          description: Reference Number representing either an LPA Uid or a Meris Id
+          examples:
+            meris: 3000000
+            lpauid: 700000000054
       responses:
         '200':
           description: LPA details returned for the requested ID
