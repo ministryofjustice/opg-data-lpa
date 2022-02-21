@@ -16,14 +16,15 @@ def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
     logger.info(f"sirius_api_url: {sirius_api_url}")
 
     url = current_app.sirius.build_sirius_url(
-        endpoint=sirius_api_url, url_params=sirius_url_params,
+        endpoint=sirius_api_url,
+        url_params=sirius_url_params,
     )
 
     return url
 
 
 def format_uid_response(sirius_response):
-    return sirius_response[0]
+    return sirius_response
 
 
 def format_online_tool_response(sirius_response):
