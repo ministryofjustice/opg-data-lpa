@@ -94,9 +94,6 @@
         },
         "companyName": {
           "type": "null"
-        },
-        "caseRecNumber": {
-          "type": ["string", "null"]
         }
       },
       "required": [
@@ -109,8 +106,7 @@
         "middlenames",
         "surname",
         "addresses",
-        "companyName",
-        "caseRecNumber"
+        "companyName"
       ]
     },
     "applicationType": {
@@ -359,6 +355,9 @@
     },
     "lpaIsCleansed": {
       "type": "boolean"
+    },
+    "caseRecNumber": {
+      "type": ["string", "null"]
     }
   },
   "required": [
@@ -386,6 +385,7 @@
     "applicationHasGuidance",
     "lpaDonorSignatureDate",
     "lifeSustainingTreatment",
-    "lpaIsCleansed"
+    "lpaIsCleansed",
+    "caseRecNumber"
   ]
 }

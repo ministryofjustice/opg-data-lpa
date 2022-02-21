@@ -17,7 +17,7 @@ def handle_lpa_get(query_params):
                 parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
             )
             for result in response_data["results"]:
-                if result["donor"]["caseRecNumber"] in meris_id:
+                if result["caseRecNumber"] in meris_id:
                     response = [result]
                     return 200, response
 

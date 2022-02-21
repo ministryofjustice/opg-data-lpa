@@ -89,7 +89,6 @@
         }
       ],
       "donor": {
-        "caseRecNumber": "2000000",
         "addresses": [
           {
             "addressLine1": "81 Front Street",
@@ -130,7 +129,8 @@
       "replacementAttorneys": [],
       "status": "Registered",
       "trustCorporations": [],
-      "uId": "7000-0000-0047"
+      "uId": "7000-0000-0047",
+      "caseRecNumber": "2000000"
     },
     {
       "applicationHasGuidance": true,
@@ -604,7 +604,8 @@
       "replacementAttorneys": [],
       "status": "Registered",
       "trustCorporations": [],
-      "uId": "7000-0000-0435"
+      "uId": "7000-0000-0435",
+      "caseRecNumber": "2000000"
     },
     {
       "applicationHasGuidance": false,
