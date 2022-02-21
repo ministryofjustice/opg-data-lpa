@@ -24,7 +24,7 @@ def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
 
 
 def format_uid_response(sirius_response):
-    return sirius_response
+    return sirius_response[0]
 
 
 def format_online_tool_response(sirius_response):
