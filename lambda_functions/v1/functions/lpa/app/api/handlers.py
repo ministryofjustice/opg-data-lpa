@@ -6,7 +6,6 @@ import json
 
 
 from .sirius_helpers import (
-    format_uid_response,
     format_online_tool_response,
     generate_sirius_url,
 )
