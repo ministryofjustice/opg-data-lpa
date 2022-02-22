@@ -16,10 +16,11 @@ def handle_lpa_get(query_params):
             response_data = load_data(
                 parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
             )
+            response = []
             for result in response_data["results"]:
-                if result["caseRecNumber"] in meris_id:
-                    response = [result]
-                    return 200, response
+                if meris_id in result["caseRecNumber"]:
+                    response.append(result)
+            return 200, response
 
         elif len(meris_id) == 3:
             print("oh no you crashed sirius")

@@ -47,7 +47,7 @@ def test_use_an_lpa_route_with_cache(
     if cache_expected:
         redis_entry = mock_redis.get(name=f"opg-data-lpa-local-{sirius_uid}")
         print(f"redis_entry: {redis_entry}")
-        assert response.get_json() == json.loads(redis_entry)[0]
+        assert response.get_json() == json.loads(redis_entry)
     else:
         assert mock_redis.exists(f"opg-data-lpa-local-{sirius_uid}") == 0
 
