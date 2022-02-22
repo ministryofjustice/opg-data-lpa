@@ -46,7 +46,7 @@ def get_by_sirius_uid(sirius_uid):
     if sirius_status_code in [200]:
         if len(sirius_response) > 0:
             try:
-                return format_uid_response(sirius_response=sirius_response), 200
+                return sirius_response, 200
             except Exception as e:
                 logger.error(f"Error formatting sirius response: {e}")
                 abort(404)
