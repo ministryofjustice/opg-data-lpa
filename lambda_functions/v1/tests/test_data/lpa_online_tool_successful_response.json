@@ -1,0 +1,28 @@
+{
+    "lpa": [
+        {
+            "cancellationDate": null,
+            "dispatchDate": null,
+            "invalidDate": null,
+            "onlineLpaId": "A39721583862",
+            "receiptDate": "2017-04-11",
+            "registrationDate": null,
+            "rejectedDate": null,
+            "status": "Pending",
+            "statusDate": "2017-04-21",
+            "withdrawnDate": null
+        },
+        {
+            "cancellationDate": null,
+            "dispatchDate": null,
+            "invalidDate": null,
+            "onlineLpaId": "A39721583864",
+            "receiptDate": "2017-04-11",
+            "registrationDate": null,
+            "rejectedDate": null,
+            "status": "Pending",
+            "statusDate": "2017-04-21",
+            "withdrawnDate": null
+        }
+    ]
+}
