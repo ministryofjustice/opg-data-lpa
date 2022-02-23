@@ -13,8 +13,8 @@ import json
     [
         ("A39721583862", True, 200, True),  # pragma: allowlist secret
         ("A39721583862", False, 200, True),  # pragma: allowlist secret
-        ("A39721583867", True, 410, True), # pragma: allowlist secret
-        ("A39721583867", False, 410, True), # pragma: allowlist secret
+        ("A39721583867", True, 410, True),  # pragma: allowlist secret
+        ("A39721583867", False, 410, True),  # pragma: allowlist secret
         ("B39721583863", True, 404, False),  # pragma: allowlist secret
         ("B39721583863", False, 404, False),  # pragma: allowlist secret
         ("crash_sirius_with_500", True, 404, False),  # pragma: allowlist secret
