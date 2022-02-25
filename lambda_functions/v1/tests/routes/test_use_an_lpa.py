@@ -41,11 +41,11 @@ def test_use_an_lpa_route_with_cache(
 
     assert response.status_code == expected_status_code
     if cache_expected:
-        redis_entry = mock_redis.get(name=f"opg-data-lpa-local-{sirius_uid}")
+        redis_entry = mock_redis.get(name=f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}")
         print(f"redis_entry: {redis_entry}")
         assert response.get_json() == json.loads(redis_entry)[0]
     else:
-        assert mock_redis.exists(f"opg-data-lpa-local-{sirius_uid}") == 0
+        assert mock_redis.exists(f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}") == 0
 
 
 @pytest.mark.parametrize(
@@ -79,4 +79,4 @@ def test_use_an_lpa_route_no_cache(
     mock_redis = fakeredis.FakeStrictRedis(server=mock_redis_server)
 
     assert response.status_code == expected_status_code
-    assert mock_redis.exists(f"opg-data-lpa-local-{sirius_uid}") == 0
+    assert mock_redis.exists(f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}") == 0
