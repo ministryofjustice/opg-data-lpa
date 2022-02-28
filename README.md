@@ -64,6 +64,8 @@ or  change the protection TTL in dynamodb.
 
 ## Manual setup
 
+
+
 #### Set up local development environment outside of docker
 
 If you wish to develop against this environment and don't want to be dealing with docker containers then there
