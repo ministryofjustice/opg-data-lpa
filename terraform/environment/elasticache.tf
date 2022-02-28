@@ -5,7 +5,7 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   automatic_failover_enabled    = local.account.elasticache_count == 1 ? false : true
   engine                        = "redis"
   engine_version                = "5.0.6"
-  replication_group_id          = "lpa-data-redis-${local.environment}"
+  replication_group_id          = "lpa-data-redis-${substr(local.environment, 0, 24)}"
   replication_group_description = "Replication Group for LPA Data"
   node_type                     = "cache.t2.small"
   multi_az_enabled              = local.account.elasticache_count == 1 ? false : true
