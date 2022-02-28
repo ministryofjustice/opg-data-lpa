@@ -15,25 +15,26 @@ logger = custom_logger()
 
 
 def get_by_online_tool_id(lpa_online_tool_id):
-
     sirius_url = generate_sirius_url(lpa_online_tool_id=lpa_online_tool_id)
 
     sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
         key=lpa_online_tool_id, url=sirius_url, method="GET"
     )
 
-    if sirius_status_code in [200]:
+    if sirius_status_code in [200, 410]:
         if len(sirius_response) > 0:
             try:
-                return format_online_tool_response(sirius_response=sirius_response), 200
+                response = format_online_tool_response(sirius_response=sirius_response) \
+                    if sirius_status_code == 200 \
+                    else sirius_response[0]
+
+                return response, sirius_status_code
             except Exception as e:
                 logger.error(f"Error formatting sirius response: {e}")
                 abort(404)
         else:
             logger.error(f"Sirius data empty")
             abort(404)
-    elif sirius_status_code in [410]:
-        return {}, 410
     else:
         logger.error(f"Sirius error: {sirius_status_code}")
         abort(404)
@@ -45,18 +46,21 @@ def get_by_sirius_uid(sirius_uid):
     sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
         key=sirius_uid, url=sirius_url, method="GET"
     )
-    if sirius_status_code in [200]:
+
+    if sirius_status_code in [200, 410]:
         if len(sirius_response) > 0:
             try:
-                return format_uid_response(sirius_response=sirius_response), 200
+                response = format_uid_response(sirius_response=sirius_response) \
+                    if sirius_status_code == 200 \
+                    else sirius_response[0]
+
+                return response, sirius_status_code
             except Exception as e:
                 logger.error(f"Error formatting sirius response: {e}")
                 abort(404)
         else:
             logger.error(f"Sirius data empty")
             abort(404)
-    elif sirius_status_code in [410]:
-        return {}, 410
     else:
         logger.error(f"Sirius error: {sirius_status_code}")
         abort(404)
