@@ -125,7 +125,7 @@ def send_a_request(
     if "CI" in os.environ:
         role_name = "integrations-ci"
     else:
-        role_name = "breakglass"
+        role_name = "operator"
 
     boto3.setup_default_session(
         region_name="eu-west-1",
