@@ -26,7 +26,7 @@ def app(*args, **kwargs):
     print(f"routes: {routes}")
 
     app.sirius.cache = fakeredis.FakeStrictRedis(
-        charset="utf-8", decode_responses=True, server=mock_redis_server
+        encoding="utf-8", decode_responses=True, server=mock_redis_server
     )
 
     yield app
@@ -46,7 +46,7 @@ def app_no_cache(*args, **kwargs):
     print(f"routes: {routes}")
 
     app.sirius.cache = fakeredis.FakeStrictRedis(
-        charset="utf-8", decode_responses=True, server=mock_redis_server
+        encoding="utf-8", decode_responses=True, server=mock_redis_server
     )
 
     yield app
@@ -75,8 +75,11 @@ def patched_send_request_to_sirius(monkeypatch):
 
         url = args[1]
 
-        if args[2] == 'POST' and url == 'http://not-really-sirius.com/api/public/v1/lpas/requestCode':
-            return 204, ''
+        if (
+            args[2] == "POST"
+            and url == "http://not-really-sirius.com/api/public/v1/lpas/requestCode"
+        ):
+            return 204, ""
 
         # test_id = kwargs["url"].split("=")[1]
         test_id = url.split("=")[1]
@@ -85,7 +88,9 @@ def patched_send_request_to_sirius(monkeypatch):
         if test_id[0] == "7":
             print(f"test_id is a valid sirius uid: {test_id}")
 
-            successful_response_data = load_data("use_an_lpa_successful_response.json", as_json=False)
+            successful_response_data = load_data(
+                "use_an_lpa_successful_response.json", as_json=False
+            )
 
             successful_response_data["uid"] = "-".join(wrap(test_id, 4))
 
@@ -96,17 +101,21 @@ def patched_send_request_to_sirius(monkeypatch):
         elif test_id[0] == "A":
             print(f"test_id is a valid lpa-online-tool id: {test_id}")
 
-            successful_response_data = load_data("lpa_online_tool_successful_response.json", as_json=False)
+            successful_response_data = load_data(
+                "lpa_online_tool_successful_response.json", as_json=False
+            )
 
-            for lpa in successful_response_data['lpa']:
+            for lpa in successful_response_data["lpa"]:
                 if test_id in lpa["onlineLpaId"]:
                     response_data = [lpa]
 
                     return 200, response_data
 
-            deleted_response_data = load_data("lpa_online_tool_deleted_response.json", as_json=False)
+            deleted_response_data = load_data(
+                "lpa_online_tool_deleted_response.json", as_json=False
+            )
 
-            for lpa in deleted_response_data['lpa']:
+            for lpa in deleted_response_data["lpa"]:
                 if test_id in lpa["onlineLpaId"]:
                     response_data = [lpa]
 
