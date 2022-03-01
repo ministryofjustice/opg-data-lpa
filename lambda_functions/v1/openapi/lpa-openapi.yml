@@ -37,9 +37,6 @@ x-amazon-apigateway-gateway-responses:
   DEFAULT_5XX:
     responseTemplates:
       application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-SERVERERROR", "title":$context.error.messageString, "detail":"Something unexpected happened internally", "meta": {"x-ray": "$context.xrayTraceId"} }}'
-  DELETED_RECORD:
-    responseTemplates:
-      application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-DELETED_RECORD", "title":$context.error.messageString, "detail": "", "meta": {"x-ray": "$context.xrayTraceId"} }}'
   EXPIRED_TOKEN:
     responseTemplates:
       application/json: '{"errors": { "id": "$context.requestId", "code": "OPGDATA-API-EXPIRED_TOKEN", "title":$context.error.messageString, "detail": "", "meta": {"x-ray": "$context.xrayTraceId"} }}'
@@ -634,7 +631,7 @@ components:
                 example: "A123BCD"
               code:
                 type: string
-                example: "OPGDATA-API-DELETED_RECORD"
+                example: "DEFAULT_4XX"
               title:
                 type: string
                 example: "An LPA with the passed ID has been deleted from The Sirius data provider"
