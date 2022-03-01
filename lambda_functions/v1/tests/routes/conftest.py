@@ -85,24 +85,32 @@ def patched_send_request_to_sirius(monkeypatch):
         if test_id[0] == "7":
             print(f"test_id is a valid sirius uid: {test_id}")
 
-            response_data = load_data("use_an_lpa_response.json", as_json=False)
+            successful_response_data = load_data("use_an_lpa_successful_response.json", as_json=False)
 
-            response_data["uid"] = "-".join(wrap(test_id, 4))
+            successful_response_data["uid"] = "-".join(wrap(test_id, 4))
 
-            response_data = [response_data]
+            response_data = [successful_response_data]
 
             return 200, response_data
 
         elif test_id[0] == "A":
             print(f"test_id is a valid lpa-online-tool id: {test_id}")
 
-            response_data = load_data("lpa_online_tool_response.json", as_json=False)
+            successful_response_data = load_data("lpa_online_tool_successful_response.json", as_json=False)
 
-            response_data["onlineLpaId"] = test_id
+            for lpa in successful_response_data['lpa']:
+                if test_id in lpa["onlineLpaId"]:
+                    response_data = [lpa]
 
-            response_data = [response_data]
+                    return 200, response_data
 
-            return 200, response_data
+            deleted_response_data = load_data("lpa_online_tool_deleted_response.json", as_json=False)
+
+            for lpa in deleted_response_data['lpa']:
+                if test_id in lpa["onlineLpaId"]:
+                    response_data = [lpa]
+
+                    return 410, response_data
 
         elif test_id[:5] == "crash":
             print("oh no you crashed sirius")
