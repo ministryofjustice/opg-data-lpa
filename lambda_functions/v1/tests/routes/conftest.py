@@ -76,8 +76,7 @@ def patched_send_request_to_sirius(monkeypatch):
         url = args[1]
 
         if (
-            args[2] == "POST"
-            and url == "http://not-really-sirius.com/api/public/v1/lpas/requestCode"
+            args[2] == "POST" and url == "http://not-really-sirius.com/api/public/v1/lpas/requestCode"
         ):
             return 204, ""
 
