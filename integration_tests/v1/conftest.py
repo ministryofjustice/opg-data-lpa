@@ -86,8 +86,8 @@ opg_data_lpa_local_mock = {
         "url": "http://0.0.0.0:4343/v1/use-an-lpa/lpas/requestCode",
         "method": "POST",
         "valid_sirius_lpas": [
-            {"caseUid": 700000000138, "actorUid": 700000000997},
-            {"caseUid": 700000000138, "actorUid": 700000000971},
+            {"caseUid": 700000000013, "actorUid": 700000000997},
+            {"caseUid": 700000000013, "actorUid": 700000000971},
         ],
     },
 }
