@@ -284,7 +284,7 @@ paths:
           description: The Sirius data provider returned an exception
         '504':
           description: The Sirius data provider timed out
-  /use-an-lpa/lpas/{lpa_online_tool_id}:
+  /use-an-lpa/lpas/{uid}:
     get:
       tags:
         - "use-a-lpa"
@@ -302,13 +302,14 @@ paths:
         type: "aws_proxy"
       parameters:
         - in: path
-          name: lpa_online_tool_id
+          name: uid
           schema:
             type: string
-            pattern: '^A\d{11}$'
+            pattern: '(^7\d{11}$)'
           required: true
-          description: Online Tool ID
-          example: A12345678987
+          description: Reference Number representing an LPA Uid
+          examples:
+            lpauid: 700000000054
       responses:
         '200':
           description: LPA details returned for the requested ID
@@ -324,61 +325,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - cancellationDate
-                  - invalidDate
-                  - onlineLpaId
-                  - receiptDate
-                  - registrationDate
-                  - rejectedDate
-                  - status
-                  - statusDate
-                  - withdrawnDate
-                  - dispatchDate
-                properties:
-                  onlineLpaId:
-                    type: string
-                    example: A22486562341
-                    pattern: '^A\d{11}$'
-                  receiptDate:
-                    type: string
-                    format: date
-                    description: The date the LPA was created
-                    example: '2018-06-30'
-                  rejectedDate:
-                    type: string
-                    format: date
-                    nullable: true
-                    description: The date the LPA was rejected
-                    example: '2018-06-30'
-                  registrationDate:
-                    type: string
-                    format: date
-                    nullable: true
-                    description: The date the LPA was registered
-                    example: '2018-06-30'
-                  statusDate:
-                    type: string
-                    format: date
-                    nullable: true
-                    description: The date the LPA's status was last changed
-                    example: '2018-06-30'
-                  withdrawnDate:
-                    type: string
-                    format: date
-                    nullable: true
-                    description: The date the LPA was withdrawn
-                    example: '2018-06-30'
-                  dispatchDate:
-                    type: string
-                    format: date
-                    nullable: true
-                    description: The date the LPA was dispatched
-                    example: '2018-06-30'
-                  status:
-                    type: string
-                    enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Withdrawn, Registered, Payment Pending, Return - unpaid]
+                $ref: '#/components/schemas/Lpa'
         '404':
           description: An LPA with the passed ID Not Found
         '400':
@@ -520,6 +467,280 @@ components:
                   x-ray:
                     type: string
                     example: "93c330d4-7d84-4c1b-8fdb-54cec5bfe747"
+    Lpa:
+      type: object
+      required:
+        - id
+        - uId
+        - applicationType
+        - caseSubtype
+        - receiptDate
+        - rejectedDate
+        - registrationDate
+        - cancellationDate
+        - invalidDate
+        - withdrawnDate
+        - dispatchDate
+        - status
+        - caseAttorneySingular
+        - caseAttorneyJointlyAndSeverally
+        - caseAttorneyJointly
+        - caseAttorneyJointlyAndJointlyAndSeverally
+        - applicationHasRestrictions
+        - applicationHasGuidance
+        - lpaDonorSignatureDate
+        - lpaIsCleansed
+        - lifeSustainingTreatment
+        - onlineLpaId
+        - attorneyActDecisions
+        - donor
+        - attorneys
+        - replacementAttorneys
+        - certificateProviders
+        - trustCorporations
+      properties:
+        id:
+          type: integer
+        uId:
+          type: string
+          example: '7000-0000-0054'
+          description: e.g. 7000-0000-0054
+        applicationType:
+          type: string
+          enum: [Online, Classic]
+        caseSubtype:
+          type: string
+          enum: [hw, pfa]
+          minLength: 1
+          maxLength: 3
+        receiptDate:
+          type: string
+          format: date
+          description: The date the LPA was created
+          nullable: true
+          example: '2018-06-30'
+        rejectedDate:
+          type: string
+          format: date
+          description: The date the LPA was rejected
+          nullable: true
+          example: '2018-06-30'
+        registrationDate:
+          type: string
+          format: date
+          description: The date the LPA was registered
+          nullable: true
+          example: '2018-06-30'
+        cancellationDate:
+          type: string
+          format: date
+          description: The date the LPA was cancelled
+          nullable: true
+          example: '2018-06-30'
+        invalidDate:
+          type: string
+          format: date
+          description: The date the LPA was marked invalid
+          nullable: true
+          example: '2018-06-30'
+        withdrawnDate:
+          type: string
+          format: date
+          description: The date the LPA was withdrawn
+          nullable: true
+          example: '2018-06-30'
+        dispatchDate:
+          type: string
+          format: date
+          description: The date the LPA was dispatched
+          nullable: true
+          example: '2018-06-30'
+        status:
+          type: string
+          enum: [Cancelled, Imperfect, Invalid, Pending, Perfect, Rejected, Revoked, Suspended, With COP, Withdrawn, Registered, Payment Pending]
+          minLength: 1
+          maxLength: 10
+        caseAttorneySingular:
+          type: boolean
+        caseAttorneyJointlyAndSeverally:
+          type: boolean
+        caseAttorneyJointly:
+          type: boolean
+        caseAttorneyJointlyAndJointlyAndSeverally:
+          type: boolean
+        applicationHasRestrictions:
+          type: boolean
+        applicationHasGuidance:
+          type: boolean
+        lpaDonorSignatureDate:
+          type: string
+          format: date
+          example: '2018-06-30'
+        lpaIsCleansed:
+          type: boolean
+        lifeSustainingTreatment:
+          type: string
+          enum: ['Option A', 'Option B', null]
+          nullable: true
+        onlineLpaId:
+          type: string
+          example: ABC123
+        attorneyActDecisions:
+          type: string
+          enum: ['When Registered', 'Loss of capacity', null]
+          nullable: true
+        donor:
+          $ref: '#/components/schemas/Donor'
+        attorneys:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseActor'
+        replacementAttorneys:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseActor'
+        trustCorporations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseActor'
+        certificateProviders:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseActor'
+    Donor:
+      allOf:
+        - $ref: '#/components/schemas/CaseActor'
+        - type: object
+          required:
+            - linked
+          properties:
+            linked:
+              type: array
+              items:
+                type: object
+                required:
+                  - id
+                  - uId
+                properties:
+                  id:
+                    type: integer
+                    description: The donor's database ID
+                  uId:
+                    type: string
+                    example: '7000-0000-0054'
+                    description: The donor's unique ID (e.g. 7000-0000-0054)
+    CaseActor:
+      type: object
+      required:
+        - id
+        - uId
+        - email
+        - dob
+        - salutation
+        - firstname
+        - middlenames
+        - surname
+        - companyName
+        - systemStatus
+        - addresses
+      properties:
+        id:
+          type: integer
+          description: The case actor's database ID
+        uId:
+          type: string
+          example: '7000-0000-0054'
+          description: The case actor's unique ID (e.g. 7000-0000-0054)
+        email:
+          type: string
+          description: The case actor's contact email address
+          maxLength: 255
+        dob:
+          type: string
+          description: The case actor's date of birth
+          example: '1980-10-10'
+        salutation:
+          type: string
+          description: The case actor's salutation
+          example: Mrs
+        firstname:
+          type: string
+          description: The case actor's first name
+          example: Ian
+          maxLength: 255
+        middlenames:
+          type: string
+          description: The case actor's last name
+          example: Deputy
+          maxLength: 255
+        surname:
+          type: string
+          description: The case actor's last name
+          example: Deputy
+          maxLength: 255
+        companyName:
+          type: string
+          description: The case actor's company name (if relevant)
+          nullable: true
+          example: ABC Ltd
+          maxLength: 255
+        systemStatus:
+          type: boolean
+          description: The active/inactive status of the case actor
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+    Address:
+      required:
+        - id
+        - town
+        - county
+        - postcode
+        - country
+        - type
+        - addressLine1
+        - addressLine2
+        - addressLine3
+      properties:
+        id:
+          type: integer
+          description: The address database ID
+        town:
+          type: string
+          description: The town
+          maxLength: 255
+        county:
+          type: string
+          description: The county
+          maxLength: 255
+        postcode:
+          type: string
+          description: The postcode
+          maxLength: 255
+        country:
+          type: string
+          description: Address country
+          example: UK
+          maxLength: 255
+        type:
+          type: string
+          description: Address type
+          example: Primary
+          enum: [Primary]
+          maxLength: 7
+        addressLine1:
+          type: string
+          description: The first line of the address
+          maxLength: 255
+        addressLine2:
+          type: string
+          description: The second line of the address
+          maxLength: 255
+        addressLine3:
+          type: string
+          description: The third line of the address
+          maxLength: 255
     Error401:
       type: object
       required:

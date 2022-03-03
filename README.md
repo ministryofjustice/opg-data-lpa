@@ -25,13 +25,17 @@ LPA related functions.
 ## Running the API locally
 
 - Run full setup script from the make file:
+
 ```
 make setup
 ```
+
 or if you want pact as well:
+
 ```
 make setup-all
 ```
+
 - Test the setup
 
 ```
@@ -64,35 +68,40 @@ or  change the protection TTL in dynamodb.
 
 ## Manual setup
 
-#### Set up local development environment outside of docker
+### Set up local development environment outside of docker
 
 If you wish to develop against this environment and don't want to be dealing with docker containers then there
 is a bit more of an in depth set up process required.
 
 1. Create a virtual environment
-    ```bash
-   python3 -m venv
-   ```
+
+    ```shell
+    python3 -m venv
+    ```
 
 1. Start the virtual env
-   ```bash
-   source venv/bin/activate
-   ```
+
+    ```shell
+    source venv/bin/activate
+    ```
 
 1. Add all the env vars:
-   ```bash
-   source .env
-   ```
-1. Install the dev requirements
-   * Install the dev requirements
-   ```bash
-   pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt
-   ```
 
-#### Running flask app locally
+    ```shell
+    source .env
+    ```
+
+1. Install the dev requirements
+    - Install the dev requirements
+
+    ```shell
+    pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt
+    ```
+
+### Running flask app locally
 
 1. `cd lambda_functions/v1/functions/lpa/app`
-2. `FLASK_APP=lpa SIRIUS_BASE_URL=http://localhost:5001 flask run`
+2. `FLASK_APP=lpa SIRIUS_BASE_URL=http://localhost:5001 flask run &`
 3. Endpoints should be available on `http://localhost:5000`
 
 ## Unit Tests
@@ -100,30 +109,62 @@ is a bit more of an in depth set up process required.
 1. [Set up local environment](#set-up-local-development-environment-outside-of-docker)
 
 1. Run the tests command-line style
-    ```bash
+
+    ```shell
     python3 -m pytest -m "not (smoke_test or pact_test)"
     ```
 
 1. Run the tests command-line style with coverage
-    ```bash
+
+    ```shell
     python3 -m pytest lambda_functions/v1/tests --cov=lambda_functions/v1/functions/lpa/app/api --cov-fail-under=80
     ```
+
 1. Run the tests in PyCharm
 
-    * Go to PyCharm > Preferences > Tools > Python Integrated Tools
-    * Set the Default Test Runner to 'pytest'
-    * Right click on the tests folder (or single file) > 'Run pytest in tests'
+    - Go to PyCharm > Preferences > Tools > Python Integrated Tools
+    - Set the Default Test Runner to 'pytest'
+    - Right click on the tests folder (or single file) > 'Run pytest in tests'
 
 ## Integration Tests
+
 1. [Set up local environment](#set-up-local-development-environment-outside-of-docker)
 
 1. Setup the tests:
-     - In `integration_tests/v1/conftest.py`, check that the url you are pointing to is correct.
-     - In `integration_tests/v1/conftest.py`, check that the `configs_to_test` is set to what you want to test against.
-     - In `integration_tests/v1/conftest.py`, take note of the ids you will be testing against.
+    - In `integration_tests/v1/conftest.py`, check that the url you are pointing to is the correct one for your environment.
 
-1.  Run the tests
-    ```bash
+    ```python
+    opg_data_lpa_dev_aws = {
+    "name": "new collections api on aws dev",
+    "healthcheck_endpoint": {
+        "url": "https://uml-2131.dev.lpa.api.opg.service.justice.gov.uk/v1/healthcheck",
+        "method": "GET",
+    },
+    "online_tool_endpoint": {
+        "url": "https://uml-2131.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa"
+        "-online-tool/lpas",
+        "method": "GET",
+        "valid_lpa_online_tool_ids": ["A33718377316"],
+        "invalid_lpa_online_tool_ids": ["banana"],
+    },
+    ```
+
+    - In `integration_tests/v1/conftest.py`, check that the `configs_to_test` is set to what you want to test against.
+
+    ```python
+    configs_to_test = [opg_data_lpa_dev_aws]
+    ```
+
+    - In `integration_tests/v1/conftest.py`, take note of the ids you will be testing against.
+
+    ```python
+    "valid_sirius_uids": ["700000000138"],
+    ```
+
+1. Run the tests
+
+    ```shell
+    aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
     aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
     ```
 
@@ -133,7 +174,7 @@ To run pact locally, the easiest way to interact with it is to use the client to
 
 The best package to get started can be found here:
 
-https://github.com/pact-foundation/pact-ruby-standalone/releases/latest
+<https://github.com/pact-foundation/pact-ruby-standalone/releases/latest>
 
 You can download the latest version to a directory, unzip it and run the individual tools
 in the `/pact/bin` folder from the command line or put them in your PATH.
@@ -141,7 +182,7 @@ First you should put the contract in our local broker. The local broker is spun 
 of the `docker-compose up -d` command and you can push in a contract manually from a json file
 by using the below command (example json included in this repo):
 
-```
+```shell
 curl -i -X PUT -d '@./docs/support_files/pact_contract.json' \
 -H 'Content-Type: application/json' \
 http://localhost:9292/pacts/provider/lpa_data_sirius/consumer/lpa_data/version/x12345
@@ -152,7 +193,7 @@ You can then check it has uploaded by browsing to `localhost:9292`.
 To tag the pact we can now run this. We will want to tag the consumer as
 the verification command is best used with tags:
 
-```
+```shell
 curl -i -X PUT -H 'Content-Type: application/json' \
 http://localhost:9292/pacticipants/lpa_data/versions/x12345/tags/v1
 ```
@@ -167,7 +208,7 @@ Run the secret creation against mock
 
 You can verify the pact as follows (assuming your path to pact-provider-verifier is correct):
 
-```
+```shell
 ../pact/bin/pact-provider-verifier --provider-base-url=http://localhost:4343 \
 --custom-provider-header 'Authorization: asdf1234567890' \
 --pact-broker-base-url="http://localhost:9292" \
