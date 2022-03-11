@@ -259,7 +259,33 @@
       "rejectedDate": null,
       "replacementAttorneys": [],
       "status": "Registered",
-      "trustCorporations": [],
+      "trustCorporations": [
+        {
+          "addresses": [
+            {
+              "addressLine1": "Irene Riverhole",
+              "addressLine2": "Riverside street",
+              "addressLine3": "Rivers Road",
+              "country": "",
+              "county": "SHEFFIELD",
+              "id": 34385736,
+              "postcode": "S3 4TV",
+              "town": "",
+              "type": "Primary"
+            }
+          ],
+          "companyName": "Irene Riverhole TRUSTEES LIMITED",
+          "dob": null,
+          "email": "",
+          "firstname": "",
+          "id": 34703514,
+          "middlenames": "",
+          "salutation": "",
+          "surname": "",
+          "systemStatus": true,
+          "uId": "7005-5236-9457"
+        }
+      ],
       "uId": "7000-0000-0138"
     },
     {
@@ -496,7 +522,58 @@
       "rejectedDate": null,
       "replacementAttorneys": [],
       "status": "Registered",
-      "trustCorporations": [],
+      "trustCorporations": [
+        {
+          "addresses": [
+            {
+              "addressLine1": "Address Line 1",
+              "addressLine2": "Address Line 2",
+              "addressLine3": "Address Line 3",
+              "country": "",
+              "county": "",
+              "id": 3394999,
+              "postcode": "CV8 4RU",
+              "town": "",
+              "type": "Primary"
+            }
+          ],
+          "companyName": "Some Tax & Trust Corporation Ltd",
+          "dob": null,
+          "email": "",
+          "firstname": "",
+          "id": 34264523,
+          "middlenames": "",
+          "salutation": "",
+          "surname": "Some Tax & Trust Corporation Ltd",
+          "systemStatus": true,
+          "uId": "7005-4425-0769"
+        },
+        {
+          "addresses": [
+            {
+              "addressLine1": "i",
+              "addressLine2": "I",
+              "addressLine3": ",",
+              "country": "",
+              "county": "",
+              "id": 33949774,
+              "postcode": "",
+              "town": "",
+              "type": "Primary"
+            }
+          ],
+          "companyName": "",
+          "dob": null,
+          "email": "",
+          "firstname": "I",
+          "id": 34264123,
+          "middlenames": "",
+          "salutation": "",
+          "surname": "I",
+          "systemStatus": false,
+          "uId": "7005-4400-0000"
+        }
+      ],
       "uId": "7000-0000-0344"
     },
     {
