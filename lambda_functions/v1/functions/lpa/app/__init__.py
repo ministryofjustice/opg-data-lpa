@@ -19,7 +19,7 @@ def create_app(flask=Flask, config=Config):
     if config.REQUEST_CACHING == "enabled":
 
         app.redis = redis.StrictRedis.from_url(
-            url=f"redis://{config.REDIS_URL}", charset="utf-8", decode_responses=True
+            url=f"redis://{config.REDIS_URL}", encoding="utf-8", decode_responses=True
         )
 
         redis_cache = app.redis

@@ -200,4 +200,4 @@ jobs:
       - name: Protect Workspace
         env:
           TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch }}
-        run: terraform-workspace-manager -register-workspace=$TF_WORKSPACE -time-to-protect=1 -aws-account-id=288342028542 -aws-iam-role=integrations-ci
+        run: terraform-workspace-manager -register-workspace=$TF_WORKSPACE -time-to-protect=4 -aws-account-id=288342028542 -aws-iam-role=integrations-ci

@@ -38,6 +38,11 @@ def handle405(error=None):
     return error_message(405, "Method not supported")
 
 
+@api.app_errorhandler(410)
+def handle410(error=None):
+    return error_message(410, "An LPA with the passed ID has been deleted from The Sirius data provider")
+
+
 @api.app_errorhandler(429)
 def handle429(error=None):
     return error_message(405, "API Gateway throttling limit exceeded")

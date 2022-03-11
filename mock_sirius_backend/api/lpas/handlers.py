@@ -12,16 +12,27 @@ def handle_lpa_get(query_params):
         if lpa_online_tool_id[0] == "A":
             print(f"test_id is a valid lpa-online-tool id: {lpa_online_tool_id}")
 
-            response_data = load_data(
+            response_data_success = load_data(
                 parent_folder="lpas",
-                filename="lpa_online_tool_response.json",
+                filename="lpa_online_tool_successful_response.json",
                 as_json=False,
             )
 
-            for result in response_data["results"]:
+            for result in response_data_success["results"]:
                 if result["onlineLpaId"] in lpa_online_tool_id:
                     response = [result]
                     return 200, response
+
+            response_data_deleted = load_data(
+                parent_folder="lpas",
+                filename="lpa_online_tool_deleted_response.json",
+                as_json=False,
+            )
+
+            for result in response_data_deleted["results"]:
+                if result["onlineLpaId"] in lpa_online_tool_id:
+                    response = [result]
+                    return 410, response
 
         elif lpa_online_tool_id[:5] == "crash":
             print("oh no you crashed sirius")
@@ -43,16 +54,29 @@ def handle_lpa_get(query_params):
         if sirius_uid[0] == "7":
             print(f"test_id is a valid sirius uid: {sirius_uid}")
 
-            response_data = load_data(
-                parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
+            response_data_success = load_data(
+                parent_folder="lpas",
+                filename="use_an_lpa_response.json",
+                as_json=False
             )
 
             case_id = "-".join(wrap(sirius_uid, 4))
 
-            for result in response_data["results"]:
+            for result in response_data_success["results"]:
                 if result["uId"] in case_id:
                     response = [result]
                     return 200, response
+
+            response_data_deleted = load_data(
+                parent_folder="lpas",
+                filename="lpa_online_tool_deleted_response.json",
+                as_json=False,
+            )
+
+            for result in response_data_deleted["results"]:
+                if result["uId"] in case_id:
+                    response = [result]
+                    return 410, response
 
         elif len(sirius_uid) == 3:
             print("oh no you crashed sirius")

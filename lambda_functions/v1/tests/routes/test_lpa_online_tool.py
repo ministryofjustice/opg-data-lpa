@@ -13,6 +13,8 @@ import json
     [
         ("A39721583862", True, 200, True),  # pragma: allowlist secret
         ("A39721583862", False, 200, True),  # pragma: allowlist secret
+        ("A39721583867", True, 410, True),  # pragma: allowlist secret
+        ("A39721583867", False, 410, True),  # pragma: allowlist secret
         ("B39721583863", True, 404, False),  # pragma: allowlist secret
         ("B39721583863", False, 404, False),  # pragma: allowlist secret
         ("crash_sirius_with_500", True, 404, False),  # pragma: allowlist secret
@@ -41,10 +43,11 @@ def test_lpa_online_tool_route_with_cache(
 
     assert response.status_code == expected_status_code
     if cache_expected:
-        redis_entry = mock_redis.get(name=f"opg-data-lpa-local-{online_tool_id}")
+        redis_entry = mock_redis.get(name=f"opg-data-lpa-local-{online_tool_id}-{expected_status_code}")
+        print(f"redis: {redis_entry}")
         assert response.get_json() == json.loads(redis_entry)[0]
     else:
-        assert mock_redis.exists(f"opg-data-lpa-local-{online_tool_id}") == 0
+        assert mock_redis.exists(f"opg-data-lpa-local-{online_tool_id}-{expected_status_code}") == 0
 
 
 @pytest.mark.parametrize(
@@ -52,6 +55,8 @@ def test_lpa_online_tool_route_with_cache(
     [
         ("A39721583864", True, 200),  # pragma: allowlist secret
         ("A39721583864", False, 404),  # pragma: allowlist secret
+        ("A39721583868", True, 410),  # pragma: allowlist secret
+        ("A39721583868", False, 404),  # pragma: allowlist secret
         ("B39721583865", True, 404),  # pragma: allowlist secret
         ("B39721583865", False, 404),  # pragma: allowlist secret
         ("crash_sirius_with_500", True, 404),  # pragma: allowlist secret
@@ -78,4 +83,4 @@ def test_lpa_online_tool_route_no_cache(
     mock_redis = fakeredis.FakeStrictRedis(server=mock_redis_server)
 
     assert response.status_code == expected_status_code
-    assert mock_redis.exists(f"opg-data-lpa-local-{online_tool_id}") == 0
+    assert mock_redis.exists(f"opg-data-lpa-local-{online_tool_id}-{expected_status_code}") == 0
