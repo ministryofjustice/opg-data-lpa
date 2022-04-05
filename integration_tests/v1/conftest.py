@@ -36,25 +36,25 @@ opg_sirius_api_gateway_dev_aws = {
 opg_data_lpa_dev_aws = {
     "name": "new collections api on aws dev",
     "healthcheck_endpoint": {
-        "url": "https://in318configobj.dev.lpa.api.opg.service.justice.gov.uk/v1/healthcheck",
+        "url": "https://uml-2131.dev.lpa.api.opg.service.justice.gov.uk/v1/healthcheck",
         "method": "GET",
     },
     "online_tool_endpoint": {
-        "url": "https://in318configobj.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa"
+        "url": "https://uml-2131.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa"
         "-online-tool/lpas",
         "method": "GET",
         "valid_lpa_online_tool_ids": ["A33718377316"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
-        "url": "https://in318configobj.dev.lpa.api.opg.service.justice.gov.uk/v1/use"
+        "url": "https://uml-2131.dev.lpa.api.opg.service.justice.gov.uk/v1/use"
         "-an-lpa/lpas",
         "method": "GET",
-        "valid_sirius_uids": ["700000000013"],
+        "valid_sirius_uids": ["700000000047"],
         "invalid_sirius_uids": ["9"],
     },
     "request_code_endpoint": {
-        "url": "https://in318configobj.dev.lpa.api.opg.service.justice.gov.uk/v1/lpas/requestCode",
+        "url": "https://uml-2131.dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas/requestCode",
         "method": "POST",
         "valid_sirius_lpas": [
             {"caseUid": 700000000013, "actorUid": 700000000997},
@@ -92,7 +92,7 @@ opg_data_lpa_local_mock = {
     },
 }
 
-configs_to_test = [opg_data_lpa_local_mock]
+configs_to_test = [opg_data_lpa_dev_aws]
 
 
 def pytest_html_report_title(report):
@@ -175,7 +175,7 @@ def send_a_request(
 
 
 def is_valid_schema(data, schema_file):
-    """ Checks whether the given data matches the schema """
+    """Checks whether the given data matches the schema"""
     schema = load_data(schema_file, as_json=False)
     try:
         validate(data, schema)
