@@ -276,6 +276,17 @@ paths:
           description: Authentication failed
         '410':
           description: An LPA with the passed ID has been deleted from The Sirius data provider
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - onlineLpaId
+                properties:
+                  onlineLpaId:
+                    type: string
+                    example: A22446562341
+                    pattern: '^A\d{11}$'
         '429':
           description: API Gateway throttling limit exceeded
         '500':
