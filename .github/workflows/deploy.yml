@@ -23,6 +23,8 @@ jobs:
           - tf_workspace: "preproduction"
 
           - tf_workspace: "production"
+
+          - tf_workspace: "integration"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
