@@ -31,8 +31,7 @@ def handle_lpa_get(query_params):
 
             for result in response_data_deleted["results"]:
                 if result["onlineLpaId"] in lpa_online_tool_id:
-                    response = [result]
-                    return 410, response
+                    return 410, {"detail": "LPA with uid " + lpa_online_tool_id + "has been deleted"}
 
         elif lpa_online_tool_id[:5] == "crash":
             print("oh no you crashed sirius")
@@ -75,8 +74,7 @@ def handle_lpa_get(query_params):
 
             for result in response_data_deleted["results"]:
                 if result["uId"] in case_id:
-                    response = [result]
-                    return 410, response
+                    return 410, {"detail": "LPA with uid " + case_id + "has been deleted"}
 
         elif len(sirius_uid) == 3:
             print("oh no you crashed sirius")

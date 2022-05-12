@@ -45,7 +45,10 @@ def test_lpa_online_tool_route_with_cache(
     if cache_expected:
         redis_entry = mock_redis.get(name=f"opg-data-lpa-local-{online_tool_id}-{expected_status_code}")
         print(f"redis: {redis_entry}")
-        assert response.get_json() == json.loads(redis_entry)[0]
+        if expected_status_code == 410:
+            assert response.get_json() == ""
+        else:
+            assert response.get_json() == json.loads(redis_entry)[0]
     else:
         assert mock_redis.exists(f"opg-data-lpa-local-{online_tool_id}-{expected_status_code}") == 0
 
