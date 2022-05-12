@@ -26,7 +26,7 @@ def get_by_online_tool_id(lpa_online_tool_id):
             try:
                 response = format_online_tool_response(sirius_response=sirius_response) \
                     if sirius_status_code == 200 \
-                    else sirius_response[0]
+                    else ""
 
                 return response, sirius_status_code
             except Exception as e:

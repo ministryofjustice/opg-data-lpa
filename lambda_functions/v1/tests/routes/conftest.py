@@ -116,9 +116,7 @@ def patched_send_request_to_sirius(monkeypatch):
 
             for lpa in deleted_response_data["lpa"]:
                 if test_id in lpa["onlineLpaId"]:
-                    response_data = [lpa]
-
-                    return 410, response_data
+                    return 410, {"detail": "LPA with uid " + test_id + "has been deleted"}
 
         elif test_id[:5] == "crash":
             print("oh no you crashed sirius")
