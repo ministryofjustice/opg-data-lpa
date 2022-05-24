@@ -3,6 +3,7 @@
 /.idea
 __pycache__/
 *.pyc
+.python-version
 
 # Terraform
 **/terraform.tfstate*
