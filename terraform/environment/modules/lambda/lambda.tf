@@ -33,7 +33,7 @@ resource "aws_lambda_function" "lambda_function" {
       API_VERSION         = var.openapi_version
       SESSION_DATA        = var.account.session_data
       REQUEST_CACHING     = "enabled"
-      REQUEST_CACHING_TTL = var.account.request_caching_ttl
+      REQUEST_CACHING_TTL = tostring(var.account.request_caching_ttl)
       REQUEST_TIMEOUT     = "10"
       REDIS_URL           = var.redis_url
     }
