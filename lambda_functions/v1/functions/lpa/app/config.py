@@ -15,10 +15,10 @@ class Config(object):
 
     # caching
     REQUEST_CACHE_NAME = API_NAME
-    REQUEST_CACHING_TTL = 48
 
     REDIS_URL = os.environ.get("REDIS_URL")
     REQUEST_CACHING = os.environ.get("REQUEST_CACHING", default="disabled")
+    REQUEST_CACHING_TTL = int(os.environ.get("REQUEST_CACHING_TTL", default="48"))
     REQUEST_TIMEOUT = float(os.environ.get("REQUEST_TIMEOUT", default="10"))
 
 
