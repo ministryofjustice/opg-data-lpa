@@ -43,9 +43,10 @@ module "deploy_v1" {
   target_environment = local.account.target_environment
   vpc_id             = local.account.vpc_id
   //Modify here for new version - point to different version
-  domain_name = aws_api_gateway_domain_name.lpa_data
-  lpa_lambda  = module.lambda_lpa_v1.lambda
-  rest_api    = aws_api_gateway_rest_api.lpa
+  domain_name     = aws_api_gateway_domain_name.lpa_data
+  lpa_lambda      = module.lambda_lpa_v1.lambda
+  rest_api        = aws_api_gateway_rest_api.lpa
+  content_api_sha = local.open_api_sha
 }
 
 //Modify here for new version - replace with new code (comment out old code)

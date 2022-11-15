@@ -29,3 +29,7 @@ variable "target_environment" {
 variable "vpc_id" {
   type = string
 }
+
+variable "content_api_sha" {
+  type = string
+}

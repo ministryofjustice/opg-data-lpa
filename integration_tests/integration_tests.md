@@ -33,7 +33,7 @@ To set up for the integration tests you should check a few things first:
 
  ### Gotchas
 
-* Make sure you are able to assume digideps dev role with your credentials or tests will not work.
+* Make sure you are able to assume sirius dev role with your credentials or tests will not work.
 
 * You may need to update some Sirius data. This is temporary, we're going to get them to create some stable
 test data for us, but for now, you need to log into Cloud9 and run:
