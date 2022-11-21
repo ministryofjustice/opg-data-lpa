@@ -11,10 +11,8 @@ data "local_file" "openapispec" {
 resource "aws_api_gateway_deployment" "deploy" {
   rest_api_id = var.rest_api.id
   depends_on  = [var.domain_name]
-  variables = {
-    // Force a deploy on when content has changed
-    stage_version             = var.openapi_version
-    content_api_sha           = local.openapi_sha
+  triggers = {
+    redeployment              = var.content_api_sha
     lambda_version_folder_sha = var.lpa_lambda.source_code_hash
   }
   lifecycle {
