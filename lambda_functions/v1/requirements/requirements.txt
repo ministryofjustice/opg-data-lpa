@@ -1,5 +1,5 @@
 #Update this date to trigger update of layers: 20220301
-Flask==1.1.4
+Flask==2.3.2
 markupsafe==2.0.1
 localstack-client==1.10
 opg-sirius-service==2.0.1
