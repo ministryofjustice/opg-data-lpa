@@ -11,7 +11,7 @@ from .sirius_helpers import (
     generate_sirius_url,
 )
 
-logger = custom_logger()
+logger = custom_logger("handlers")
 
 
 def get_by_online_tool_id(lpa_online_tool_id):

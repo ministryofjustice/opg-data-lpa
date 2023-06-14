@@ -13,7 +13,7 @@ from .handlers import (
 from .helpers import custom_logger
 
 
-logger = custom_logger("")
+logger = custom_logger("resources")
 
 version = "v1"
 api = Blueprint("api", __name__, url_prefix=f"/{version}")
