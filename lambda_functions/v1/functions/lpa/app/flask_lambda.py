@@ -24,12 +24,12 @@ except ImportError:
 from flask import Flask
 
 try:
-    from cStringIO import StringIO
+    from cBytesIO import BytesIO
 except ImportError:
     try:
-        from StringIO import StringIO
+        from BytesIO import BytesIO
     except ImportError:
-        from io import StringIO
+        from io import BytesIO
 
 from werkzeug.wrappers import BaseRequest
 
@@ -55,6 +55,7 @@ def make_environ(event):
     environ["SOURCE_IP"] = event["requestContext"]["identity"]["sourceIp"]
     environ["USER_AGENT"] = event["requestContext"]["identity"]["userAgent"]
     environ["REQUEST_METHOD"] = event["httpMethod"]
+    environ["REQUEST_ID"] = event["requestContext"]["requestId"]
     environ["SERVER_PROTOCOL"] = event["requestContext"]["protocol"]
     environ["PATH_INFO"] = event["path"]
     environ["QUERY_STRING"] = urlencode(qs) if qs else ""
@@ -73,7 +74,7 @@ def make_environ(event):
     environ["CONTENT_LENGTH"] = str(len(event["body"]) if event["body"] else "")
 
     environ["wsgi.url_scheme"] = environ.get("HTTP_X_FORWARDED_PROTO")
-    environ["wsgi.input"] = StringIO(event["body"] or "")
+    environ["wsgi.input"] = BytesIO(bytes((event["body"] or ""), "utf8"))
     environ["wsgi.version"] = (1, 0)
     environ["wsgi.errors"] = sys.stderr
     environ["wsgi.multithread"] = False
@@ -105,7 +106,6 @@ class FlaskLambda(Flask):
                 # occur via API Gateway and Lambda
                 return super(FlaskLambda, self).__call__(event, context)
 
-            print("call as aws lambda")
             response = LambdaResponse()
 
             body = b"".join(self.wsgi_app(make_environ(event), response.start_response))
