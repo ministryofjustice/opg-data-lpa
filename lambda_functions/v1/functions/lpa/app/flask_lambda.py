@@ -39,7 +39,6 @@ __version__ = "0.0.4"
 
 def make_environ(event):
     environ = {}
-    print("resource:", event["resource"], "path:", event["path"])
     # key might be there but set to None
     headers = event.get("headers", {}) or {}
     for hdr_name, hdr_value in headers.items():
@@ -53,20 +52,23 @@ def make_environ(event):
 
     qs = event["queryStringParameters"]
 
+    environ["SOURCE_IP"] = event["requestContext"]["identity"]["sourceIp"]
+    environ["USER_AGENT"] = event["requestContext"]["identity"]["userAgent"]
     environ["REQUEST_METHOD"] = event["httpMethod"]
+    environ["SERVER_PROTOCOL"] = event["requestContext"]["protocol"]
     environ["PATH_INFO"] = event["path"]
     environ["QUERY_STRING"] = urlencode(qs) if qs else ""
 
     environ["REMOTE_ADDR"] = environ.get("X_FORWARDED_FOR")
 
     environ["HOST"] = "{}:{}".format(
-        environ.get("HTTP_HOST", ""), environ.get("HTTP_X_FORWARDED_PORT", ""),
+        environ.get("HTTP_HOST", ""),
+        environ.get("HTTP_X_FORWARDED_PORT", ""),
     )
     environ["SCRIPT_NAME"] = ""
     environ["SERVER_NAME"] = "SERVER_NAME"
 
     environ["SERVER_PORT"] = environ.get("HTTP_X_FORWARDED_PORT", "")
-    environ["SERVER_PROTOCOL"] = "HTTP/1.1"
 
     environ["CONTENT_LENGTH"] = str(len(event["body"]) if event["body"] else "")
 
@@ -106,7 +108,7 @@ class FlaskLambda(Flask):
             print("call as aws lambda")
             response = LambdaResponse()
 
-            body = b''.join(self.wsgi_app(make_environ(event), response.start_response))
+            body = b"".join(self.wsgi_app(make_environ(event), response.start_response))
 
             return {
                 "statusCode": response.status,
@@ -114,6 +116,5 @@ class FlaskLambda(Flask):
                 "body": body.decode("utf-8"),
             }
 
-        except Exception as e:
-            print("unexpected error", e)
+        except Exception:
             return {"statusCode": 500, "headers": {}, "body": "internal server error"}
