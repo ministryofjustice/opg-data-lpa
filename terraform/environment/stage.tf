@@ -35,7 +35,7 @@ module "deploy_v1" {
 
   account_name       = local.account.account_mapping
   api_name           = local.api_name
-  aws_subnet_ids     = data.aws_subnet_ids.private.ids
+  aws_subnet_ids     = data.aws_subnet.private.*.id
   environment        = local.environment
   openapi_version    = "v1"
   region_name        = data.aws_region.region.name

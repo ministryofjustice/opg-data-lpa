@@ -2,21 +2,21 @@ data "aws_availability_zones" "available" {
 }
 
 resource "aws_elasticache_replication_group" "lpa_redis" {
-  automatic_failover_enabled    = local.account.elasticache_count == 1 ? false : true
-  engine                        = "redis"
-  engine_version                = "5.0.6"
-  replication_group_id          = "lpa-${local.redis_c_rg_name}-cache-rg"
-  replication_group_description = "Replication Group for LPA Data"
-  node_type                     = "cache.t2.small"
-  multi_az_enabled              = local.account.elasticache_count == 1 ? false : true
-  availability_zones            = local.account.elasticache_count == 1 ? ["eu-west-1a"] : data.aws_availability_zones.available.names
-  number_cache_clusters         = local.account.elasticache_count
-  parameter_group_name          = "default.redis5.0"
-  port                          = 6379
-  subnet_group_name             = "private-redis"
-  security_group_ids            = [aws_security_group.lpa_redis_sg.id]
-  tags                          = local.default_tags
-  apply_immediately             = true
+  automatic_failover_enabled  = local.account.elasticache_count == 1 ? false : true
+  engine                      = "redis"
+  engine_version              = "5.0.6"
+  replication_group_id        = "lpa-${local.redis_c_rg_name}-cache-rg"
+  description                 = "Replication Group for LPA Data"
+  node_type                   = "cache.t2.small"
+  multi_az_enabled            = local.account.elasticache_count == 1 ? false : true
+  preferred_cache_cluster_azs = local.account.elasticache_count == 1 ? ["eu-west-1a"] : data.aws_availability_zones.available.names
+  num_cache_clusters          = local.account.elasticache_count
+  parameter_group_name        = "default.redis5.0"
+  port                        = 6379
+  subnet_group_name           = "private-redis"
+  security_group_ids          = [aws_security_group.lpa_redis_sg.id]
+  tags                        = local.default_tags
+  apply_immediately           = true
 }
 
 resource "aws_security_group" "lpa_redis_sg" {
