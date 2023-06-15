@@ -110,14 +110,14 @@ def custom_logger(name):
 
     handler = logging.StreamHandler()
     handler.setFormatter(json_formatter)
-    logging.getLogger().handlers.clear()
     logger = logging.getLogger(name)
     try:
         logger.setLevel(os.environ["LOGGER_LEVEL"])
     except KeyError:
         logger.setLevel("INFO")
-
+    logger.handlers.clear()  # Remove existing handlers from the logger
     logger.addHandler(handler)
+    logger.propagate = False
 
     # Switch to basic logging for DEBUG as easier to read
     if logger.level == 10:

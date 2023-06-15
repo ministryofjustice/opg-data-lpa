@@ -13,7 +13,7 @@ def generate_sirius_url(lpa_online_tool_id=None, sirius_uid=None):
     elif sirius_uid:
         sirius_url_params = {"uid": sirius_uid}
 
-    logger.info(f"sirius_api_url: {sirius_api_url}")
+    logger.debug(f"sirius_api_url: {sirius_api_url}")
 
     url = current_app.sirius.build_sirius_url(
         endpoint=sirius_api_url,

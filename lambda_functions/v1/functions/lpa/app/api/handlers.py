@@ -3,7 +3,7 @@ from werkzeug.exceptions import abort
 
 from .helpers import custom_logger, get_event_details_for_logs
 import json
-
+import traceback
 
 from .sirius_helpers import (
     format_uid_response,
@@ -21,12 +21,13 @@ def get_by_online_tool_id(lpa_online_tool_id):
         (
             sirius_status_code,
             sirius_response,
-            use_cache,
         ) = current_app.sirius.send_request_to_sirius(
             key=lpa_online_tool_id, url=sirius_url, method="GET"
         )
+        use_cache = current_app.sirius.use_cache
     except Exception as e:
-        message = f"Internal server error contacting Sirius: {e}"
+        stack_trace = traceback.format_exc()
+        message = f"Internal server error: {e} --- {stack_trace}"
         logger.error(
             message,
             extra=get_event_details_for_logs(
@@ -89,19 +90,19 @@ def get_by_sirius_uid(sirius_uid):
         (
             sirius_status_code,
             sirius_response,
-            use_cache,
         ) = current_app.sirius.send_request_to_sirius(
             key=sirius_uid, url=sirius_url, method="GET"
         )
+        use_cache = current_app.sirius.use_cache
     except Exception as e:
+        stack_trace = traceback.format_exc()
         logger.error(
-            f"Internal server error contacting Sirius: {e}",
+            f"Internal server error: {e} --- {stack_trace}",
             extra=get_event_details_for_logs(
                 status=500, key=sirius_uid, cache_used=False
             ),
         )
         abort(500)
-
     if sirius_status_code in [200, 410]:
         if len(sirius_response) > 0:
             try:
@@ -149,26 +150,35 @@ def request_code(body):
     sirius_url = current_app.sirius.build_sirius_url(
         endpoint="api/public/v1/lpas/requestCode"
     )
-
-    sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
-        key=None,
-        url=sirius_url,
-        method="POST",
-        content_type="application/json",
-        data=json.dumps(body) if isinstance(body, dict) else body,
-    )
+    try:
+        sirius_status_code, sirius_response = current_app.sirius.send_request_to_sirius(
+            key=None,
+            url=sirius_url,
+            method="POST",
+            content_type="application/json",
+            data=json.dumps(body) if isinstance(body, dict) else body,
+        )
+    except Exception as e:
+        stack_trace = traceback.format_exc()
+        logger.error(
+            f"Internal server error contacting Sirius: {e} --- {stack_trace}",
+            extra=get_event_details_for_logs(
+                status=500, key=str(body), cache_used=False
+            ),
+        )
+        abort(500)
     if sirius_status_code != 204 and sirius_status_code != 200:
         logger.error(
             f"Sirius error: {sirius_status_code}",
             extra=get_event_details_for_logs(
-                status=sirius_status_code, key=body, cache_used=False
+                status=sirius_status_code, key=str(body), cache_used=False
             ),
         )
     else:
         logger.info(
             "Post Request Code - OK",
             extra=get_event_details_for_logs(
-                status=sirius_status_code, key=body, cache_used=False
+                status=sirius_status_code, key=str(body), cache_used=False
             ),
         )
     return sirius_response, sirius_status_code

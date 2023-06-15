@@ -31,7 +31,7 @@ except ImportError:
     except ImportError:
         from io import BytesIO
 
-from werkzeug.wrappers import BaseRequest
+from werkzeug.wrappers import Request
 
 
 __version__ = "0.0.4"
@@ -81,7 +81,7 @@ def make_environ(event):
     environ["wsgi.run_once"] = True
     environ["wsgi.multiprocess"] = False
 
-    BaseRequest(environ)
+    Request(environ)
 
     return environ
 
@@ -116,5 +116,6 @@ class FlaskLambda(Flask):
                 "body": body.decode("utf-8"),
             }
 
-        except Exception:
+        except Exception as e:
+            print("Unexpected error", e)
             return {"statusCode": 500, "headers": {}, "body": "internal server error"}
