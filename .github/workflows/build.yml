@@ -16,30 +16,29 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.7'
+          python-version: '3.8'
       - uses: unfor19/install-aws-cli-action@v1
-      - name: Install requirements
-        run: |
-          for i in $(ls -d lambda_functions/*/ | awk -F'/' '{print $2}')
-          do
-            pip3 install -r ./lambda_functions/"${i}"/requirements/dev-requirements.txt
-          done
+
+      - name: Install flake8
+        run: pip3 install flake8
 
       - name: Run Flask8
         run: |
-          flake8 --ignore Q000 lambda_functions
-      - name: Test Coverage
+          flake8 --ignore Q000,W503 lambda_functions
+
+      - name: Build Unit Test Container
         run: |
-          python -m pytest lambda_functions/v1/tests --cov=lambda_functions/v1/functions/lpa/app/api --cov-fail-under=80
-      - name: Run unit tests
+          docker-compose -f docker-compose.yml build unit-test-lpa-data
+
+      - name: Run Unit Tests
         run: |
-          python -m pytest -m "not (smoke_test or pact_test)"
+          docker-compose -f docker-compose.yml up unit-test-lpa-data
 
       - name: Install lambda requirements
         run: |
           for i in $(ls -d lambda_functions/*/ | awk -F'/' '{print $2}' | grep '^v[1-9]\+')
           do
-            export LAYER_PATH=lambda_functions/"${i}"/lambda_layers/python/lib/python3.7/site-packages
+            export LAYER_PATH=lambda_functions/"${i}"/lambda_layers/python/lib/python3.8/site-packages
             pip3 install -r lambda_functions/"${i}"/requirements/requirements.txt --target ./$LAYER_PATH/
           done
 

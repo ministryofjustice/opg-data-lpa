@@ -7,7 +7,7 @@ services:
       - "5433:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: password #pragma: allowlist secret
       POSTGRES_DB: postgres
   broker_app:
     image: pactfoundation/pact-broker
@@ -18,7 +18,7 @@ services:
       - postgres
     environment:
       PACT_BROKER_DATABASE_USERNAME: postgres
-      PACT_BROKER_DATABASE_PASSWORD: password
+      PACT_BROKER_DATABASE_PASSWORD: password #pragma: allowlist secret
       PACT_BROKER_DATABASE_HOST: postgres
       PACT_BROKER_DATABASE_NAME: postgres
       #Uncomment these two options for debugging purposes:
@@ -77,3 +77,9 @@ services:
       default:
         aliases:
           - lpa.local
+
+  unit-test-lpa-data:
+    image: unit-tests-request-handler:latest
+    build:
+      context: lambda_functions/v1
+      dockerfile: Dockerfile-tests
