@@ -1,5 +1,5 @@
 #Update this date to trigger update of layers: 20230619
-Flask==2.2.3
+Flask==2.2.5
 markupsafe==2.1.1
 localstack-client==1.10
 redis==3.5.3
