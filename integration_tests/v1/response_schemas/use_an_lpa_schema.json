@@ -38,6 +38,9 @@
         "firstname": {
           "type": "string"
         },
+        "otherNames": {
+          "type": ["string", "null"]
+        },
         "middlenames": {
           "type": ["string", "null"]
         },
@@ -103,6 +106,7 @@
         "email",
         "salutation",
         "firstname",
+        "otherNames",
         "middlenames",
         "surname",
         "addresses",
@@ -159,6 +163,9 @@
             },
             "firstname": {
               "type": "string"
+            },
+            "otherNames": {
+              "type": ["string", "null"]
             },
             "middlenames": {
               "type": ["string", "null"]
@@ -228,6 +235,7 @@
             "email",
             "salutation",
             "firstname",
+            "otherNames",
             "middlenames",
             "surname",
             "addresses",
@@ -268,6 +276,9 @@
             },
             "firstname": {
               "type": "string"
+            },
+            "otherNames": {
+              "type": ["string", "null"]
             },
             "middlenames": {
               "type": ["string", "null"]
@@ -331,6 +342,7 @@
             "email",
             "salutation",
             "firstname",
+            "otherNames",
             "middlenames",
             "surname",
             "addresses"
