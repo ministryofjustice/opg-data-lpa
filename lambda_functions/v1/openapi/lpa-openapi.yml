@@ -676,7 +676,7 @@ components:
           maxLength: 255
         middlenames:
           type: string
-          description: The case actor's last name
+          description: The case actor's middle name
           example: Deputy
           maxLength: 255
         surname:
