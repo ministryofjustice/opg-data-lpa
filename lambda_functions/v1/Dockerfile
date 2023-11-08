@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.8-slim-buster
 WORKDIR /var/www/lambda_functions/v1
 
 # Install Python Dependencies

@@ -12,5 +12,5 @@ tenacity==6.3.1
 validators==0.18.2
 yarl
 importlib-metadata
-opg-sirius-service
+opg-sirius-service==2.1.1
 localstack-client
