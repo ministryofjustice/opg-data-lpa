@@ -11,6 +11,7 @@ services:
       POSTGRES_DB: postgres
   broker_app:
     image: pactfoundation/pact-broker
+    platform: linux/amd64
     ports:
       - "9293:80"
       - "9292:9292"
