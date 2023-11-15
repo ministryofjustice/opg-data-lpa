@@ -44,3 +44,6 @@ login-api-gateway:
 
 logs:
 	docker-compose logs --tail=100 -f $(c)
+
+unit-tests-all:
+	docker-compose run unit-test-lpa-data

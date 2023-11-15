@@ -40,15 +40,13 @@ opg_data_lpa_dev_aws = {
         "method": "GET",
     },
     "online_tool_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa"
-        "-online-tool/lpas",
+        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa-online-tool/lpas",
         "method": "GET",
         "valid_lpa_online_tool_ids": ["A33718377316"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/use"
-        "-an-lpa/lpas",
+        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas",
         "method": "GET",
         "valid_sirius_uids": ["700000000047"],
         "invalid_sirius_uids": ["9"],

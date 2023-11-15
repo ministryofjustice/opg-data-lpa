@@ -4,6 +4,7 @@ WORKDIR /var/www/lambda_functions/v1
 # Install Python Dependencies
 COPY requirements requirements
 RUN cat ./requirements/*.txt | uniq | grep -v "#" > ./requirements/local-requirements.txt
+RUN pip install --upgrade pip
 RUN pip install -r ./requirements/local-requirements.txt
 
 EXPOSE 4343
