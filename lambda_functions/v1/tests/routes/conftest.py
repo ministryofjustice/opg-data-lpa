@@ -19,7 +19,6 @@ class NoCache(LocalTestingConfig):
 
 @pytest.fixture(scope="session")
 def app(*args, **kwargs):
-
     app = create_app(Flask, config=LocalTestingConfig)
 
     routes = [str(p) for p in app.url_map.iter_rules()]
@@ -33,8 +32,12 @@ def app(*args, **kwargs):
 
 
 @pytest.fixture(scope="function")
-def test_server(app):
+def cache(app):
+    return app.sirius.cache
 
+
+@pytest.fixture(scope="session")
+def test_server(app):
     return app.test_client()
 
 
@@ -50,6 +53,19 @@ def app_no_cache(*args, **kwargs):
     )
 
     yield app
+
+
+@pytest.fixture(scope="session")
+def mock_environ():
+    environ = {
+        "SOURCE_IP": "127.0.0.1",
+        "USER_AGENT": "Mock User Agent",
+        "REQUEST_METHOD": "GET",
+        "SERVER_PROTOCOL": "HTTP/1.1",
+        "PATH_INFO": "/example",
+        "REQUEST_ID": "123456789",
+    }
+    return environ
 
 
 @pytest.fixture(scope="function")
@@ -76,7 +92,8 @@ def patched_send_request_to_sirius(monkeypatch):
         url = args[1]
 
         if (
-            args[2] == "POST" and url == "http://not-really-sirius.com/api/public/v1/lpas/requestCode"
+            args[2] == "POST"
+            and url == "http://not-really-sirius.com/api/public/v1/lpas/requestCode"
         ):
             return 204, ""
 
@@ -116,9 +133,9 @@ def patched_send_request_to_sirius(monkeypatch):
 
             for lpa in deleted_response_data["lpa"]:
                 if test_id in lpa["onlineLpaId"]:
-                    response_data = [lpa]
-
-                    return 410, response_data
+                    return 410, {
+                        "detail": "LPA with uid " + test_id + "has been deleted"
+                    }
 
         elif test_id[:5] == "crash":
             print("oh no you crashed sirius")

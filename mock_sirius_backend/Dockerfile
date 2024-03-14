@@ -1,5 +1,5 @@
 # our base image
-FROM python:3.6-slim
+FROM python:3.8-slim
 
 WORKDIR /var/www/
 COPY requirements.txt .

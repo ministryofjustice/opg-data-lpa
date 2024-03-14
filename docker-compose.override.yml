@@ -4,3 +4,8 @@ services:
   api_gateway:
     ports:
       - "4343:4343"
+
+  unit-test-lpa-data:
+    volumes:
+      - ./lambda_functions/v1/functions/lpa/app:/lpa_data/lambda_functions/v1/functions/lpa/app
+      - ./lambda_functions/v1/tests:/lpa_data/lambda_functions/v1/tests

@@ -4,14 +4,18 @@ from flask import Blueprint
 from flask import request, jsonify
 
 from .errors import error_message
-from .handlers import get_by_online_tool_id, get_by_sirius_uid, get_service_status, request_code
+from .handlers import (
+    get_by_online_tool_id,
+    get_by_sirius_uid,
+    get_service_status,
+    request_code,
+)
 from .helpers import custom_logger
 
 
-logger = custom_logger("")
+logger = custom_logger("resources")
 
 version = "v1"
-print(f"version: {version}")
 api = Blueprint("api", __name__, url_prefix=f"/{version}")
 
 # TODO Not sure how many of these are actually implemented, and some will get caught
@@ -40,7 +44,9 @@ def handle405(error=None):
 
 @api.app_errorhandler(410)
 def handle410(error=None):
-    return error_message(410, "An LPA with the passed ID has been deleted from The Sirius data provider")
+    return error_message(
+        410, "An LPA with the passed ID has been deleted from The Sirius data provider"
+    )
 
 
 @api.app_errorhandler(429)
@@ -72,8 +78,6 @@ def handle_healthcheck_route():
 
 @api.route("/lpa-online-tool/lpas/<lpa_online_tool_id>", methods=["GET"])
 def handle_lpa_online_tool(lpa_online_tool_id):
-    logger.info(f"lpa_online_tool_id: {lpa_online_tool_id}")
-
     response, status = get_by_online_tool_id(lpa_online_tool_id=lpa_online_tool_id)
 
     return jsonify(response), status
@@ -81,8 +85,6 @@ def handle_lpa_online_tool(lpa_online_tool_id):
 
 @api.route("/use-an-lpa/lpas/<sirius_uid>", methods=["GET"])
 def handle_use_an_lpa(sirius_uid):
-    logger.info(f"sirius_uid: {sirius_uid}")
-
     response, status = get_by_sirius_uid(sirius_uid=sirius_uid)
 
     return jsonify(response), status
@@ -91,8 +93,6 @@ def handle_use_an_lpa(sirius_uid):
 @api.route("/use-an-lpa/lpas/requestCode", methods=["POST"])
 def handle_request_code():
     body = request.json
-    logger.info(f"body: {body}")
-
     response, status = request_code(body)
 
     return jsonify(response), status

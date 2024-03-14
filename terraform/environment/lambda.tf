@@ -1,7 +1,7 @@
 module "lambda_lpa_v1" {
   source                 = "./modules/lambda"
   environment            = local.environment
-  aws_subnet_ids         = data.aws_subnet_ids.private.ids
+  aws_subnet_ids         = data.aws_subnet.private.*.id
   lambda_prefix          = "lpa"
   handler                = "app.lpa.lambda_handler"
   lambda_function_subdir = "lpa"

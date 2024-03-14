@@ -1,9 +1,6 @@
-import fakeredis
 import pytest
 
 from opg_sirius_service import sirius_handler
-
-from lambda_functions.v1.tests.routes.conftest import mock_redis_server
 
 import json
 
@@ -26,26 +23,31 @@ def test_use_an_lpa_route_with_cache(
     expected_status_code,
     cache_expected,
     test_server,
+    cache,
+    mock_environ,
     patched_send_request_to_sirius,
 ):
-
     monkeypatch.setattr(
         sirius_handler.SiriusService,
         "check_sirius_available",
         lambda x: sirius_available,
     )
 
-    response = test_server.get(f"/v1/use-an-lpa/lpas/{sirius_uid}")
-
-    mock_redis = fakeredis.FakeStrictRedis(server=mock_redis_server)
+    response = test_server.get(
+        f"/v1/use-an-lpa/lpas/{sirius_uid}", environ_base=mock_environ
+    )
 
     assert response.status_code == expected_status_code
     if cache_expected:
-        redis_entry = mock_redis.get(name=f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}")
+        redis_entry = cache.get(
+            name=f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}"
+        )
         print(f"redis_entry: {redis_entry}")
         assert response.get_json() == json.loads(redis_entry)[0]
     else:
-        assert mock_redis.exists(f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}") == 0
+        assert (
+            cache.exists(f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}") == 0
+        )
 
 
 @pytest.mark.parametrize(
@@ -65,18 +67,19 @@ def test_use_an_lpa_route_no_cache(
     sirius_available,
     expected_status_code,
     test_server_no_cache,
+    cache,
+    mock_environ,
     patched_send_request_to_sirius,
 ):
-
     monkeypatch.setattr(
         sirius_handler.SiriusService,
         "check_sirius_available",
         lambda x: sirius_available,
     )
 
-    response = test_server_no_cache.get(f"/v1/use-an-lpa/lpas/{sirius_uid}")
-
-    mock_redis = fakeredis.FakeStrictRedis(server=mock_redis_server)
+    response = test_server_no_cache.get(
+        f"/v1/use-an-lpa/lpas/{sirius_uid}", environ_base=mock_environ
+    )
 
     assert response.status_code == expected_status_code
-    assert mock_redis.exists(f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}") == 0
+    assert cache.exists(f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}") == 0

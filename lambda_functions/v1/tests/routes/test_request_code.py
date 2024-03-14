@@ -1,4 +1,3 @@
-import pytest
 from opg_sirius_service import sirius_handler
 
 
@@ -6,6 +5,7 @@ def test_request_code_route(
     monkeypatch,
     test_server_no_cache,
     patched_send_request_to_sirius,
+    mock_environ,
 ):
     monkeypatch.setattr(
         sirius_handler.SiriusService,
@@ -13,7 +13,13 @@ def test_request_code_route(
         lambda x: True,
     )
 
-    response = test_server_no_cache.post("/v1/use-an-lpa/lpas/requestCode", method='POST', data='{"case_uid":70001,"actor_uid":70005}')
+    response = test_server_no_cache.post(
+        "/v1/use-an-lpa/lpas/requestCode",
+        method="POST",
+        content_type="application/json",
+        data='{"case_uid":70001,"actor_uid":70005}',
+        environ_base=mock_environ,
+    )
 
     assert response.status_code == 204
 
@@ -22,6 +28,7 @@ def test_dict_body_works_as_json(
     monkeypatch,
     test_server_no_cache,
     patched_send_request_to_sirius,
+    mock_environ,
 ):
     monkeypatch.setattr(
         sirius_handler.SiriusService,
@@ -29,7 +36,13 @@ def test_dict_body_works_as_json(
         lambda x: True,
     )
 
-    response = test_server_no_cache.post("/v1/use-an-lpa/lpas/requestCode", method='POST', data={"case_uid": 70001, "actor_uid": 70005})
+    response = test_server_no_cache.post(
+        "/v1/use-an-lpa/lpas/requestCode",
+        method="POST",
+        content_type="application/json",
+        data='{"case_uid": 70001, "actor_uid": 70005}',
+        environ_base=mock_environ,
+    )
 
     assert response.status_code == 204
 
@@ -38,6 +51,7 @@ def test_request_code_route_sirius_unavailable(
     monkeypatch,
     test_server_no_cache,
     patched_send_request_to_sirius,
+    mock_environ,
 ):
     monkeypatch.setattr(
         sirius_handler.SiriusService,
@@ -45,6 +59,12 @@ def test_request_code_route_sirius_unavailable(
         lambda x: False,
     )
 
-    response = test_server_no_cache.post("/v1/use-an-lpa/lpas/requestCode", method='POST', data='{"case_uid":70001,"actor_uid":70005}')
+    response = test_server_no_cache.post(
+        "/v1/use-an-lpa/lpas/requestCode",
+        method="POST",
+        content_type="application/json",
+        data='{"case_uid":70001,"actor_uid":70005}',
+        environ_base=mock_environ,
+    )
 
     assert response.status_code == 500

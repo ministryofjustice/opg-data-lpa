@@ -126,6 +126,13 @@ is a bit more of an in depth set up process required.
     - Set the Default Test Runner to 'pytest'
     - Right click on the tests folder (or single file) > 'Run pytest in tests'
 
+
+These tests can also be run with docker, first [set up docker environment](#running-the-api-locally). 
+Then:
+   ```shell
+    docker-compose run unit-test-lpa-data
+   ```
+
 ## Integration Tests
 
 1. [Set up local environment](#set-up-local-development-environment-outside-of-docker)
