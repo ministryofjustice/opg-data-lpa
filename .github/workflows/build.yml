@@ -167,7 +167,8 @@ jobs:
       - name: Extract branch name
         shell: bash
         run: |
-          echo "branch=$(echo ${GITHUB_HEAD_REF#refs/heads/} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+          echo "branch_raw=$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF##*/}})" >> $GITHUB_OUTPUT
+          echo "branch_formatted=$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF##*/}} | tr -cd '[:alnum:]' | tr '[:upper:]' '[:lower:]' | cut -c1-8)" >> $GITHUB_OUTPUT
         id: extract_branch
       - name: Install workspace manager
         run: |
@@ -196,10 +197,10 @@ jobs:
       - name: Terraform apply
         working-directory: ./terraform/environment
         env:
-          TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch }}
+          TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
         run: |
           terraform apply --auto-approve
       - name: Protect Workspace
         env:
-          TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch }}
+          TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
         run: terraform-workspace-manager -register-workspace=$TF_WORKSPACE -time-to-protect=4 -aws-account-id=288342028542 -aws-iam-role=integrations-ci
