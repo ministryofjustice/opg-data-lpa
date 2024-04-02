@@ -1,6 +1,12 @@
 # opg-data-lpa
 
-[![CircleCI](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/opg-data-lpa/tree/main)
+OPG Use My LPA: Managed by opg-org-infra &amp; Terraform
+
+![path to live status](https://github.com/ministryofjustice/opg-data-lpa/actions/workflows/deploy.yml/badge.svg)
+![licence-mit](https://img.shields.io/github/license/ministryofjustice/opg-data-lpa.svg)
+
+
+[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=for-the-badge&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fendpoint%2Fopg-data-lpa)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-report/opg-data-lpa 'Link to report')
 
 ## Purpose
 
@@ -20,11 +26,11 @@ LPA related functions.
 
 - Terraform (for infrastructure)
 - Python (for lambda code)
-- OpenApi spec (for building the REST API against API Gateway)
+- OpenAPI spec (for building the REST API against API Gateway)
 
 ## Running the API locally
 
-- Run full setup script from the make file:
+- Run full setup script from the Makefile:
 
 ```
 make setup
@@ -50,11 +56,9 @@ That should be all you need to set it up locally.
 
 When working on a ticket you should name your branch as the jira identifier of the ticket you are working on.
 
-When you push your changes to your branch and create a PR then the CircleCi workflow will run and create a branch
-based environment in aws. This includes an api gateway instance, the lambda function and all the relevant DNS to access
-the environment.
+When you push your changes to your branch and create a PR then Github Actions workflow will run and create a branch-based environment in AWS. This includes an API Gateway instance, the Lambda function and all the relevant DNS to access the environment.
 
-You can test against the endpoints by assuming a sirius dev role and hitting the following endpoint (replacing branch_name and api_path:
+You can test against the endpoints by assuming a Sirius dev role and hitting the following endpoint (replacing branch_name and api_path):
 
 ```
 https://branch_name.dev.lpa.api.opg.service.justice.gov.uk/v1/api_path
@@ -64,13 +68,13 @@ Once merged you can do the same tests against dev by removing the branch_name po
 
 Environments get destroyed overnight and by default your environment is protected for the first night's destroy but
 will be cleaned up on the subsequent night. If you want to work on it longer either recreate it by rerunning the workflow
-or  change the protection TTL in dynamodb.
+or  change the protection TTL in DynamoDB.
 
 ## Manual setup
 
 ### Set up local development environment outside of docker
 
-If you wish to develop against this environment and don't want to be dealing with docker containers then there
+If you wish to develop against this environment and don't want to be dealing with Docker containers then there
 is a bit more of an in depth set up process required.
 
 1. Create a virtual environment
@@ -98,7 +102,7 @@ is a bit more of an in depth set up process required.
     pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt
     ```
 
-### Running flask app locally
+### Running Flask app locally
 
 1. `cd lambda_functions/v1/functions/lpa/app`
 2. `FLASK_APP=lpa SIRIUS_BASE_URL=http://localhost:5001 flask run &`
@@ -186,7 +190,7 @@ The best package to get started can be found here:
 You can download the latest version to a directory, unzip it and run the individual tools
 in the `/pact/bin` folder from the command line or put them in your PATH.
 First you should put the contract in our local broker. The local broker is spun up as part
-of the `docker-compose up -d` command and you can push in a contract manually from a json file
+of the `docker compose up -d` command and you can push in a contract manually from a json file
 by using the below command (example json included in this repo):
 
 ```shell
