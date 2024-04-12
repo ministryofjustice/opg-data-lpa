@@ -27,7 +27,7 @@ locals {
 
   //Modify here for new version - replace with new code (comment out old code)
   latest_openapi_version = "v1"
-  openapispec            = file("../../lambda_functions/${local.latest_openapi_version}/openapi/${local.api_name}-openapi.yml")
+  openapi_spec           = "../../lambda_functions/${local.latest_openapi_version}/openapi/${local.api_name}-openapi.yml"
 }
 
 output "policy" {
