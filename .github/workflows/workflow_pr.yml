@@ -80,6 +80,8 @@ jobs:
     name: Build, Scan and Push
     needs:
       - set_variables
+      - python_unit_tests
+      - terraform_environment_lint
     uses: ./.github/workflows/_docker_build_scan_push.yml
     with:
       build_latest: false
@@ -87,66 +89,7 @@ jobs:
     secrets: inherit
 
 
-  # terraform_checks:
-  #   runs-on: ubuntu-latest
-  #   needs: build_and_test
-  #   env:
-  #     TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
-  #   strategy:
-  #     max-parallel: 1
-  #     matrix:
-  #       include:
-  #         - environment: "development"
-
-  #         - environment: "preproduction"
-
-  #         - environment: "production"
-
-  #         - environment: "integration"
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: Configure AWS Credentials For Terraform
-  #       uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: eu-west-1
-  #         role-session-name: GitHubActionsTerraform
-
-  #     - uses: hashicorp/setup-terraform@v3
-  #       with:
-  #         terraform_version: 1.2.4
-  #     - name: Retrieve Artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: opg-data-lpa
-  #     - name: unzip
-  #       run: |
-  #         unzip ./opg-data-lpa.zip -d .
-
-  #     - name: Setup environment
-  #       run: |
-  #         echo TF_WORKSPACE=${{ matrix.environment }} >> $GITHUB_ENV
-  #     - name: Terraform init
-  #       working-directory: ./terraform/environment
-  #       run: |
-  #         terraform init
-
-  #     - name: Terraform formatting
-  #       working-directory: ./terraform/environment
-  #       run: |
-  #         terraform fmt -diff -check -recursive
-  #     - name: Validate Terraform
-  #       working-directory: ./terraform/environment
-  #       run: |
-  #         terraform validate
-
-  #     - name: Terraform plan
-  #       working-directory: ./terraform/environment
-  #       run: |
-  #         terraform plan -input=false
-
+  # TODO: Add Integration tests. Pact verfication is probably unnecessary due to to Sirius not changing their API much
   # pact_verification:
   #   runs-on: ubuntu-latest
   #   needs: terraform_checks
@@ -188,52 +131,19 @@ jobs:
   #         --git_commit_consumer="${GIT_COMMIT_CONSUMER}" \
   #         --git_commit_provider="${GIT_COMMIT_PROVIDER}" || echo "Failed but because consumer pacts not set up yet"
 
-  # ephemeral_environment:
-  #   name: Create Ephemeral Environment
-  #   runs-on: "ubuntu-latest"
-  #   needs: [build_and_test, terraform_checks]
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: hashicorp/setup-terraform@v3
-  #       with:
-  #         terraform_version: 1.2.4
-  #     - name: Extract branch name
-  #       shell: bash
-  #       run: |
-  #         echo "branch_raw=$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF##*/}})" >> $GITHUB_OUTPUT
-  #         echo "branch_formatted=$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF##*/}} | tr -cd '[:alnum:]' | tr '[:upper:]' '[:lower:]' | cut -c1-8)" >> $GITHUB_OUTPUT
-  #       id: extract_branch
-  #     - name: Install workspace manager
-  #       run: |
-  #         wget https://github.com/ministryofjustice/opg-terraform-workspace-manager/releases/download/v0.3.2/opg-terraform-workspace-manager_Linux_x86_64.tar.gz -O $HOME/terraform-workspace-manager.tar.gz
-  #         sudo tar -xvf $HOME/terraform-workspace-manager.tar.gz -C /usr/local/bin
-  #         sudo chmod +x /usr/local/bin/terraform-workspace-manager
-  #     - name: Configure AWS Credentials For Terraform
-  #       uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: eu-west-1
-  #         role-session-name: GitHubActionsTerraform
-  #     - name: Retrieve Artifact
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: opg-data-lpa
-  #     - name: Unzip Artifact
-  #       run: unzip -o ./opg-data-lpa.zip -d ./lambda_functions
-  #     - name: Terraform init
-  #       working-directory: ./terraform/environment
-  #       env:
-  #         TF_WORKSPACE: default
-  #       run: |
-  #         terraform init
-  #     - name: Terraform apply
-  #       working-directory: ./terraform/environment
-  #       env:
-  #         TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
-  #       run: |
-  #         terraform apply --auto-approve
-  #     - name: Protect Workspace
-  #       env:
-  #         TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
-  #       run: terraform-workspace-manager -register-workspace=$TF_WORKSPACE -time-to-protect=4 -aws-account-id=288342028542 -aws-iam-role=integrations-ci
+  ephemeral_environment:
+    name: Create Ephemeral Environment
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
+    needs: 
+      - set_variables
+      - docker_build_scan_push
+      - branch_name
+    with:
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_directory: "./terraform/environment"
+      terraform_workspace: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.branch_name }}
+      is_ephemeral: true
+      workspace_manager_aws_account_id: "050256574573"
+      workspace_manager_aws_iam_role: integrations-ci
+      terraform_apply: false
+    secrets: inherit
