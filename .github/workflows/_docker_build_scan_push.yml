@@ -21,6 +21,7 @@ on:
             description: 'Semver tag'
             required: true
             type: string
+        
   
 
 jobs:
@@ -30,9 +31,10 @@ jobs:
     strategy:
       matrix:
         data:
-          - name: 'lpa-app'
+          - name: 'lpa-data-lambda'
             docker_build_directory: 'lambda_functions/v1'
-            dockerfile: "Function"
+            ecr_repository: 'integrations'
+            dockerfile: 'Function'
     env:
       sarif_file: trivy-results.sarif
 
