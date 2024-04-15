@@ -39,25 +39,26 @@ jobs:
     name: "Generate a safe branch name"
     uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@main
 
-  semver_tag:
-    needs: [branch_name]
-    name: "Generate the semver tag value"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-semver-tag.yml@main
-    with:
-      branch_name: "${{ needs.branch_name.outputs.parsed }}"
-    secrets: inherit
-
   set_variables:
     name: output workflow variables
     runs-on: ubuntu-latest
     outputs:
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
+      semver_tag: ${{ steps.semver_tag.outputs.created_tag }}
     steps:
       - name: Set terraform version - environment
         id: terraform_version_environment
         uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
         with:
           terraform_directory: "./terraform/environment"
+      - name: "Semver tag"
+        id: semver_tag
+        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@v2.3.1
+        with:
+          prerelease: true
+          with_v: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+    
 
   terraform_environment_lint:
     name: Terraform - Environment - Lint
@@ -73,18 +74,16 @@ jobs:
     name: Python Unit Tests
     needs:
       - set_variables
-      - semver_tag
     uses: ./.github/workflows/_python_unit_tests.yml
 
   docker_build_scan_push:
     name: Build, Scan and Push
     needs:
       - set_variables
-      - semver_tag
     uses: ./.github/workflows/_docker_build_scan_push.yml
     with:
       build_latest: false
-      semver_tag: "${{ needs.semver_tag.outputs.semver_tag }}"
+      semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit
 
 
