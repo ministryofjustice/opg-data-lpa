@@ -1,0 +1,9 @@
+FROM public.ecr.aws/lambda/python:3.12
+
+COPY lambda_functions/v1/functions/lpa/ ${LAMBDA_TASK_ROOT}
+
+COPY lambda_functions/v1/requirements/requirements.txt requirements.txt
+
+RUN pip install -r requirements.txt
+
+CMD [ "app.lpa.lambda_handler" ]
