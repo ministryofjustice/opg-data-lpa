@@ -61,7 +61,7 @@ jobs:
         env:
           SEMVER_TAG: ${{ inputs.semver_tag }}
           ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ matrix.data.ecr_repository }}
+          ECR_REPOSITORY: '${{ matrix.data.ecr_repository }}/${{ matrix.data.name }}'
         id: docker_tags
         run: |
           if ${{ inputs.build_latest }}; then
