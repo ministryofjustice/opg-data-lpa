@@ -1,4 +1,4 @@
 connexion==2.7.0
-Flask==2.2.5
+Flask==3.0.3
 markupsafe==2.1.1
 requests
