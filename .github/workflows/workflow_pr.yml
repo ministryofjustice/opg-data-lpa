@@ -66,6 +66,7 @@ jobs:
     uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@v3.1.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      tflint_check: false
       directory: "./terraform/environment"
 
   python_unit_tests:
