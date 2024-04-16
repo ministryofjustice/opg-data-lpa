@@ -156,7 +156,7 @@ jobs:
   #         --git_commit_provider="${GIT_COMMIT_PROVIDER}" || echo "Failed but because consumer pacts not set up yet"
 
   ephemeral_environment:
-    name: Create Ephemeral Environment
+    name: Create Ephemeral Environment and run Integration Tests
     runs-on: "ubuntu-latest"
     needs: [build_and_test, terraform_checks]
     steps:
@@ -204,3 +204,8 @@ jobs:
         env:
           TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
         run: terraform-workspace-manager -register-workspace=$TF_WORKSPACE -time-to-protect=4 -aws-account-id=288342028542 -aws-iam-role=integrations-ci
+      - name: Integration Tests
+        env:
+          TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
+        run: echo "hello"
+
