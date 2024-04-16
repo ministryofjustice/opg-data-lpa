@@ -145,7 +145,7 @@ jobs:
       is_ephemeral: true
       workspace_manager_aws_account_id: "288342028542"
       workspace_manager_aws_iam_role: integrations-ci
-      terraform_apply: false
+      terraform_apply: true
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
