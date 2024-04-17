@@ -206,8 +206,8 @@ jobs:
         run: terraform-workspace-manager -register-workspace=$TF_WORKSPACE -time-to-protect=4 -aws-account-id=288342028542 -aws-iam-role=integrations-ci
 
   integration_tests:
-    - name: Integration Tests
-      needs: [ephemeral_environment]
-      uses: ./.github/workflows/sub-task-integration-tests.yml
-      with:
-        branch_name: ${{ steps.extract_branch.outputs.branch_formatted }}
+    name: Integration Tests
+    needs: [ephemeral_environment]
+    uses: ./.github/workflows/sub-task-integration-tests.yml
+    with:
+      branch_name: ${{ steps.extract_branch.outputs.branch_formatted }}
