@@ -17,11 +17,6 @@ on:
         description: 'Branch Name'
         required: true
         type: string
-    secrets:
-      aws_access_key_id_actions:
-        required: true
-      aws_secret_access_key_actions:
-        required: true
 
 jobs:
   integration_tests:
