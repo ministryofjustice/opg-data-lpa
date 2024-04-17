@@ -204,8 +204,10 @@ jobs:
         env:
           TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
         run: terraform-workspace-manager -register-workspace=$TF_WORKSPACE -time-to-protect=4 -aws-account-id=288342028542 -aws-iam-role=integrations-ci
-      - name: Integration Tests
-        uses: ./.github/workflows/sub-task-integration-tests.yml
-        env:
-          TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
 
+  integration_tests:
+      - name: Integration Tests
+        needs: [ephemeral_environment]
+        uses: ./.github/workflows/sub-task-integration-tests.yml
+        with:
+          branch_name: ${{ steps.extract_branch.outputs.branch_formatted }}
