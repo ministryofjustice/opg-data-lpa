@@ -17,6 +17,11 @@ on:
         description: 'Branch Name'
         required: true
         type: string
+    secrets:
+      aws_access_key_id_actions:
+        required: true
+      aws_secret_access_key_actions:
+        required: true
 
 jobs:
   integration_tests:
@@ -26,14 +31,6 @@ jobs:
       - name: Check out code
         id: checkout_code
         uses: actions/checkout@v4.1.1
-
-      - name: Configure AWS Credentials for integration tests
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-          aws-region: eu-west-1
-          role-session-name: GitHubActionsIntegrationTests
 
       - name: Setup Python
         uses: actions/setup-python@9a7ac94420f42ee15fc60ab88d0dca4be1fd5757
