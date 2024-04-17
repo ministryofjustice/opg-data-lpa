@@ -159,6 +159,8 @@ jobs:
     name: Create Ephemeral Environment and run Integration Tests
     runs-on: "ubuntu-latest"
     needs: [build_and_test, terraform_checks]
+    outputs:
+      branch_name: ${{ steps.extract_branch.outputs.branch_formatted }}
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -210,4 +212,4 @@ jobs:
     needs: [ephemeral_environment]
     uses: ./.github/workflows/sub-task-integration-tests.yml
     with:
-      branch_name: ${{ steps.extract_branch.outputs.branch_formatted }}
+      branch_name: ${{ needs.ephemeral_environment.outputs.branch_name }}
