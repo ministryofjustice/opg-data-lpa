@@ -213,3 +213,6 @@ jobs:
     uses: ./.github/workflows/sub-task-integration-tests.yml
     with:
       branch_name: ${{ needs.ephemeral_environment.outputs.branch_name }}
+    secrets:
+      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
