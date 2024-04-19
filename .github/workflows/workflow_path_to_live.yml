@@ -55,7 +55,7 @@ jobs:
       terraform_workspace: preproduction
       is_ephemeral: false
       terraform_apply: true
-      terraform_variables: -var="lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
+      terraform_variables: "-var=lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
@@ -75,7 +75,7 @@ jobs:
       terraform_workspace: production
       is_ephemeral: false
       terraform_apply: true
-      terraform_variables: -var="lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
+      terraform_variables: "-var=lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
