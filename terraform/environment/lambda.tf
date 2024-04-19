@@ -7,6 +7,7 @@ module "lambda_lpa_v1" {
   vpc_security_group_ids = [aws_security_group.lpa_redis_sg.id, data.aws_security_group.lambda_api_ingress.id]
   tags                   = local.default_tags
   package_type           = "Image"
+  image_uri              = var.lambda_image_uri
   tracing_mode           = "Active"
   timeout                = 15
 
