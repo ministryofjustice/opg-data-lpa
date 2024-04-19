@@ -56,6 +56,7 @@ jobs:
         env:
           BRANCH_NAME: ${{ inputs.branch_name }}
         id: integration_tests
+        working-directory: ./integration_tests
         run: |
           echo "my branch name is" ; echo $BRANCH_NAME
           python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
