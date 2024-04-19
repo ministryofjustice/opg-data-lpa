@@ -52,7 +52,7 @@ jobs:
         run: |
           pip install -r ./lambda_functions/v1/requirements/requirements.txt
           pip install -r ./lambda_functions/v1/requirements/dev-requirements.txt
-          pip install -r ./lambda_functions/v1/requirements/requirements.txt
+          pip install -r ./integration_tests/v1/requirements.txt
 
       - name: Run Integration Tests
         env:
