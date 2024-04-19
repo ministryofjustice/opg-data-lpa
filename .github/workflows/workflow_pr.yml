@@ -58,7 +58,6 @@ jobs:
           prerelease: true
           with_v: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-    
 
   terraform_environment_lint:
     name: Terraform - Environment - Lint
@@ -117,4 +116,6 @@ jobs:
     uses: ./.github/workflows/_integration_tests.yml
     with:
       branch_name: ${{ needs.branch_name.outputs.branch_name }}
+      working_directory: "./integration_tests"
+      tests_directory: "./integration_tests/v1"
     secrets: inherit
