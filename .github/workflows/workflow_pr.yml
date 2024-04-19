@@ -116,7 +116,7 @@ jobs:
       - branch_name
     uses: ./.github/workflows/_integration_tests.yml
     with:
-      branch_name: ${{ needs.branch_name.outputs.branch_name }}
+      environment_name: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.branch_name }}
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
     secrets: inherit

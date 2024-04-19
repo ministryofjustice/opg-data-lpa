@@ -13,8 +13,8 @@ permissions:
 on:
   workflow_call:
     inputs:
-      branch_name:
-        description: 'Branch Name'
+      environment_name:
+        description: 'The name of the environment'
         required: true
         type: string
       working_directory:
@@ -69,7 +69,7 @@ jobs:
 
       - name: Run tests with Pytest
         env:
-          BRANCH_NAME: ${{ inputs.branch_name }}
+          environment_name: ${{ inputs.environment_name }}
         working-directory: ${{ inputs.working_directory }}
         run: |
           coverage run -m pytest  -v -s

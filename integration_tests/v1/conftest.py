@@ -8,8 +8,10 @@ from boto3.session import Session
 from jsonschema import validate, exceptions
 from requests_aws4auth import AWS4Auth
 
-BRANCH_NAME = os.getenv("BRANCH_NAME")
-DATA_LPA_URL_ROOT = f"https://{BRANCH_NAME}.dev.lpa.api.opg.service.justice.gov.uk/v1"
+ENVIRONMENT_NAME = os.getenv("ENVIRONMENT_NAME")
+DATA_LPA_URL_ROOT = (
+    f"https://{ENVIRONMENT_NAME}.dev.lpa.api.opg.service.justice.gov.uk/v1"
+)
 HEALTHCHECK_URL = f"{DATA_LPA_URL_ROOT}/healthcheck"
 ONLINE_TOOL_URL = f"{DATA_LPA_URL_ROOT}/lpa-online-tool/lpas"
 USE_AN_LPA_URL = f"{DATA_LPA_URL_ROOT}/use-an-lpa/lpas"
