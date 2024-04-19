@@ -1,9 +1,8 @@
 #Update this date to trigger update of layers: 20230619
-Flask==2.2.5
+Flask==3.0.2
 markupsafe==2.1.1
-localstack-client==1.39
+localstack-client==2.5
 redis==4.4.4
 requests==2.31.0
 Werkzeug==3.0.1
-requests-aws4auth==1.0.1
 opg-sirius-service==2.1.1
