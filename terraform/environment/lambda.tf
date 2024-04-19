@@ -25,6 +25,10 @@ module "lambda_lpa_v1" {
     REDIS_URL           = aws_route53_record.lpa_redis.name
   }
 
+  // Workaround for "We currently do not support adding policies for $LATEST" error
+  // See https://github.com/terraform-aws-modules/terraform-aws-lambda/issues/36
+  create_unqualified_alias_allowed_triggers = true
+  create_current_version_allowed_triggers   = false
   allowed_triggers = {
     APIGatewayTrigger = {
       statement_id = "AllowApiLPAGatewayInvoke_${local.environment}-v1-lpa"
