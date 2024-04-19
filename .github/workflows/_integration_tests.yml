@@ -20,24 +20,31 @@ on:
     secrets:
       aws_access_key_id:
         description: 'AWS Access Key ID'
-        required: true
+        required: false
       aws_secret_access_key:
         description: 'AWS Secret Access Key'
+        required: false
 
 jobs:
   integration_tests:
     name: Run integration tests
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
+    strategy:  
+      matrix:  
+        python-version: ["3.10"]
     steps:
       - name: Check out code
-        id: checkout_code
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials For integration tests
         uses: aws-actions/configure-aws-credentials@v4
+        if: ${{ env.AWS_ACCESS_KEY_ID != '' && env.AWS_SECRET_ACCESS_KEY != '' }}
         with:
-          aws-access-key-id: ${{ secrets.aws_access_key_id }}
-          aws-secret-access-key: ${{ secrets.aws_secret_access_key }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
           aws-region: eu-west-1
           role-duration-seconds: 900
           role-session-name: GitHubActionsIntegrationTests
@@ -45,18 +52,21 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@9a7ac94420f42ee15fc60ab88d0dca4be1fd5757
         with:
-          python-version: '3.10'
+          python-version: ${{ matrix.python-version }}
 
-      - name: Install requirements
-        id: requirements
+      - name: Install integration test requirements.txt
         run: |
+          python -m pip install --upgrade pip
           pip install -r ./integration_tests/v1/requirements.txt
 
-      - name: Run Integration Tests
+      - name: Run tests with Pytest
         env:
           BRANCH_NAME: ${{ inputs.branch_name }}
-        id: integration_tests
         working-directory: ./integration_tests
         run: |
-          echo "my branch name is" ; echo $BRANCH_NAME
-          python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
+          echo running integration tests for branch $BRANCH_NAME
+          coverage run -m pytest  -v -s
+  
+      - name: Generate Coverage Report  
+        run: |  
+          coverage report -m

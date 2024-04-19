@@ -88,49 +88,6 @@ jobs:
       semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit
 
-
-  # TODO: Add Integration tests. Pact verfication is probably unnecessary due to to Sirius not changing their API much
-  # pact_verification:
-  #   runs-on: ubuntu-latest
-  #   needs: terraform_checks
-  #   env:
-  #     # GIT_CONSUMER: << pipeline.parameters.consumer >>
-  #     # GIT_COMMIT_CONSUMER: << pipeline.parameters.consumerversion >>
-  #     PACT_PROVIDER: lpa
-  #     PACT_CONSUMER: sirius
-  #     PACT_BROKER_BASE_URL: https://pact-broker.api.opg.service.justice.gov.uk
-  #     PACT_BROKER_HTTP_AUTH_USER: admin
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Pact Install
-  #       run: |
-  #         wget https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.82.3/pact-1.82.3-linux-x86_64.tar.gz
-  #         tar xzf pact-1.82.3-linux-x86_64.tar.gz
-  #     - name: Code artifact login
-  #       working-directory: ./docs/ci_scripts
-  #       run: |
-  #         ./login_code_artifact.sh -a 288342028542 -t pip
-
-  #     - name: install ci requirements
-  #       working-directory: ./pact
-  #       run: |
-  #         pip3 install -r requirements.txt
-
-  #     - name: verify pact
-  #       working-directory: ./pact
-  #       run: |
-  #         echo ${API_VERSION}
-  #         python check_pact_deployable.py \
-  #         --provider_base_url="http://localhost:4343" \
-  #         --pact_broker_url="${PACT_BROKER_BASE_URL}" \
-  #         --broker_user_name="admin" \
-  #         --broker_secret_name="pactbroker_admin" \
-  #         --consumer_pacticipant="${PACT_CONSUMER}" \
-  #         --provider_pacticipant="${PACT_PROVIDER}" \
-  #         --api_version="${API_VERSION}" \
-  #         --git_commit_consumer="${GIT_COMMIT_CONSUMER}" \
-  #         --git_commit_provider="${GIT_COMMIT_PROVIDER}" || echo "Failed but because consumer pacts not set up yet"
-
   ephemeral_environment:
     name: Create Ephemeral Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
@@ -151,3 +108,13 @@ jobs:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       PAGERDUTY_TOKEN: ""
+
+  integration_tests:
+    name: Run Integration Tests on Ephemeral Environment
+    needs:
+      - ephemeral_environment
+      - branch_name
+    uses: ./.github/workflows/_integration_tests.yml
+    with:
+      branch_name: ${{ needs.branch_name.outputs.branch_name }}
+    secrets: inherit
