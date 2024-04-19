@@ -21,8 +21,8 @@ on:
             description: 'Semver tag'
             required: true
             type: string
-        
-  
+
+
 
 jobs:
   docker_build_scan_push:

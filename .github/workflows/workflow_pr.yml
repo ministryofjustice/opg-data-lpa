@@ -19,7 +19,7 @@ permissions:
   repository-projects: none
   security-events: write
   statuses: none
-      
+
 defaults:
  run:
   shell: bash
@@ -90,7 +90,7 @@ jobs:
   ephemeral_environment:
     name: Create Ephemeral Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
-    needs: 
+    needs:
       - set_variables
       - docker_build_scan_push
       - branch_name
