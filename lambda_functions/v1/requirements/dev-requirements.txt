@@ -1,5 +1,5 @@
 connexion==2.7.0
-fakeredis==1.4.5
+fakeredis==2.22.0
 flake8==3.8.4
 flake8-quotes==3.2.0
 hypothesis==6.0.0
