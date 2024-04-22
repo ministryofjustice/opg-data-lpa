@@ -4,7 +4,7 @@ from jsonschema import validate, exceptions
 
 
 def is_valid_schema(data, schema_file):
-    """ Checks whether the given data matches the schema """
+    """Checks whether the given data matches the schema"""
     schema = load_data(schema_file, as_json=False)
     try:
         validate(data, schema)
