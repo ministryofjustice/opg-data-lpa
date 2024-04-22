@@ -75,5 +75,6 @@ jobs:
           coverage run -m pytest  -v -s
 
       - name: Generate Coverage Report
+        working-directory: ${{ inputs.working_directory }}
         run: |
           coverage report -m
