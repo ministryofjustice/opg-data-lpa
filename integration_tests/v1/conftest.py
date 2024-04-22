@@ -8,33 +8,51 @@ from boto3.session import Session
 from jsonschema import validate, exceptions
 from requests_aws4auth import AWS4Auth
 
-BRANCH_NAME = os.getenv("BRANCH_NAME")
-DATA_LPA_URL_ROOT = f"https://{BRANCH_NAME}.dev.lpa.api.opg.service.justice.gov.uk/v1"
-HEALTHCHECK_URL = f"{DATA_LPA_URL_ROOT}/healthcheck"
-ONLINE_TOOL_URL = f"{DATA_LPA_URL_ROOT}/lpa-online-tool/lpas"
-USE_AN_LPA_URL = f"{DATA_LPA_URL_ROOT}/use-an-lpa/lpas"
-REQUEST_CODE_URL = f"{DATA_LPA_URL_ROOT}/use-an-lpa/lpas/requestCode"
-
-opg_data_lpa_dev_aws = {
-    "name": "new collections api on aws dev",
-    "healthcheck_endpoint": {
-        "url": HEALTHCHECK_URL,
-        "method": "GET",
-    },
+opg_sirius_api_gateway_dev_aws = {
+    "name": "original collections api on aws dev",
     "online_tool_endpoint": {
-        "url": ONLINE_TOOL_URL,
+        "url": "https://dev.lpa.api.opg.service.justice.gov.uk/v1/lpa-online-tool/lpas",
         "method": "GET",
         "valid_lpa_online_tool_ids": ["A33718377316"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
-        "url": USE_AN_LPA_URL,
+        "url": "https://dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas",
+        "method": "GET",
+        "valid_sirius_uids": ["700000000013"],
+        "invalid_sirius_uids": ["9"],
+    },
+    "request_code_endpoint": {
+        "url": "https://dev.lpa.api.opg.service.justice.gov.uk/v1/lpas/requestCode",
+        "method": "POST",
+        "valid_sirius_lpas": [
+            {"caseUid": 700000000013, "actorUid": 700000000997},
+            {"caseUid": 700000000013, "actorUid": 700000000971},
+        ],
+    },
+}
+
+
+opg_data_lpa_dev_aws = {
+    "name": "new collections api on aws dev",
+    "healthcheck_endpoint": {
+        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/healthcheck",
+        "method": "GET",
+    },
+    "online_tool_endpoint": {
+        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa-online-tool/lpas",
+        "method": "GET",
+        "valid_lpa_online_tool_ids": ["A33718377316"],
+        "invalid_lpa_online_tool_ids": ["banana"],
+    },
+    "use_an_lpa_endpoint": {
+        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas",
         "method": "GET",
         "valid_sirius_uids": ["700000000047"],
         "invalid_sirius_uids": ["9"],
     },
     "request_code_endpoint": {
-        "url": REQUEST_CODE_URL,
+        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas/requestCode",
         "method": "POST",
         "valid_sirius_lpas": [
             {"caseUid": 700000000013, "actorUid": 700000000997},
@@ -47,23 +65,23 @@ opg_data_lpa_dev_aws = {
 opg_data_lpa_local_mock = {
     "name": "new collections api local mock",
     "healthcheck_endpoint": {
-        "url": "http://127.0.0.1:4343/v1/healthcheck",
+        "url": "http://0.0.0.0:4343/v1/healthcheck",
         "method": "GET",
     },
     "online_tool_endpoint": {
-        "url": "http://127.0.0.1:4343/v1/lpa-online-tool/lpas",
+        "url": "http://0.0.0.0:4343/v1/lpa-online-tool/lpas",
         "method": "GET",
         "valid_lpa_online_tool_ids": ["A39721583862"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
-        "url": "http://127.0.01:4343/v1/use-an-lpa/lpas",
+        "url": "http://0.0.0.0:4343/v1/use-an-lpa/lpas",
         "method": "GET",
         "valid_sirius_uids": ["700000000138"],
         "invalid_sirius_uids": ["9"],
     },
     "request_code_endpoint": {
-        "url": "http://127.0.0.1:4343/v1/use-an-lpa/lpas/requestCode",
+        "url": "http://0.0.0.0:4343/v1/use-an-lpa/lpas/requestCode",
         "method": "POST",
         "valid_sirius_lpas": [
             {"caseUid": 700000000138, "actorUid": 700000000997},

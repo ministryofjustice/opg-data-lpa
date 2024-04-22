@@ -13,7 +13,7 @@ resource "aws_lambda_function" "lambda_function" {
   function_name    = local.lambda
   role             = aws_iam_role.lambda_role.arn
   handler          = var.handler
-  runtime          = "python3.10"
+  runtime          = "python3.8"
   timeout          = 15
   depends_on       = [aws_cloudwatch_log_group.lambda]
   layers           = [aws_lambda_layer_version.lambda_layer.arn]
@@ -58,7 +58,7 @@ resource "aws_lambda_layer_version" "lambda_layer" {
   source_code_hash = data.archive_file.lambda_layer_archive.output_base64sha256
   layer_name       = "lpa_requirements_${var.environment}"
 
-  compatible_runtimes = ["python3.10"]
+  compatible_runtimes = ["python3.8"]
 
   lifecycle {
     ignore_changes = [
