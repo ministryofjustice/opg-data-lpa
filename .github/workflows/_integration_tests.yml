@@ -69,7 +69,7 @@ jobs:
 
       - name: Run tests with Pytest
         env:
-          environment_name: ${{ inputs.environment_name }}
+          ENVIRONMENT_NAME: ${{ inputs.environment_name }}
         working-directory: ${{ inputs.working_directory }}
         run: |
           coverage run -m pytest  -v -s
