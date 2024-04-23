@@ -20,23 +20,23 @@ REQUEST_CODE_URL = f"{DATA_LPA_URL_ROOT}/use-an-lpa/lpas/requestCode"
 opg_data_lpa_dev_aws = {
     "name": "new collections api on aws dev",
     "healthcheck_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/healthcheck",
+        "url": f"{ HEALTHCHECK_URL }",
         "method": "GET",
     },
     "online_tool_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa-online-tool/lpas",
+        "url": f"{ ONLINE_TOOL_URL }",
         "method": "GET",
         "valid_lpa_online_tool_ids": ["A33718377316"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas",
+        "url": f"{ USE_AN_LPA_URL }",
         "method": "GET",
         "valid_sirius_uids": ["700000000047"],
         "invalid_sirius_uids": ["9"],
     },
     "request_code_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas/requestCode",
+        "url": f"{ REQUEST_CODE_URL }",
         "method": "POST",
         "valid_sirius_lpas": [
             {"caseUid": 700000000013, "actorUid": 700000000997},
