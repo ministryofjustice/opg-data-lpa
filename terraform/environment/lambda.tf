@@ -1,3 +1,7 @@
+data "aws_secretsmanager_secret" "jwt_secret_key" {
+  name = "${local.account.account_mapping}/jwt-key"
+}
+
 module "lambda_lpa_v1" {
   source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v7.2.6"
 
@@ -16,6 +20,21 @@ module "lambda_lpa_v1" {
   create_role                   = true
   attach_cloudwatch_logs_policy = true
   attach_network_policy         = true
+  attach_policy_json            = true
+  policy_json = jsonencode({
+    Version : "2012-10-17",
+    Statement : [
+      {
+        Effect : "Allow",
+        Action : [
+          "secretsmanager:GetSecretValue"
+        ],
+        Resource : [
+          data.aws_secretsmanager_secret.jwt_secret_key.arn
+        ]
+      }
+    ]
+  })
 
   environment_variables = {
     SIRIUS_BASE_URL     = "http://api.${local.account.target_environment}.ecs"
