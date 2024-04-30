@@ -12,6 +12,11 @@ module "lambda_lpa_v1" {
   tracing_mode           = "Active"
   timeout                = 15
 
+  # Let the module create a role for us
+  create_role                   = true
+  attach_cloudwatch_logs_policy = true
+  attach_network_policy         = true
+
   environment_variables = {
     SIRIUS_BASE_URL     = "http://api.${local.account.target_environment}.ecs"
     SIRIUS_API_VERSION  = "v1"
