@@ -35,7 +35,7 @@ jobs:
         run: 'flake8 --ignore Q000,W503 lambda_functions'
 
       - name: Build Unit Test Container
-        run: docker compose -f docker-compose.yml build unit-test-lpa-data
+        run: docker compose -f docker-compose.yml build unit-test-lpa-data --build-arg PYTHON_VERSION=${{ matrix.python-version }}
 
       - name: Run Unit Tests
         run: docker compose -f docker-compose.yml up unit-test-lpa-data --abort-on-container-exit --exit-code-from unit-test-lpa-data || exit 1

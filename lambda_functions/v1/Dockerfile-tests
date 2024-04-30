@@ -1,4 +1,5 @@
-FROM public.ecr.aws/lambda/python:3.12
+ARG PYTHON_VERSION=3.10
+FROM public.ecr.aws/lambda/python:${PYTHON_VERSION}
 
 COPY /functions/lpa/ ${LAMBDA_TASK_ROOT}/lambda_functions/v1/functions/lpa
 COPY /tests/  ${LAMBDA_TASK_ROOT}/lambda_functions/v1/tests
