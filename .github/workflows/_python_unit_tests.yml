@@ -38,4 +38,4 @@ jobs:
         run: docker compose -f docker-compose.yml build unit-test-lpa-data
 
       - name: Run Unit Tests
-        run: docker compose -f docker-compose.yml up unit-test-lpa-data
+        run: docker compose -f docker-compose.yml up unit-test-lpa-data --abort-on-container-exit --exit-code-from unit-test-lpa-data || exit 1
