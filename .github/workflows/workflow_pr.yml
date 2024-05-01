@@ -119,5 +119,5 @@ jobs:
       data_lpa_api_url: "https://${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.branch_name }}.dev.lpa.api.opg.service.justice.gov.uk/v1"
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
-      specific_tests: "./integration_tests/v1/test_healthcheck.py"
+      specifc_tests: "test_healthcheck.py"
     secrets: inherit
