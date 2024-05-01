@@ -119,5 +119,17 @@ jobs:
       data_lpa_api_url: "https://${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.branch_name }}.dev.lpa.api.opg.service.justice.gov.uk/v1"
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
+    secrets: inherit
+
+  smoke_test_preprod:
+    name: Smoke test 
+    needs:
+      - terraform_preprod_environment_apply
+      - branch_name
+    uses: ./.github/workflows/_integration_tests.yml
+    with:
+      data_lpa_api_url: "https://pre.lpa.api.opg.service.justice.gov.uk/v1"
+      working_directory: "./integration_tests"
+      tests_directory: "./integration_tests/v1"
       specific_tests: "./v1/test_healthcheck.py"
     secrets: inherit
