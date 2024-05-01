@@ -119,4 +119,5 @@ jobs:
       environment_name: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.branch_name }}
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
+      specifc_tests: "./integration_tests/v1/test_healthcheck.py"
     secrets: inherit

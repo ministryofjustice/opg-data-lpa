@@ -25,6 +25,11 @@ on:
         description: 'Directory containing Pytest tests'
         required: true
         type: string
+      specific_tests:
+        description: 'File path to specific Pytest tests - currently used to run 1 test as a smoke test'
+        required: false
+        type: string
+        default: ""
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS:
         description: 'AWS Access Key ID'
@@ -67,9 +72,10 @@ jobs:
       - name: Run tests with Pytest
         env:
           ENVIRONMENT_NAME: ${{ inputs.environment_name }}
+          SPECIFIC_TESTS: ${{ inputs.specific_tests}}
         working-directory: ${{ inputs.working_directory }}
         run: |
-          coverage run -m pytest  -v -s
+          coverage run -m pytest $SPECIFIC_TESTS -v -s
 
       - name: Generate Coverage Report
         working-directory: ${{ inputs.working_directory }}
