@@ -85,7 +85,7 @@ jobs:
     with:
       build_latest: false
       semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
-    secrets: inherit
+    secrets: inherit # pragma: allowlist secret
 
   ephemeral_environment:
     name: Create Ephemeral Environment
@@ -116,8 +116,8 @@ jobs:
       - branch_name
     uses: ./.github/workflows/_integration_tests.yml
     with:
-      data_lpa_api_url: "https://${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.branch_name }}.dev.lpa.api.opg.service.justice.gov.uk/v1"
+      data_lpa_api_url: "https:// ${{ fromJson(needs.ephemeral_environment.outputs.terraform_output_as_json).api_gateway_url }}"
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
-    secrets: inherit
+    secrets: inherit # pragma: allowlist secret
 
