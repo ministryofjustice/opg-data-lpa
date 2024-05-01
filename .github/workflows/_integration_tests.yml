@@ -13,8 +13,8 @@ permissions:
 on:
   workflow_call:
     inputs:
-      environment_name:
-        description: 'The name of the environment'
+      data_lpa_url:
+        description: 'The url of the data lpa api gateway'
         required: true
         type: string
       working_directory:
@@ -71,7 +71,7 @@ jobs:
 
       - name: Run tests with Pytest
         env:
-          ENVIRONMENT_NAME: ${{ inputs.environment_name }}
+          DATA_LPA_URL: ${{ inputs.data_lpa_url }}
           SPECIFIC_TESTS: ${{ inputs.specific_tests}}
         working-directory: ${{ inputs.working_directory }}
         run: |

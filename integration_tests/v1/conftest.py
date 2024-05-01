@@ -8,14 +8,12 @@ from boto3.session import Session
 from jsonschema import validate, exceptions
 from requests_aws4auth import AWS4Auth
 
-ENVIRONMENT_NAME = os.getenv("ENVIRONMENT_NAME")
-DATA_LPA_URL_ROOT = (
-    f"https://{ENVIRONMENT_NAME}.dev.lpa.api.opg.service.justice.gov.uk/v1"
-)
-HEALTHCHECK_URL = f"{DATA_LPA_URL_ROOT}/healthcheck"
-ONLINE_TOOL_URL = f"{DATA_LPA_URL_ROOT}/lpa-online-tool/lpas"
-USE_AN_LPA_URL = f"{DATA_LPA_URL_ROOT}/use-an-lpa/lpas"
-REQUEST_CODE_URL = f"{DATA_LPA_URL_ROOT}/use-an-lpa/lpas/requestCode"
+#DATA_LPA_URL = "https://128uml-3399-smoke-2.dev.lpa.api.opg.service.justice.gov.uk/v1"
+DATA_LPA_URL = os.getenv("DATA_LPA_URL")
+HEALTHCHECK_URL = f"{DATA_LPA_URL}/healthcheck"
+ONLINE_TOOL_URL = f"{DATA_LPA_URL}/lpa-online-tool/lpas"
+USE_AN_LPA_URL = f"{DATA_LPA_URL}/use-an-lpa/lpas"
+REQUEST_CODE_URL = f"{DATA_LPA_URL}/use-an-lpa/lpas/requestCode"
 
 opg_data_lpa_dev_aws = {
     "name": "new collections api on aws dev",

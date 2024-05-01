@@ -116,7 +116,7 @@ jobs:
       - branch_name
     uses: ./.github/workflows/_integration_tests.yml
     with:
-      environment_name: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.branch_name }}
+      data_lpa_url: "https://${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.branch_name }}.dev.lpa.api.opg.service.justice.gov.uk/v1"
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
       specifc_tests: "./integration_tests/v1/test_healthcheck.py"
