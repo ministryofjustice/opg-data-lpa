@@ -8,51 +8,33 @@ from boto3.session import Session
 from jsonschema import validate, exceptions
 from requests_aws4auth import AWS4Auth
 
-opg_sirius_api_gateway_dev_aws = {
-    "name": "original collections api on aws dev",
-    "online_tool_endpoint": {
-        "url": "https://dev.lpa.api.opg.service.justice.gov.uk/v1/lpa-online-tool/lpas",
-        "method": "GET",
-        "valid_lpa_online_tool_ids": ["A33718377316"],
-        "invalid_lpa_online_tool_ids": ["banana"],
-    },
-    "use_an_lpa_endpoint": {
-        "url": "https://dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas",
-        "method": "GET",
-        "valid_sirius_uids": ["700000000013"],
-        "invalid_sirius_uids": ["9"],
-    },
-    "request_code_endpoint": {
-        "url": "https://dev.lpa.api.opg.service.justice.gov.uk/v1/lpas/requestCode",
-        "method": "POST",
-        "valid_sirius_lpas": [
-            {"caseUid": 700000000013, "actorUid": 700000000997},
-            {"caseUid": 700000000013, "actorUid": 700000000971},
-        ],
-    },
-}
-
+# DATA_LPA_API_URL = "https://128uml-3399-smoke-2.dev.lpa.api.opg.service.justice.gov.uk/v1"
+DATA_LPA_API_URL = os.getenv("DATA_LPA_API_URL")
+HEALTHCHECK_URL = f"{DATA_LPA_API_URL}/healthcheck"
+ONLINE_TOOL_URL = f"{DATA_LPA_API_URL}/lpa-online-tool/lpas"
+USE_AN_LPA_URL = f"{DATA_LPA_API_URL}/use-an-lpa/lpas"
+REQUEST_CODE_URL = f"{DATA_LPA_API_URL}/use-an-lpa/lpas/requestCode"
 
 opg_data_lpa_dev_aws = {
     "name": "new collections api on aws dev",
     "healthcheck_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/healthcheck",
+        "url": f"{HEALTHCHECK_URL}",
         "method": "GET",
     },
     "online_tool_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa-online-tool/lpas",
+        "url": f"{ONLINE_TOOL_URL}",
         "method": "GET",
         "valid_lpa_online_tool_ids": ["A33718377316"],
         "invalid_lpa_online_tool_ids": ["banana"],
     },
     "use_an_lpa_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas",
+        "url": f"{USE_AN_LPA_URL}",
         "method": "GET",
         "valid_sirius_uids": ["700000000047"],
         "invalid_sirius_uids": ["9"],
     },
     "request_code_endpoint": {
-        "url": "https://uml-XXXX.dev.lpa.api.opg.service.justice.gov.uk/v1/use-an-lpa/lpas/requestCode",
+        "url": f"{REQUEST_CODE_URL}",
         "method": "POST",
         "valid_sirius_lpas": [
             {"caseUid": 700000000013, "actorUid": 700000000997},
@@ -132,7 +114,10 @@ def send_a_request(
     client = boto3.client("sts")
     client.get_caller_identity()["Account"]
 
-    role_to_assume = f"arn:aws:iam::288342028542:role/{role_name}"
+    if DATA_LPA_API_URL == "https://pre.lpa.api.opg.service.justice.gov.uk/v1":
+        role_to_assume = f"arn:aws:iam::492687888235:role/{role_name}"
+    else:
+        role_to_assume = f"arn:aws:iam::288342028542:role/{role_name}"
 
     response = client.assume_role(
         RoleArn=role_to_assume, RoleSessionName="assumed_role"
