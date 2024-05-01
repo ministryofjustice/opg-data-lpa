@@ -13,7 +13,7 @@ permissions:
 on:
   workflow_call:
     inputs:
-      data_lpa_url:
+      data_lpa_api_url:
         description: 'The url of the data lpa api gateway'
         required: true
         type: string
@@ -71,7 +71,7 @@ jobs:
 
       - name: Run tests with Pytest
         env:
-          DATA_LPA_URL: ${{ inputs.data_lpa_url }}
+          DATA_LPA_API_URL: ${{ inputs.data_lpa_api_url }}
           SPECIFIC_TESTS: ${{ inputs.specific_tests}}
         working-directory: ${{ inputs.working_directory }}
         run: |
