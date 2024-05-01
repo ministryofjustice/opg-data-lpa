@@ -10,7 +10,7 @@ OPG Use My LPA: Managed by opg-org-infra &amp; Terraform
 
 ## Purpose
 
-OPG Data LPA is a repo to build a rest API for interactions with LPA. Currently it includes GET endpoints for
+OPG Data LPA is a repo to build a REST API for interactions with LPA. Currently it includes GET endpoints for
 gathering information about LPAs from sirius.
 
 In the future it may be expanded to have further GET endpoints or PUT, POST or DELETE endpoints for  strictly
@@ -131,7 +131,7 @@ is a bit more of an in depth set up process required.
     - Right click on the tests folder (or single file) > 'Run pytest in tests'
 
 
-These tests can also be run with docker, first [set up docker environment](#running-the-api-locally). 
+These tests can also be run with docker, first [set up docker environment](#running-the-api-locally).
 Then:
    ```shell
     docker-compose run unit-test-lpa-data
