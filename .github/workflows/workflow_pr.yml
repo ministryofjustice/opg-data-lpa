@@ -116,7 +116,7 @@ jobs:
       - branch_name
     uses: ./.github/workflows/_integration_tests.yml
     with:
-      data_lpa_api_url: "https:// ${{ fromJSON(needs.ephemeral_environment.outputs.terraform_output_as_json)['api_gateway_url'] }}/v1"
+      data_lpa_api_url: "https://${{ needs.ephemeral_environment.outputs.terraform_output_as_json }}/v1"
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
     secrets: inherit # pragma: allowlist secret
