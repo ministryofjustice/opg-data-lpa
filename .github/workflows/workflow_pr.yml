@@ -117,11 +117,11 @@ jobs:
     outputs:
       data_lpa_api_url: ${{ steps.data_lpa_api_url.outputs.data_lpa_api_url }}
     steps:
-      - name: Set terraform version - environment
+      - name: Set Data LPA API URL
         id: data_lpa_api_url
-        run:
+        run: |
           data_lpa_api_url=$(echo -e ${{ needs.ephemeral_environment.outputs.terraform_output_as_json }} | jq -r '.api_gateway_url.value')
-          echo data_lpa_api_url=$data_lpa_api_url >> $GITHUB_OUTPUT
+          echo data_lpa_api_url=${data_lpa_api_url} >> $GITHUB_OUTPUT
 
   integration_tests:
     name: Run Integration Tests on Ephemeral Environment
