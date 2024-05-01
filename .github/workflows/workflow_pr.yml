@@ -123,9 +123,6 @@ jobs:
 
   smoke_test_preprod:
     name: Smoke test 
-    needs:
-      - terraform_preprod_environment_apply
-      - branch_name
     uses: ./.github/workflows/_integration_tests.yml
     with:
       data_lpa_api_url: "https://pre.lpa.api.opg.service.justice.gov.uk/v1"
