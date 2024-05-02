@@ -16,14 +16,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
-      - name: Set terraform version - environment
-        id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v2.7.3
-        with:
-          terraform_directory: "./terraform/environment"
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
+          terraform_version: 1.2.4
           terraform_wrapper: false
       - name: Install workspace manager
         run: |
@@ -43,6 +38,4 @@ jobs:
       - name: Destroy Protected Workspaces
         run: |
           unset TF_WORKSPACE
-          # Set the image URI to allow the workspace cleanup script to run without errors (it expects a value)
-          set TF_VAR_lambda_image_uri=destroy
           ./scripts/workspace_cleanup.sh $(terraform-workspace-manager -protected-workspaces=true -aws-account-id=288342028542 -aws-iam-role=integrations-ci)

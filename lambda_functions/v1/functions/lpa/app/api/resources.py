@@ -73,20 +73,7 @@ def handle504(error=None):
 def handle_healthcheck_route():
     response_message = get_service_status()
 
-    if (
-        "data" in response_message
-        and "sirius-status" in response_message["data"]
-        and response_message["data"]["sirius-status"] != "Unavailable"
-        and "cache-status" in response_message["data"]
-        and response_message["data"]["cache-status"] != "Unavailable"
-        and "api-status" in response_message["data"]
-        and response_message["data"]["api-status"] != "Unavailable"
-    ):
-        return_code = 200
-    else:
-        return_code = 504
-
-    return jsonify(response_message), return_code
+    return jsonify(response_message), 200
 
 
 @api.route("/lpa-online-tool/lpas/<lpa_online_tool_id>", methods=["GET"])

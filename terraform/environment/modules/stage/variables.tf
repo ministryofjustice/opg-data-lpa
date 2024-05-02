@@ -12,6 +12,8 @@ variable "environment" {
   type = string
 }
 
+variable "lpa_lambda" {}
+
 variable "openapi_version" {}
 
 variable "region_name" {}
@@ -30,14 +32,4 @@ variable "vpc_id" {
 
 variable "content_api_sha" {
   type = string
-}
-
-variable "lpa_lambda_function_name" {
-  type        = string
-  description = "The name of the Lambda function"
-}
-
-variable "lpa_lambda_source_code_hash" {
-  type        = string
-  description = "The source code hash of the Lambda function"
 }

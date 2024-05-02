@@ -1,0 +1,206 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - main
+
+defaults:
+ run:
+  shell: bash
+
+jobs:
+  build_and_test:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+      - uses: unfor19/install-aws-cli-action@v1
+
+      - name: Install flake8
+        run: pip3 install flake8
+
+      - name: Run Flask8
+        run: |
+          flake8 --ignore Q000,W503 lambda_functions
+
+      - name: Build Unit Test Container
+        run: |
+          docker-compose -f docker-compose.yml build unit-test-lpa-data
+
+      - name: Run Unit Tests
+        run: |
+          docker-compose -f docker-compose.yml up unit-test-lpa-data
+
+      - name: Install lambda requirements
+        run: |
+          for i in $(ls -d lambda_functions/*/ | awk -F'/' '{print $2}' | grep '^v[1-9]\+')
+          do
+            export LAYER_PATH=lambda_functions/"${i}"/lambda_layers/python/lib/python3.8/site-packages
+            pip3 install -r lambda_functions/"${i}"/requirements/requirements.txt --target ./$LAYER_PATH/
+          done
+
+      - name: Create Artifact
+        run: |
+          chmod -R 755 ./lambda_functions
+          cd ./lambda_functions
+          zip -r9 /tmp/opg-data-lpa.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: opg-data-lpa
+          path: /tmp/opg-data-lpa.zip
+
+  terraform_checks:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    env:
+      TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - environment: "development"
+
+          - environment: "preproduction"
+
+          - environment: "production"
+
+          - environment: "integration"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials For Terraform
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-session-name: GitHubActionsTerraform
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.2.4
+      - name: Retrieve Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: opg-data-lpa
+      - name: unzip
+        run: |
+          unzip ./opg-data-lpa.zip -d .
+
+      - name: Setup environment
+        run: |
+          echo TF_WORKSPACE=${{ matrix.environment }} >> $GITHUB_ENV
+      - name: Terraform init
+        working-directory: ./terraform/environment
+        run: |
+          terraform init
+
+      - name: Terraform formatting
+        working-directory: ./terraform/environment
+        run: |
+          terraform fmt -diff -check -recursive
+      - name: Validate Terraform
+        working-directory: ./terraform/environment
+        run: |
+          terraform validate
+
+      - name: Terraform plan
+        working-directory: ./terraform/environment
+        run: |
+          terraform plan -input=false
+
+  # pact_verification:
+  #   runs-on: ubuntu-latest
+  #   needs: terraform_checks
+  #   env:
+  #     # GIT_CONSUMER: << pipeline.parameters.consumer >>
+  #     # GIT_COMMIT_CONSUMER: << pipeline.parameters.consumerversion >>
+  #     PACT_PROVIDER: lpa
+  #     PACT_CONSUMER: sirius
+  #     PACT_BROKER_BASE_URL: https://pact-broker.api.opg.service.justice.gov.uk
+  #     PACT_BROKER_HTTP_AUTH_USER: admin
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Pact Install
+  #       run: |
+  #         wget https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v1.82.3/pact-1.82.3-linux-x86_64.tar.gz
+  #         tar xzf pact-1.82.3-linux-x86_64.tar.gz
+  #     - name: Code artifact login
+  #       working-directory: ./docs/ci_scripts
+  #       run: |
+  #         ./login_code_artifact.sh -a 288342028542 -t pip
+
+  #     - name: install ci requirements
+  #       working-directory: ./pact
+  #       run: |
+  #         pip3 install -r requirements.txt
+
+  #     - name: verify pact
+  #       working-directory: ./pact
+  #       run: |
+  #         echo ${API_VERSION}
+  #         python check_pact_deployable.py \
+  #         --provider_base_url="http://localhost:4343" \
+  #         --pact_broker_url="${PACT_BROKER_BASE_URL}" \
+  #         --broker_user_name="admin" \
+  #         --broker_secret_name="pactbroker_admin" \
+  #         --consumer_pacticipant="${PACT_CONSUMER}" \
+  #         --provider_pacticipant="${PACT_PROVIDER}" \
+  #         --api_version="${API_VERSION}" \
+  #         --git_commit_consumer="${GIT_COMMIT_CONSUMER}" \
+  #         --git_commit_provider="${GIT_COMMIT_PROVIDER}" || echo "Failed but because consumer pacts not set up yet"
+
+  ephemeral_environment:
+    name: Create Ephemeral Environment
+    runs-on: "ubuntu-latest"
+    needs: [build_and_test, terraform_checks]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.2.4
+      - name: Extract branch name
+        shell: bash
+        run: |
+          echo "branch_raw=$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF##*/}})" >> $GITHUB_OUTPUT
+          echo "branch_formatted=$(echo ${GITHUB_HEAD_REF:-${GITHUB_REF##*/}} | tr -cd '[:alnum:]' | tr '[:upper:]' '[:lower:]' | cut -c1-8)" >> $GITHUB_OUTPUT
+        id: extract_branch
+      - name: Install workspace manager
+        run: |
+          wget https://github.com/ministryofjustice/opg-terraform-workspace-manager/releases/download/v0.3.2/opg-terraform-workspace-manager_Linux_x86_64.tar.gz -O $HOME/terraform-workspace-manager.tar.gz
+          sudo tar -xvf $HOME/terraform-workspace-manager.tar.gz -C /usr/local/bin
+          sudo chmod +x /usr/local/bin/terraform-workspace-manager
+      - name: Configure AWS Credentials For Terraform
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+          aws-region: eu-west-1
+          role-session-name: GitHubActionsTerraform
+      - name: Retrieve Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: opg-data-lpa
+      - name: Unzip Artifact
+        run: unzip -o ./opg-data-lpa.zip -d ./lambda_functions
+      - name: Terraform init
+        working-directory: ./terraform/environment
+        env:
+          TF_WORKSPACE: default
+        run: |
+          terraform init
+      - name: Terraform apply
+        working-directory: ./terraform/environment
+        env:
+          TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
+        run: |
+          terraform apply --auto-approve
+      - name: Protect Workspace
+        env:
+          TF_WORKSPACE: ${{ steps.extract_branch.outputs.branch_formatted }}
+        run: terraform-workspace-manager -register-workspace=$TF_WORKSPACE -time-to-protect=4 -aws-account-id=288342028542 -aws-iam-role=integrations-ci

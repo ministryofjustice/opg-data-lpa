@@ -23,9 +23,3 @@ variable "accounts" {
     })
   )
 }
-
-variable "lambda_image_uri" {
-  type        = string
-  description = "The URI of the container image that contains your Lambda function. Optional if package_type is not Image."
-  default     = null
-}

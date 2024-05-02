@@ -1,6 +1,6 @@
 locals {
   v1 = {
-    flask_app_name : var.lpa_lambda_function_name
+    flask_app_name : var.lpa_lambda.function_name
   }
   //Modify here for new version - uncomment below and modify accordingly
   //  v2 = {

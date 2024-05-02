@@ -3,6 +3,11 @@
 The purpose of this folder is to house integration tests. We often will want integration tests to work across (and
 compare) versions. As such we have this folder outside of the main lambda_functions folder structure.
 
+
+The integration test suites aren't part of the pipeline as they create real data on the sirius side
+(against whatever branch you point them to). Their purpose is to give us confidence that all our real world
+infrastructure is working as it should for all of our happy and unhappy paths.
+
 They are to be run either locally against our mock or against real world infrastructure (not live!).
 
 ### Prerequisites

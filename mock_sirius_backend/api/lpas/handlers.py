@@ -4,6 +4,7 @@ from textwrap import wrap
 
 
 def handle_lpa_get(query_params):
+
     if "lpaonlinetoolid" in query_params:
         lpa_online_tool_id = query_params["lpaonlinetoolid"]
         print(f"using lpa online tool with id {lpa_online_tool_id}")
@@ -30,11 +31,7 @@ def handle_lpa_get(query_params):
 
             for result in response_data_deleted["results"]:
                 if result["onlineLpaId"] in lpa_online_tool_id:
-                    return 410, {
-                        "detail": "LPA with uid "
-                        + lpa_online_tool_id
-                        + "has been deleted"
-                    }
+                    return 410, {"detail": "LPA with uid " + lpa_online_tool_id + "has been deleted"}
 
         elif lpa_online_tool_id[:5] == "crash":
             print("oh no you crashed sirius")
@@ -48,6 +45,7 @@ def handle_lpa_get(query_params):
             return 404, ""
 
     elif "uid" in query_params:
+
         sirius_uid = str(query_params["uid"])
 
         print(f"using use my lpa with id {sirius_uid}")
@@ -56,7 +54,9 @@ def handle_lpa_get(query_params):
             print(f"test_id is a valid sirius uid: {sirius_uid}")
 
             response_data_success = load_data(
-                parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
+                parent_folder="lpas",
+                filename="use_an_lpa_response.json",
+                as_json=False
             )
 
             case_id = "-".join(wrap(sirius_uid, 4))
@@ -74,9 +74,7 @@ def handle_lpa_get(query_params):
 
             for result in response_data_deleted["results"]:
                 if result["uId"] in case_id:
-                    return 410, {
-                        "detail": "LPA with uid " + case_id + "has been deleted"
-                    }
+                    return 410, {"detail": "LPA with uid " + case_id + "has been deleted"}
 
         elif len(sirius_uid) == 3:
             print("oh no you crashed sirius")
@@ -91,6 +89,7 @@ def handle_lpa_get(query_params):
 
 
 def handle_request_letter(caseUid, actorUid, notes):
+
     response_data = load_data(
         parent_folder="lpas", filename="use_an_lpa_response.json", as_json=False
     )
@@ -100,14 +99,15 @@ def handle_request_letter(caseUid, actorUid, notes):
 
     for result in response_data["results"]:
         if result["uId"] in case_id:
-            if notes != None:
-                return 200, '{"queuedForCleansing":true}'
 
-            if result["donor"]["uId"] == actor_id:
+            if notes != None:
+                return 200, "{\"queuedForCleansing\":true}"
+
+            if result['donor']['uId'] == actor_id:
                 return 204, "{}"
 
-            for attorney in result["attorneys"]:
-                if attorney["uId"] == actor_id:
+            for attorney in result['attorneys']:
+                if  attorney['uId'] == actor_id:
                     return 204, "{}"
 
     return 400, "{}"

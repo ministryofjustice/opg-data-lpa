@@ -3,11 +3,11 @@ from opg_sirius_service import sirius_handler
 
 
 @pytest.mark.parametrize(
-    " sirius_available, cache_available, return_code",
-    [(True, True, 200), (True, False, 504), (False, True, 504), (False, False, 504)],
+    " sirius_available, cache_available",
+    [(True, True), (True, False), (False, True), (False, False)],
 )
 def test_healthcheck_route_with_cache(
-    test_server, monkeypatch, sirius_available, cache_available, return_code
+    test_server, monkeypatch, sirius_available, cache_available
 ):
     monkeypatch.setattr(
         sirius_handler.SiriusService,
@@ -21,7 +21,7 @@ def test_healthcheck_route_with_cache(
 
     response = test_server.get(f"/v1/healthcheck")
 
-    assert response.status_code == return_code
+    assert response.status_code == 200
     assert (
         response.get_json()["data"]["sirius-status"] == "OK"
         if sirius_available is True
@@ -35,11 +35,11 @@ def test_healthcheck_route_with_cache(
 
 
 @pytest.mark.parametrize(
-    "sirius_available, cache_available, return_code",
-    [(True, True, 200), (True, False, 200), (False, True, 504), (False, False, 504)],
+    "sirius_available, cache_available",
+    [(True, True), (True, False), (False, True), (False, False)],
 )
 def test_healthcheck_route_no_cache(
-    test_server_no_cache, monkeypatch, sirius_available, cache_available, return_code
+    test_server_no_cache, monkeypatch, sirius_available, cache_available
 ):
     monkeypatch.setattr(
         sirius_handler.SiriusService,
@@ -53,7 +53,7 @@ def test_healthcheck_route_no_cache(
 
     response = test_server_no_cache.get(f"/v1/healthcheck")
 
-    assert response.status_code == return_code
+    assert response.status_code == 200
     assert (
         response.get_json()["data"]["sirius-status"] == "OK"
         if sirius_available is True
