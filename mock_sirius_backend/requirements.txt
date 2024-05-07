@@ -1,4 +1,4 @@
-connexion==2.14.2
+connexion==3.0.6
 Flask==3.0.3
 markupsafe==2.1.5
 requests
