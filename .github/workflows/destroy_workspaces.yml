@@ -44,5 +44,5 @@ jobs:
         run: |
           unset TF_WORKSPACE
           # Set the image URI to allow the workspace cleanup script to run without errors (it expects a value)
-          set TF_VAR_lambda_image_uri=destroy
+          export TF_VAR_lambda_image_uri=destroy
           ./scripts/workspace_cleanup.sh $(terraform-workspace-manager -protected-workspaces=true -aws-account-id=288342028542 -aws-iam-role=integrations-ci)
