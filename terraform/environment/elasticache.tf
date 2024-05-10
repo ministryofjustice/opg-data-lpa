@@ -144,6 +144,11 @@ data "aws_iam_policy_document" "elasticache_kms_key" {
       variable = "aws:SourceAccount"
       values   = [data.aws_caller_identity.current.account_id]
     }
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
   }
 }
 
