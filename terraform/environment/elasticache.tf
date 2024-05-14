@@ -17,6 +17,8 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   security_group_ids          = [aws_security_group.lpa_redis_sg.id]
   tags                        = local.default_tags
   apply_immediately           = true
+  at_rest_encryption_enabled  = true
+  kms_key_id                  = aws_kms_alias.elasticache_kms_alias.target_key_arn
 }
 
 resource "aws_security_group" "lpa_redis_sg" {
@@ -70,3 +72,89 @@ resource "aws_security_group_rule" "lpa_redis_rules" {
   cidr_blocks              = each.value.target_type == "cidr_block" ? [each.value.target] : null
   self                     = each.value.target_type == "self" ? each.value.target : null
 }
+
+resource "aws_kms_key" "elasticache_kms" {
+  description             = "KMS Key for elasticache"
+  policy                  = data.aws_iam_policy_document.elasticache_kms_key.json
+  deletion_window_in_days = 7
+}
+
+data "aws_iam_policy_document" "elasticache_kms_key" {
+  statement {
+    sid       = "Enable IAM User Permissions"
+    effect    = "Allow"
+    resources = ["*"]
+    actions   = ["kms:*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+  }
+
+  statement {
+    sid       = "Allow access for Key Administrators"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "kms:Create*",
+      "kms:Describe*",
+      "kms:Enable*",
+      "kms:List*",
+      "kms:Put*",
+      "kms:Update*",
+      "kms:Revoke*",
+      "kms:Disable*",
+      "kms:Get*",
+      "kms:Delete*",
+      "kms:TagResource",
+      "kms:UntagResource",
+      "kms:ScheduleKeyDeletion",
+      "kms:CancelKeyDeletion",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ci"]
+    }
+  }
+
+  statement {
+    sid       = "Allow Elasticache to use KMS key"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "kms:DescribeKey",
+      "kms:GenerateDataKey*",
+      "kms:Encrypt",
+      "kms:ReEncrypt*",
+      "kms:Decrypt"
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["elasticache.${data.aws_region.region.name}.amazonaws.com", "dax.${data.aws_region.region.name}.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+  }
+}
+
+resource "aws_kms_alias" "elasticache_kms_alias" {
+  name          = "alias/elasticache-lpa"
+  target_key_id = aws_kms_key.elasticache_kms.id
+}
+
+data "aws_caller_identity" "current" {}
