@@ -3,7 +3,7 @@ Flask==3.0.3
 markupsafe==2.1.5
 localstack-client==2.5
 redis==5.0.4
-requests==2.31.0
+requests==2.32.0
 Werkzeug==3.0.3
-requests-aws4auth==1.0.1
+requests-aws4auth==1.2.3
 opg-sirius-service==2.1.1
