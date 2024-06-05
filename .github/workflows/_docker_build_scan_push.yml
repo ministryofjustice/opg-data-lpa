@@ -13,10 +13,10 @@ permissions:
 on:
   workflow_call:
     inputs:
-      build_latest:
+      branch_name:
         description: Branch name
-        type: boolean
-        default: false
+        type: string
+        required: false
       semver_tag:
         description: Semver tag
         required: true
@@ -31,7 +31,7 @@ jobs:
     name: 'Build, Scan and Push Lambdas'
     runs-on: ubuntu-latest
     outputs:
-      ecr_image_uri: ${{ steps.login_ecr.outputs.registry }}/${{ matrix.data.ecr_repository }}/${{ matrix.data.name }}:${{ inputs.semver_tag }}
+      ecr_image_uri: ${{ steps.docker_tags.outputs.semver_tag }}
     strategy:
       matrix:
         data:
@@ -67,10 +67,12 @@ jobs:
           ECR_REPOSITORY: '${{ matrix.data.ecr_repository }}/${{ matrix.data.name }}'
         id: docker_tags
         run: >
-          if ${{ inputs.build_latest }}; then
-            echo "tags=$ECR_REGISTRY/$ECR_REPOSITORY:latest,$ECR_REGISTRY/$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
+          if ${{ inputs.branch_name == 'main' }}; then
+            echo "tags=$ECR_REGISTRY/$ECR_REPOSITORY:latest,$ECR_REGISTRY/main-$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
+            echo "semver_tag=$ECR_REGISTRY/main-$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
           else
             echo "tags=$ECR_REGISTRY/$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
+            echo "semver_tag=$ECR_REGISTRY/$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
           fi
 
           echo "semver_tag=$ECR_REGISTRY/$ECR_REPOSITORY:$SEMVER_TAG" >>
