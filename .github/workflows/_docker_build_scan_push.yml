@@ -68,8 +68,8 @@ jobs:
         id: docker_tags
         run: >
           if ${{ inputs.branch_name == 'main' }}; then
-            echo "tags=$ECR_REGISTRY/$ECR_REPOSITORY:latest,$ECR_REGISTRY/main-$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
-            echo "semver_tag=$ECR_REGISTRY/main-$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
+            echo "tags=$ECR_REGISTRY/$ECR_REPOSITORY:latest,$ECR_REGISTRY/$ECR_REPOSITORY:main-$SEMVER_TAG" >> $GITHUB_OUTPUT
+            echo "semver_tag=$ECR_REGISTRY/$ECR_REPOSITORY:main-$SEMVER_TAG" >> $GITHUB_OUTPUT
           else
             echo "tags=$ECR_REGISTRY/$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
             echo "semver_tag=$ECR_REGISTRY/$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
