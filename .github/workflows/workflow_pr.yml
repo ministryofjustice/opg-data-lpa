@@ -83,7 +83,6 @@ jobs:
       - terraform_environment_lint
     uses: ./.github/workflows/_docker_build_scan_push.yml
     with:
-      build_latest: false
       semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit # pragma: allowlist secret
 
