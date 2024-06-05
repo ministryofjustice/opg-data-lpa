@@ -153,7 +153,7 @@ data "aws_iam_policy_document" "elasticache_kms_key" {
 }
 
 resource "aws_kms_alias" "elasticache_kms_alias" {
-  name          = "alias/elasticache-lpa"
+  name          = "alias/elasticache-lpa-${local.environment}"
   target_key_id = aws_kms_key.elasticache_kms.id
 }
 
