@@ -75,9 +75,6 @@ jobs:
             echo "semver_tag=$ECR_REGISTRY/$ECR_REPOSITORY:$SEMVER_TAG" >> $GITHUB_OUTPUT
           fi
 
-          echo "semver_tag=$ECR_REGISTRY/$ECR_REPOSITORY:$SEMVER_TAG" >>
-          $GITHUB_OUTPUT
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
