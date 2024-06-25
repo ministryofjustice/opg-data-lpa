@@ -11,6 +11,6 @@ pytest-html==4.1.1
 tenacity==8.2.3
 validators==0.28.1
 yarl==1.9.4
-importlib-metadata==7.1.0
+importlib-metadata==8.0.0
 opg-sirius-service==2.1.1
 typing-extensions==4.11.0
