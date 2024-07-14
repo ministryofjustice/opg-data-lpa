@@ -3,7 +3,7 @@ data "aws_secretsmanager_secret" "jwt_secret_key" {
 }
 
 module "lambda_lpa_v1" {
-  source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v7.4.0"
+  source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v7.7.0"
 
   function_name          = "lpa-${local.environment}-v1"
   handler                = "app.lpa.lambda_handler"
