@@ -12,5 +12,7 @@ tenacity==8.5.0
 validators==0.33.0
 yarl==1.9.4
 importlib-metadata==8.0.0
-#opg-sirius-service==2.1.1
 typing-extensions==4.12.2
+boto3==1.34.144
+pyjwt==2.8.0
+localstack-client==2.5
