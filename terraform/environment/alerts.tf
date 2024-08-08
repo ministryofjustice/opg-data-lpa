@@ -45,3 +45,25 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_high_count" {
   threshold                 = 500
   treat_missing_data        = "notBreaching"
 }
+
+resource "aws_cloudwatch_metric_alarm" "rest_api_slow_response" {
+  actions_enabled     = true
+  alarm_actions       = [data.aws_sns_topic.rest_api.arn]
+  alarm_description   = "Average response time over a minute for LPA Data Rest API in ${terraform.workspace}"
+  alarm_name          = "lpa-${local.environment}-rest-api-slow-response"
+  comparison_operator = "GreaterThanThreshold"
+  datapoints_to_alarm = 2
+  dimensions = {
+    ApiName = "lpa-${terraform.workspace}"
+  }
+  evaluation_periods        = 2
+  insufficient_data_actions = []
+  metric_name               = "Latency"
+  namespace                 = "AWS/ApiGateway"
+  ok_actions                = [data.aws_sns_topic.rest_api.arn]
+  period                    = 60
+  statistic                 = "Average"
+  tags                      = {}
+  threshold                 = 3500
+  treat_missing_data        = "notBreaching"
+}
