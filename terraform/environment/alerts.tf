@@ -3,7 +3,7 @@ data "aws_sns_topic" "rest_api" {
 }
 
 data "aws_sns_topic" "lpa_data_api" {
-  name = "CloudWatch-LPA-Data-to-PagerDuty-${local.account}-eu-west-1"
+  name = "CloudWatch-LPA-Data-to-PagerDuty-${local.account.account_mapping}-eu-west-1"
 }
 
 resource "aws_cloudwatch_metric_alarm" "rest_api_5xx_errors" {
