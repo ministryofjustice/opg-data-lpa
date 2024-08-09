@@ -53,7 +53,7 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_high_count" {
 resource "aws_cloudwatch_metric_alarm" "rest_api_slow_response" {
   count               = local.account.is_production ? 1 : 0
   actions_enabled     = true
-  alarm_actions       = [data.aws_sns_topic.lpa_data_api[0].arn]
+  alarm_actions       = [data.aws_sns_topic.lpa_data_api.arn]
   alarm_description   = "Average response time over a minute for LPA Data Rest API in ${terraform.workspace}"
   alarm_name          = "lpa-${local.environment}-rest-api-slow-response"
   comparison_operator = "GreaterThanThreshold"
