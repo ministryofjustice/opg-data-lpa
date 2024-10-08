@@ -1,6 +1,6 @@
 #Update this date to trigger update of layers: 20230619
 Flask==3.0.3
-markupsafe==2.1.5
+markupsafe==3.0.0
 localstack-client==2.5
 redis==5.0.4
 requests==2.32.0

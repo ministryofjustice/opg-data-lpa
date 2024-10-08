@@ -1,4 +1,4 @@
 connexion==3.0.6
 Flask==3.0.3
-markupsafe==2.1.5
+markupsafe==3.0.0
 requests
