@@ -2,6 +2,10 @@ data "aws_secretsmanager_secret" "jwt_secret_key" {
   name = "${local.account.account_mapping}/jwt-key"
 }
 
+data "aws_kms_key" "secrets_manager" {
+  key_id = "alias/secrets-manager-regional-kms-key"
+}
+
 module "lambda_lpa_v1" {
   source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v7.4.0"
 
@@ -31,6 +35,15 @@ module "lambda_lpa_v1" {
         ],
         Resource : [
           data.aws_secretsmanager_secret.jwt_secret_key.arn
+        ]
+      },
+      {
+        Effect : "Allow",
+        Action : [
+          "kms:Decrypt"
+        ],
+        Resource : [
+          data.aws_kms_key.secrets_manager.arn
         ]
       }
     ]
