@@ -58,7 +58,7 @@ module "lambda_lpa_v1" {
     SESSION_DATA        = local.account.session_data
     REQUEST_CACHING     = "enabled"
     REQUEST_CACHING_TTL = tostring(local.account.request_caching_ttl)
-    REQUEST_TIMEOUT     = "10"
+    REQUEST_TIMEOUT     = "30"
     REDIS_URL           = aws_route53_record.lpa_redis.name
   }
 
