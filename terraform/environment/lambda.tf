@@ -18,7 +18,7 @@ module "lambda_lpa_v1" {
   create_package         = false
   image_uri              = var.lambda_image_uri
   tracing_mode           = "Active"
-  timeout                = 30
+  timeout                = 15
 
   # Let the module create a role for us
   create_role                   = true
@@ -58,7 +58,7 @@ module "lambda_lpa_v1" {
     SESSION_DATA        = local.account.session_data
     REQUEST_CACHING     = "enabled"
     REQUEST_CACHING_TTL = tostring(local.account.request_caching_ttl)
-    REQUEST_TIMEOUT     = "30"
+    REQUEST_TIMEOUT     = "10"
     REDIS_URL           = aws_route53_record.lpa_redis.name
   }
 
