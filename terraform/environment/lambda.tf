@@ -18,7 +18,7 @@ module "lambda_lpa_v1" {
   create_package         = false
   image_uri              = var.lambda_image_uri
   tracing_mode           = "Active"
-  timeout                = 15
+  timeout                = 30
 
   # Let the module create a role for us
   create_role                   = true
