@@ -67,15 +67,14 @@ jobs:
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       PAGERDUTY_TOKEN: ""
 
-  smoke_test_development:
-    name: Smoke test Development
+  integration_test_development:
+    name: Integration Test Development
     uses: ./.github/workflows/_integration_tests.yml
     needs: terraform_development_environment_apply
     with:
       data_lpa_api_url: "https://dev.lpa.api.opg.service.justice.gov.uk/v1"
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
-      specific_tests: "./v1/test_healthcheck.py"
     secrets: inherit
 
   terraform_preprod_environment_apply:
@@ -83,7 +82,7 @@ jobs:
     needs:
       - set_variables
       - docker_build_scan_push
-      - smoke_test_development
+      - integration_test_development
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.1.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
@@ -99,7 +98,7 @@ jobs:
       PAGERDUTY_TOKEN: ""
 
   smoke_test_preprod:
-    name: Smoke test Preproduction
+    name: Smoke Test Preproduction
     uses: ./.github/workflows/_integration_tests.yml
     needs: terraform_preprod_environment_apply
     with:
