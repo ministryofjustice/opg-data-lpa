@@ -9,16 +9,17 @@ data "aws_kms_key" "secrets_manager" {
 module "lambda_lpa_v1" {
   source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v7.4.0"
 
+  create_package         = false
   function_name          = "lpa-${local.environment}-v1"
   handler                = "app.lpa.lambda_handler"
-  vpc_subnet_ids         = data.aws_subnet.private.*.id
-  vpc_security_group_ids = [aws_security_group.lpa_redis_sg.id, data.aws_security_group.lambda_api_ingress.id]
-  tags                   = local.default_tags
-  package_type           = "Image"
-  create_package         = false
   image_uri              = var.lambda_image_uri
-  tracing_mode           = "Active"
+  memory_size            = 256
+  package_type           = "Image"
+  tags                   = local.default_tags
   timeout                = 15
+  tracing_mode           = "Active"
+  vpc_security_group_ids = [aws_security_group.lpa_redis_sg.id, data.aws_security_group.lambda_api_ingress.id]
+  vpc_subnet_ids         = data.aws_subnet.private.*.id
 
   # Let the module create a role for us
   create_role                   = true
