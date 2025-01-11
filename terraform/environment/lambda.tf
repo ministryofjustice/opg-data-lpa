@@ -7,7 +7,7 @@ data "aws_kms_key" "secrets_manager" {
 }
 
 module "lambda_lpa_v1" {
-  source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v7.4.0"
+  source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v7.17.1"
 
   create_package         = false
   function_name          = "lpa-${local.environment}-v1"
