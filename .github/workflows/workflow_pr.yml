@@ -63,7 +63,7 @@ jobs:
     name: Terraform - Environment - Lint
     needs:
       - set_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@v3.7.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       tflint_check: false
@@ -88,7 +88,7 @@ jobs:
 
   ephemeral_environment:
     name: Create Ephemeral Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@v3.7.0
     needs:
       - set_variables
       - docker_build_scan_push
