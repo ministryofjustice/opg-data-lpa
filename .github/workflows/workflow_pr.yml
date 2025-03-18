@@ -37,7 +37,7 @@ jobs:
 
   branch_name:
     name: "Generate a safe branch name"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@main
+    uses:  ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@ce7e03453712dee1e56accf0a83a4349b1a97c42 # v3.10.0
 
   set_variables:
     name: output workflow variables
@@ -48,12 +48,12 @@ jobs:
     steps:
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@v3.1.1
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@73bfe6f3ea05ffbc3dd278fe29c113ec1e7dcefc # v3.1.1
         with:
           terraform_directory: "./terraform/environment"
       - name: "Semver tag"
         id: semver_tag
-        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@v3.1.1
+        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@73bfe6f3ea05ffbc3dd278fe29c113ec1e7dcefc # v3.1.1
         with:
           prerelease: true
           with_v: true
