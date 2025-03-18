@@ -42,7 +42,7 @@ jobs:
     env:
       sarif_file: trivy-results.sarif
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Configure AWS Credentials With Assumed Role to Management
         uses: aws-actions/configure-aws-credentials@v4
@@ -92,7 +92,7 @@ jobs:
           provenance: false
 
       - name: Trivy scan
-        uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5
+        uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5 # 0.30.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
@@ -104,7 +104,7 @@ jobs:
           output: '${{ env.sarif_file }}'
 
       - name: Trivy scan upload to github
-        uses: github/codeql-action/upload-sarif@6bb031afdd8eb862ea3fc1848194185e076637e5 # v3
+        uses: github/codeql-action/upload-sarif@6bb031afdd8eb862ea3fc1848194185e076637e5 # v3.28.11
         if: always()
         with:
           sarif_file: '${{ env.sarif_file }}'
