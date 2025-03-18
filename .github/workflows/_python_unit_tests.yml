@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - uses: unfor19/install-aws-cli-action@v1
+      - uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367 # v1
 
       - name: Install flake8
         run: pip3 install flake8
