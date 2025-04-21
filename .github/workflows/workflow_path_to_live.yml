@@ -15,7 +15,7 @@ defaults:
 jobs:
   branch_name:
     name: "Generate a safe branch name"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@ce7e03453712dee1e56accf0a83a4349b1a97c42 # v3.10.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
 
   set_variables:
     name: output workflow variables
@@ -53,7 +53,7 @@ jobs:
     needs:
       - set_variables
       - docker_build_scan_push
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@69f792d51c52f2d77ddbf9a0681ea65e05adf222 # v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       terraform_directory: "./terraform/environment"
@@ -83,7 +83,7 @@ jobs:
       - set_variables
       - docker_build_scan_push
       - integration_test_development
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@69f792d51c52f2d77ddbf9a0681ea65e05adf222 # v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       terraform_directory: "./terraform/environment"
@@ -115,7 +115,7 @@ jobs:
       - docker_build_scan_push
       - smoke_test_preprod
 
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@69f792d51c52f2d77ddbf9a0681ea65e05adf222 # v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       terraform_directory: "./terraform/environment"
@@ -136,7 +136,7 @@ jobs:
       - docker_build_scan_push
       - terraform_prod_environment_apply
 
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@69f792d51c52f2d77ddbf9a0681ea65e05adf222 # v3.6.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@6bc0246b5cca2f4c85d06986c82a9a42643f6851 # v3.13.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       terraform_directory: "./terraform/environment"
