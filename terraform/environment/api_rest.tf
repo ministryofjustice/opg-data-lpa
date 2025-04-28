@@ -2,7 +2,7 @@ resource "aws_api_gateway_rest_api" "lpa" {
   name        = "lpa-${local.environment}"
   description = "API Gateway for LPA - ${local.environment}"
   body        = local.template_file
-  policy      = data.aws_iam_policy_document.lpa_rest_api_policy.json
+  policy      = sensitive(data.aws_iam_policy_document.lpa_rest_api_policy.json)
 
   endpoint_configuration {
     types = ["REGIONAL"]
@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "lpa_rest_api_policy" {
       identifiers = local.account.allowed_roles
     }
     actions   = ["execute-api:Invoke"]
-    resources = ["arn:aws:execute-api:eu-west-1:${local.account.account_id}:*/*/*/*"]
+    resources = ["arn:aws:execute-api:eu-west-?:${local.account.account_id}:*/*/*/*"]
   }
 }
 data "aws_iam_policy_document" "lpa_rest_api_ip_restriction_policy" {
@@ -48,12 +48,12 @@ data "aws_iam_policy_document" "lpa_rest_api_ip_restriction_policy" {
       type        = "AWS"
       identifiers = ["*"]
     }
-    actions   = ["execute-api:Invoke"]
-    resources = ["arn:aws:execute-api:eu-west-1:${local.account.account_id}:*/*/*/*"]
+    actions       = ["execute-api:Invoke"]
+    not_resources = ["arn:aws:execute-api:eu-west-?:${local.account.account_id}:*/*/*/healthcheck"]
     condition {
       test     = "NotIpAddress"
       variable = "aws:SourceIp"
-      values   = local.allow_list_mapping[local.account.account_mapping]
+      values   = sensitive(local.allow_list_mapping[local.account.account_mapping])
     }
   }
 }
