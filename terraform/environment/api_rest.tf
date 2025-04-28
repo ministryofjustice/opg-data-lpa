@@ -64,6 +64,13 @@ module "allow_list" {
 
 locals {
   allow_list_mapping = {
+    development = concat(
+      module.allow_list.make_an_lpa_development,
+      module.allow_list.make_an_lpa_preproduction,
+      module.allow_list.use_an_lpa_development,
+      module.allow_list.use_an_lpa_preproduction,
+      module.allow_list.sirius_dev_allow_list,
+    )
     preproduction = concat(
       module.allow_list.make_an_lpa_preproduction,
       module.allow_list.use_an_lpa_preproduction,
@@ -75,5 +82,5 @@ locals {
       module.allow_list.sirius_prod_allow_list,
     )
   }
-  ip_restrictions_enabled = contains(["preproduction"], local.account.account_mapping)
+  ip_restrictions_enabled = contains(["development", "preproduction"], local.account.account_mapping)
 }
