@@ -100,13 +100,15 @@ jobs:
       is_ephemeral: true
       workspace_manager_aws_account_id: "288342028542"
       workspace_manager_aws_iam_role: integrations-ci
+      use_ssh_private_key: true
       terraform_apply: true
       terraform_variables: "-var=lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
     secrets:
-      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ""
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
 
   get_terraform_output:
     name: Get Terraform Outputs
