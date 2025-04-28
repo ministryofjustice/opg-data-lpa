@@ -30,13 +30,3 @@ locals {
   latest_openapi_version = "v1"
   openapi_spec           = "../../lambda_functions/${local.latest_openapi_version}/openapi/${local.api_name}-openapi.yml"
 }
-
-output "policy" {
-  value     = aws_api_gateway_rest_api.lpa.policy
-  sensitive = true
-}
-
-output "rest_arn" {
-  value = aws_api_gateway_rest_api.lpa.execution_arn
-}
-
