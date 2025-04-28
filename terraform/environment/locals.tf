@@ -32,7 +32,8 @@ locals {
 }
 
 output "policy" {
-  value = aws_api_gateway_rest_api.lpa.policy
+  value     = aws_api_gateway_rest_api.lpa.policy
+  sensitive = true
 }
 
 output "rest_arn" {
