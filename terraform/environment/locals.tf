@@ -19,10 +19,11 @@ locals {
   api_name = "lpa"
 
   api_template_vars = {
-    region        = "eu-west-1"
-    environment   = local.environment
-    allowed_roles = join(", ", local.account.allowed_roles)
-    account_id    = local.account.account_id
+    region            = "eu-west-1"
+    environment       = local.environment
+    allowed_roles     = join(", ", local.account.allowed_roles)
+    allowed_ip_ranges = []
+    account_id        = local.account.account_id
   }
 
   //Modify here for new version - replace with new code (comment out old code)
