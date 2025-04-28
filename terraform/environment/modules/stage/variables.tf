@@ -32,6 +32,10 @@ variable "content_api_sha" {
   type = string
 }
 
+variable "content_api_policy_sha" {
+  type = string
+}
+
 variable "lpa_lambda_function_name" {
   type        = string
   description = "The name of the Lambda function"

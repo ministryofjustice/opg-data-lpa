@@ -19,22 +19,14 @@ locals {
   api_name = "lpa"
 
   api_template_vars = {
-    region        = "eu-west-1"
-    environment   = local.environment
-    allowed_roles = join(", ", local.account.allowed_roles)
-    account_id    = local.account.account_id
+    region            = "eu-west-1"
+    environment       = local.environment
+    allowed_roles     = join(", ", local.account.allowed_roles)
+    allowed_ip_ranges = []
+    account_id        = local.account.account_id
   }
 
   //Modify here for new version - replace with new code (comment out old code)
   latest_openapi_version = "v1"
   openapi_spec           = "../../lambda_functions/${local.latest_openapi_version}/openapi/${local.api_name}-openapi.yml"
 }
-
-output "policy" {
-  value = aws_api_gateway_rest_api.lpa.policy
-}
-
-output "rest_arn" {
-  value = aws_api_gateway_rest_api.lpa.execution_arn
-}
-
