@@ -61,11 +61,13 @@ jobs:
       is_ephemeral: false
       terraform_apply: true
       terraform_variables: "-var=lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
+      use_ssh_private_key: true
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       PAGERDUTY_TOKEN: ""
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
 
   integration_test_development:
     name: Integration Test Development
@@ -91,11 +93,13 @@ jobs:
       is_ephemeral: false
       terraform_apply: true
       terraform_variables: "-var=lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
+      use_ssh_private_key: true
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       PAGERDUTY_TOKEN: ""
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
 
   smoke_test_preprod:
     name: Smoke Test Preproduction
@@ -123,11 +127,13 @@ jobs:
       is_ephemeral: false
       terraform_apply: true
       terraform_variables: "-var=lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
+      use_ssh_private_key: true
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       PAGERDUTY_TOKEN: ""
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
 
   terraform_integration_environment_apply:
     name: Terraform - Integration - Environment - Apply
@@ -144,8 +150,10 @@ jobs:
       is_ephemeral: false
       terraform_apply: true
       terraform_variables: "-var=lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
+      use_ssh_private_key: true
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       PAGERDUTY_TOKEN: ""
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
