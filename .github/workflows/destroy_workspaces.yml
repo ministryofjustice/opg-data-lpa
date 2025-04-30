@@ -3,6 +3,7 @@ name: Destroy Ephemeral Environments
 on:
   schedule:
     - cron: '30 * * * 1-6'
+  workflow_dispatch:
 
 
 defaults:
