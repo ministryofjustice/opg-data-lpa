@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.12-alpine3.21
 WORKDIR /var/www/lambda_functions/v1
 
 # Install Python Dependencies
@@ -15,8 +15,4 @@ ENV FLASK_APP "lpa_local.py"
 ENV FLASK_ENV "development"
 ENV FLASK_DEBUG True
 
-
 CMD flask run --host=0.0.0.0 --port=4343
-
-
-
