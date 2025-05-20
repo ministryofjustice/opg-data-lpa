@@ -1,3 +1,2 @@
-connexion==3.0.6
 swagger-ui-bundle
 requests
