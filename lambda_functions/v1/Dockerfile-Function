@@ -4,6 +4,12 @@ COPY lambda_functions/v1/functions/lpa/ ${LAMBDA_TASK_ROOT}
 
 COPY lambda_functions/v1/requirements/requirements.txt requirements.txt
 
-RUN pip install -r requirements.txt
+RUN RUN python -m pip install --upgrade pip && \
+    python -m pip install -r requirements.txt
+
+RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
+    dnf clean all && \
+    dnf -y update sqlite-libs libxml2 && \
+    dnf clean all
 
 CMD [ "app.lpa.lambda_handler" ]
