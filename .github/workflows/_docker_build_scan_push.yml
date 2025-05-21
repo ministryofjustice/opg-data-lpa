@@ -100,7 +100,7 @@ jobs:
         with:
           image-ref: '${{ steps.docker_tags.outputs.semver_tag }}'
           severity: 'HIGH,CRITICAL'
-          format: sarif
+          format: table
           exit-code: 1
           output: '${{ env.sarif_file }}'
 
