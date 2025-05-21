@@ -101,6 +101,7 @@ jobs:
           image-ref: '${{ steps.docker_tags.outputs.semver_tag }}'
           severity: 'HIGH,CRITICAL'
           format: sarif
+          exit-code: 1
           output: '${{ env.sarif_file }}'
 
       - name: Trivy scan upload to github
