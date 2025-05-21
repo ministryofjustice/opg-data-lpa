@@ -10,7 +10,8 @@ RUN python -m pip install --upgrade pip && \
         --target ${LAMBDA_TASK_ROOT} \
         --requirement requirements.txt \
         --requirement dev-requirements.txt && \
-        python -m pip install coverage==7.5.0
+        python -m pip install coverage==7.5.0 && \
+        python -m pip install --upgrade sqlite3
 
 ENV PYTHONPATH "${PYTHONPATH}:${LAMBDA_TASK_ROOT}"
 
