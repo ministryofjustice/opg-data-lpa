@@ -51,7 +51,7 @@ module "lambda_lpa_v1" {
   })
 
   environment_variables = {
-    SIRIUS_BASE_URL     = "http://api.${local.account.target_environment}.ecs"
+    SIRIUS_BASE_URL     = "http://api.${local.target_environment}.ecs"
     SIRIUS_API_VERSION  = "v1"
     ENVIRONMENT         = local.account.account_mapping
     LOGGER_LEVEL        = local.account.logger_level
