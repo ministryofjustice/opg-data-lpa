@@ -20,10 +20,6 @@ variable "rest_api" {}
 
 variable "tags" {}
 
-variable "target_environment" {
-  type = string
-}
-
 variable "vpc_id" {
   type = string
 }
