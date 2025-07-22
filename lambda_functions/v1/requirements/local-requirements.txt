@@ -14,3 +14,13 @@ yarl==1.9.4
 importlib-metadata==8.0.0
 opg-sirius-service==2.1.1
 typing-extensions==4.11.0
+swagger-ui-bundle
+requests
+Flask==3.0.3
+markupsafe==3.0.0
+localstack-client==2.5
+redis==6.0.0
+requests==2.32.0
+Werkzeug==3.0.6
+requests-aws4auth==1.0.1
+opg-sirius-service==2.1.1
