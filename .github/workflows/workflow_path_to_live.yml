@@ -26,12 +26,12 @@ jobs:
     steps:
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@464975f6f9e628ffcece3db87ecb819d8d391ab6 # v3.1.6
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@78208f9a60e457c51a35a5fd8502606d734981eb # v4.0.0
         with:
           terraform_directory: "./terraform/environment"
       - name: "Semver tag"
         id: semver_tag
-        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@464975f6f9e628ffcece3db87ecb819d8d391ab6 # v3.1.6
+        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@78208f9a60e457c51a35a5fd8502606d734981eb # v4.0.0
         with:
           prerelease: true
           with_v: true
