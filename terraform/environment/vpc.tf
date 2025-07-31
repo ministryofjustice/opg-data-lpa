@@ -5,7 +5,10 @@ data "aws_subnet" "private" {
 
   filter {
     name   = "tag:Name"
-    values = ["private*"]
+    values = [
+      "application-*",
+      "private-*"
+      ]
   }
 }
 
