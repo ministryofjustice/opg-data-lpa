@@ -17,11 +17,14 @@ variable "accounts" {
       opg_hosted_zone     = string
       vpc_id              = string
       session_data        = string
-      target_environment  = string
       elasticache_count   = number
       request_caching_ttl = number
     })
   )
+}
+
+variable "environment_mapping" {
+  type = map(string)
 }
 
 variable "lambda_image_uri" {
