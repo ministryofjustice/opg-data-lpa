@@ -12,6 +12,12 @@ RUN python -m pip install --upgrade pip && \
         --requirement dev-requirements.txt && \
         python -m pip install coverage==7.5.0
 
+RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
+        dnf clean all && \
+        dnf -y update sqlite-libs libxml2 && \
+        dnf clean all
+        
+
 ENV PYTHONPATH "${PYTHONPATH}:${LAMBDA_TASK_ROOT}"
 
 COPY --chmod=755 run-tests.sh run-tests.sh

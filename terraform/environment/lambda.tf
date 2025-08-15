@@ -2,19 +2,24 @@ data "aws_secretsmanager_secret" "jwt_secret_key" {
   name = "${local.account.account_mapping}/jwt-key"
 }
 
+data "aws_kms_key" "secrets_manager" {
+  key_id = "alias/secrets-manager-regional-kms-key"
+}
+
 module "lambda_lpa_v1" {
   source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v7.4.0"
 
+  create_package         = false
   function_name          = "lpa-${local.environment}-v1"
   handler                = "app.lpa.lambda_handler"
-  vpc_subnet_ids         = data.aws_subnet.private.*.id
-  vpc_security_group_ids = [aws_security_group.lpa_redis_sg.id, data.aws_security_group.lambda_api_ingress.id]
-  tags                   = local.default_tags
-  package_type           = "Image"
-  create_package         = false
   image_uri              = var.lambda_image_uri
-  tracing_mode           = "Active"
+  memory_size            = 256
+  package_type           = "Image"
+  tags                   = local.default_tags
   timeout                = 15
+  tracing_mode           = "Active"
+  vpc_security_group_ids = [aws_security_group.lpa_redis_sg.id, data.aws_security_group.lambda_api_ingress.id]
+  vpc_subnet_ids         = data.aws_subnet.private.*.id
 
   # Let the module create a role for us
   create_role                   = true
@@ -32,12 +37,21 @@ module "lambda_lpa_v1" {
         Resource : [
           data.aws_secretsmanager_secret.jwt_secret_key.arn
         ]
+      },
+      {
+        Effect : "Allow",
+        Action : [
+          "kms:Decrypt"
+        ],
+        Resource : [
+          data.aws_kms_key.secrets_manager.arn
+        ]
       }
     ]
   })
 
   environment_variables = {
-    SIRIUS_BASE_URL     = "http://api.${local.account.target_environment}.ecs"
+    SIRIUS_BASE_URL     = "http://api.${local.target_environment}.ecs"
     SIRIUS_API_VERSION  = "v1"
     ENVIRONMENT         = local.account.account_mapping
     LOGGER_LEVEL        = local.account.logger_level
