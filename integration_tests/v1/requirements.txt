@@ -7,4 +7,4 @@ boto3==1.40.11
 jsonschema==4.25.0
 fakeredis==2.31.0
 flask==3.1.1
-coverage==7.10.3
+coverage==7.10.4
