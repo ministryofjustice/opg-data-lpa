@@ -80,7 +80,7 @@ is a bit more of an in depth set up process required.
 1. Create a virtual environment
 
     ```shell
-    python3 -m venv
+    python3 -m venv venv
     ```
 
 1. Start the virtual env
@@ -99,7 +99,7 @@ is a bit more of an in depth set up process required.
     - Install the dev requirements
 
     ```shell
-    pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt
+    pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt -r lambda_functions/v1/requirements/requirements.txt
     ```
 
 ### Running Flask app locally
