@@ -1,8 +1,10 @@
-FROM public.ecr.aws/lambda/python:3.13.2025.08.15.14@sha256:308f4e536a543fe608649a4cb552203c695dda353b7b5aea15d1bd053aa36058
+FROM public.ecr.aws/lambda/python:3.13.2025.08.15.14@sha256:308f4e536a543fe608649a4cb552203c695dda353b7b5aea15d1bd053aa36058 as build
 
-COPY lambda_functions/v1/functions/lpa/ ${LAMBDA_TASK_ROOT}
+WORKDIR /var/task
 
-COPY lambda_functions/v1/requirements/requirements.txt requirements.txt
+COPY ./functions/lpa/ .
+
+COPY ./requirements/requirements.txt requirements.txt
 
 RUN pip install -r requirements.txt
 
@@ -10,5 +12,11 @@ RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
     dnf clean all && \
     dnf -y update sqlite-libs libxml2 && \
     dnf clean all
+
+FROM public.ecr.aws/lambda/python:3.13.2025.08.15.14@sha256:308f4e536a543fe608649a4cb552203c695dda353b7b5aea15d1bd053aa36058 as runtime
+
+COPY --from=build /var/task ${LAMBDA_TASK_ROOT}
+
+RUN rm -f /usr/local/bin/aws-lambda-rie
 
 CMD [ "app.lpa.lambda_handler" ]
