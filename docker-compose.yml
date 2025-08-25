@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   postgres:
-    image: postgres
+    image: postgres@sha256:29e0bb09c8e7e7fc265ea9f4367de9622e55bae6b0b97e7cce740c2d63c2ebc0
     ports:
       - "5433:5432"
     environment:
@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: password #pragma: allowlist secret
       POSTGRES_DB: postgres
   broker_app:
-    image: pactfoundation/pact-cli:latest-multi
+    image: pactfoundation/pact-cli:latest-multi@sha256:328565c63fcd516c91ab9a3787231424e55ba22c05b082ab648dd67d841b47d9
     ports:
       - "9293:80"
       - "9292:9292"
@@ -42,7 +42,7 @@ services:
       - "4584:4584"
       - "4566:4566"
   redis:
-    image: "redis:alpine"
+    image: "redis:alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232"
     ports:
      - "0.0.0.0:6379:6379"
   api_gateway:
