@@ -10,7 +10,7 @@ from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
 
 from opg_sirius_service import sirius_handler
 from lambda_functions.v1.tests.helpers import load_data
-from pact import Consumer, Provider
+from pact.v3 import Pact
 
 mock_redis_server = fakeredis.FakeServer()
 
@@ -72,23 +72,15 @@ def mock_environ():
 
 @pytest.fixture(scope="session")
 def pact():
-    pact = Consumer("data-lpa").has_pact_with(Provider("sirius"), pact_dir="/tmp/pact", host_name="127.0.0.1", port=1222)
-    pact.start_service()
-    atexit.register(pact.stop_service)
+    # pact = Consumer("data-lpa").has_pact_with(Provider("sirius"), pact_dir="/tmp/pact", host_name="127.0.0.1", port=1222)
+    # pact.start_service()
+    # atexit.register(pact.stop_service)
+    # return pact
 
-    return pact
+    pact = Pact("data-lpa", "sirius")
+    yield pact
 
-
-@pytest.fixture(scope="session")
-def test_server_pact(pact):
-    app = create_app(Flask, config=LocalTestingConfig)
-
-    app.sirius.sirius_base_url = pact.uri
-    app.sirius.cache = fakeredis.FakeStrictRedis(
-        encoding="utf-8", decode_responses=True, server=mock_redis_server
-    )
-
-    return app.test_client()
+    pact.write_file("/tmp/pact")
 
 
 @pytest.fixture(scope="function")

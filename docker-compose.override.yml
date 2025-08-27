@@ -7,4 +7,3 @@ services:
     volumes:
       - ./lambda_functions/v1/functions/lpa/app:/lpa_data/lambda_functions/v1/functions/lpa/app
       - ./lambda_functions/v1/tests:/lpa_data/lambda_functions/v1/tests
-      - ./pact/pact-mock-service.log:/var/task/pact-mock-service.log
