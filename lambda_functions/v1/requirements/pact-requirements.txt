@@ -1,3 +1,0 @@
-connexion==3.2.0
-swagger-ui-bundle
-requests
