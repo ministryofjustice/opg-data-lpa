@@ -1,3 +1,0 @@
-opg-pact==0.0.3
-boto3
-requests
