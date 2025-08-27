@@ -1,6 +1,7 @@
 import pytest
 
 from opg_sirius_service import sirius_handler
+from pact.v3 import match
 
 import json
 
@@ -83,3 +84,45 @@ def test_use_an_lpa_route_no_cache(
 
     assert response.status_code == expected_status_code
     assert cache.exists(f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}") == 0
+
+
+def test_use_an_lpa_pact(
+    monkeypatch,
+    app,
+    pact,
+    cache,
+    mock_environ,
+):
+    monkeypatch.setattr(
+        sirius_handler.SiriusService,
+        "check_sirius_available",
+        lambda x: True,
+    )
+
+    expected = match.each_like(
+        {
+            "uId": match.regex("7000-3764-4871", regex=r"^7\d{3}-\d{4}-\d{4}$"),
+            "normalizedUid": match.like(700037644871),
+        },
+        min=1,
+    )
+
+    (
+        pact.upon_receiving("A request for LPA 7000-3764-4871")
+        .given("An LPA with UID 7000-3764-4871 exists")
+        .with_request("get", "/api/public/v1/lpas")
+        .with_query_parameter("uid", "700037644871")
+        .will_respond_with(200)
+        .with_body(expected)
+    )
+
+    with pact.serve() as srv:
+        app.sirius.sirius_base_url = srv.url
+
+        response = app.test_client().get(
+            f"/v1/use-an-lpa/lpas/700037644871", environ_base=mock_environ
+        )
+
+        assert response.status_code == 200
+        redis_entry = cache.get(name=f"opg-data-lpa-local-700037644871-200")
+        assert response.get_json() == json.loads(redis_entry)[0]
