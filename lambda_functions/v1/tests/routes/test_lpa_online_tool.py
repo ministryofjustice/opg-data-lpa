@@ -1,6 +1,7 @@
 import pytest
 
 from opg_sirius_service import sirius_handler
+from pact.v3 import match
 
 import json
 
@@ -92,3 +93,55 @@ def test_lpa_online_tool_route_no_cache(
     assert (
         cache.exists(f"opg-data-lpa-local-{online_tool_id}-{expected_status_code}") == 0
     )
+
+
+def test_lpa_online_tool_pact(
+    monkeypatch,
+    app,
+    pact,
+    cache,
+    mock_environ,
+):
+    monkeypatch.setattr(
+        sirius_handler.SiriusService,
+        "check_sirius_available",
+        lambda x: True,
+    )
+
+    expected = match.each_like(
+        {
+            "status": match.like("Cancelled"),
+            "onlineLpaId": match.regex("A17843895384", regex=r"^A\d{11}$"),
+            "receiptDate": match.regex("2020-08-10", regex=r"^\d{1,2}/\d{1,2}/\d{4}$"),
+            "statusDate": match.regex("2020-08-13", regex=r"^\d{1,2}/\d{1,2}/\d{4}$"),
+            "cancellationDate": match.regex(
+                "2020-08-16", regex=r"^\d{1,2}/\d{1,2}/\d{4}$"
+            ),
+            "dispatchDate": match.none(),
+            "invalidDate": match.none(),
+            "registrationDate": match.none(),
+            "rejectedDate": match.none(),
+            "withdrawnDate": match.none(),
+        },
+        min=1,
+    )
+
+    (
+        pact.upon_receiving("A request for LPA A17843895384")
+        .given("A cancelled LPA with Online LPA ID A17843895384 exists")
+        .with_request("get", "/api/public/v1/lpas")
+        .with_query_parameter("lpa-online-tool-id", "A17843895384")
+        .will_respond_with(200)
+        .with_body(expected)
+    )
+
+    with pact.serve() as srv:
+        app.sirius.sirius_base_url = srv.url
+
+        response = app.test_client().get(
+            f"/v1/lpa-online-tool/lpas/A17843895384", environ_base=mock_environ
+        )
+
+        assert response.status_code == 200
+        redis_entry = cache.get(name=f"opg-data-lpa-local-A17843895384-200")
+        assert response.get_json() == json.loads(redis_entry)[0]

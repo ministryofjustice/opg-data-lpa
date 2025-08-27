@@ -9,6 +9,7 @@ from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
 
 from opg_sirius_service import sirius_handler
 from lambda_functions.v1.tests.helpers import load_data
+from pact.v3 import Pact
 
 mock_redis_server = fakeredis.FakeServer()
 
@@ -66,6 +67,14 @@ def mock_environ():
         "REQUEST_ID": "123456789",
     }
     return environ
+
+
+@pytest.fixture
+def pact():
+    pact = Pact("data-lpa", "sirius").with_specification("V4")
+    yield pact
+
+    pact.write_file("/tmp/pact")
 
 
 @pytest.fixture(scope="function")
