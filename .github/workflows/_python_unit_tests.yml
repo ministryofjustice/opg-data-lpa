@@ -11,7 +11,17 @@ permissions:
   statuses: none
 
 on:
-  workflow_call: null
+  workflow_call:
+    inputs:
+      branch_name:
+        type: string
+        required: true
+      commit_sha:
+        type: string
+        required: true
+      semver_tag:
+        type: string
+        required: true
 
 jobs:
   run_unit_tests:
@@ -36,3 +46,14 @@ jobs:
 
       - name: Run Unit Tests
         run: docker compose up unit-test-lpa-data --abort-on-container-exit --exit-code-from unit-test-lpa-data || exit 1
+
+      - name: Publish pacts
+        run: |
+          docker run --rm -v ${PWD}/pact:/tmp/pact pactfoundation/pact-cli:latest \
+            pact-broker publish /tmp/pact/data-lpa-sirius.json \
+            --consumer-app-version ${{ inputs.commit_sha }} \
+            --branch ${{ inputs.branch_name }} \
+            --tag ${{ inputs.semver_tag }} \
+            --broker-base-url https://pact-broker.api.opg.service.justice.gov.uk \
+            --broker-username admin \
+            --broker-password ${{ secrets.PACT_BROKER_PASSWORD }}
