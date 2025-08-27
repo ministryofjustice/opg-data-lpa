@@ -1,7 +1,7 @@
 import pytest
 
 from opg_sirius_service import sirius_handler
-from pact import EachLike, Like, Term
+from pact.v3 import match
 
 import json
 
@@ -97,7 +97,7 @@ def test_lpa_online_tool_route_no_cache(
 
 def test_lpa_online_tool_pact(
     monkeypatch,
-    test_server_pact,
+    app,
     pact,
     cache,
     mock_environ,
@@ -108,10 +108,10 @@ def test_lpa_online_tool_pact(
         lambda x: True,
     )
 
-    expected = EachLike(
+    expected = match.each_like(
         {
-            "status": Like("Registered"),
-            "cancellationDate": Term(r"^\d{1,2}/\d{1,2}/\d{4}$", "28/08/2020"),
+            "status": match.like("Registered"),
+            "cancellationDate": match.regex("28/08/2020", regex=r"^\d{1,2}/\d{1,2}/\d{4}$"),
             "dispatchDate": "28/08/2020",
             "invalidDate": "28/08/2020",
             "onlineLpaId": "28/08/2020",
@@ -121,22 +121,22 @@ def test_lpa_online_tool_pact(
             "statusDate": "28/08/2020",
             "withdrawnDate": "28/08/2020",
         },
-        minimum=1,
+        min=1,
     )
 
     (
-        pact.given("An LPA with Online LPA ID A17843895384 exists")
-        .upon_receiving(f"A request for LPA A17843895384")
-        .with_request(
-            method="get",
-            path=f"/api/public/v1/lpas",
-            query={"lpa-online-tool-id": "A17843895384"},
-        )
-        .will_respond_with(200, body=expected)
+        pact.upon_receiving(f"A request for LPA A17843895384")
+        .given("An LPA with Online LPA ID A17843895384 exists")
+        .with_request("get", "/api/public/v1/lpas")
+        .with_query_parameter("lpa-online-tool-id", "A17843895384")
+        .will_respond_with(200)
+        .with_body(expected)
     )
 
-    with pact:
-        response = test_server_pact.get(
+    with pact.serve() as srv:
+        app.sirius.sirius_base_url = srv.url
+
+        response = app.test_client().get(
             f"/v1/lpa-online-tool/lpas/A17843895384", environ_base=mock_environ
         )
 

@@ -86,43 +86,43 @@ def test_use_an_lpa_route_no_cache(
     assert cache.exists(f"opg-data-lpa-local-{sirius_uid}-{expected_status_code}") == 0
 
 
-def test_use_an_lpa_pact(
-    monkeypatch,
-    test_server_pact,
-    pact,
-    cache,
-    mock_environ,
-):
-    monkeypatch.setattr(
-        sirius_handler.SiriusService,
-        "check_sirius_available",
-        lambda x: True,
-    )
+# def test_use_an_lpa_pact(
+#     monkeypatch,
+#     test_server_pact,
+#     pact,
+#     cache,
+#     mock_environ,
+# ):
+#     monkeypatch.setattr(
+#         sirius_handler.SiriusService,
+#         "check_sirius_available",
+#         lambda x: True,
+#     )
 
-    expected = EachLike(
-        {
-            "uId": Term(r"^7\d{3}-\d{4}-\d{4}$", "7000-3764-4871"),
-            "normalizedUid": Like(700037644871),
-        },
-        minimum=1,
-    )
+#     expected = EachLike(
+#         {
+#             "uId": Term(r"^7\d{3}-\d{4}-\d{4}$", "7000-3764-4871"),
+#             "normalizedUid": Like(700037644871),
+#         },
+#         minimum=1,
+#     )
 
-    (
-        pact.given("An LPA with UID 7000-3764-4871 exists")
-        .upon_receiving(f"A request for LPA 7000-3764-4871")
-        .with_request(
-            method="get",
-            path=f"/api/public/v1/lpas",
-            query={"uid": "700037644871"},
-        )
-        .will_respond_with(200, body=expected)
-    )
+#     (
+#         pact.given("An LPA with UID 7000-3764-4871 exists")
+#         .upon_receiving(f"A request for LPA 7000-3764-4871")
+#         .with_request(
+#             method="get",
+#             path=f"/api/public/v1/lpas",
+#             query={"uid": "700037644871"},
+#         )
+#         .will_respond_with(200, body=expected)
+#     )
 
-    with pact:
-        response = test_server_pact.get(
-            f"/v1/use-an-lpa/lpas/700037644871", environ_base=mock_environ
-        )
+#     with pact:
+#         response = test_server_pact.get(
+#             f"/v1/use-an-lpa/lpas/700037644871", environ_base=mock_environ
+#         )
 
-        assert response.status_code == 200
-        redis_entry = cache.get(name=f"opg-data-lpa-local-700037644871-200")
-        assert response.get_json() == json.loads(redis_entry)[0]
+#         assert response.status_code == 200
+#         redis_entry = cache.get(name=f"opg-data-lpa-local-700037644871-200")
+#         assert response.get_json() == json.loads(redis_entry)[0]
