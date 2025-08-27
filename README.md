@@ -137,6 +137,8 @@ Then:
     docker-compose run unit-test-lpa-data
    ```
 
+Some tests use a Pact mock service to record and assert interactions. These are saved to a JSON contract in `./pact` and then uploaded to the Pact Broker in the pipeline. If the interactions fail locally, you can find a log file inside the `./pact`.
+
 ## Integration Tests
 
 1. [Set up local environment](#set-up-local-development-environment-outside-of-docker)
@@ -178,54 +180,3 @@ Then:
     aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
     aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
     ```
-
-## PACT
-
-To run pact locally, the easiest way to interact with it is to use the client tools.
-
-The best package to get started can be found here:
-
-<https://github.com/pact-foundation/pact-ruby-standalone/releases/latest>
-
-You can download the latest version to a directory, unzip it and run the individual tools
-in the `/pact/bin` folder from the command line or put them in your PATH.
-First you should put the contract in our local broker. The local broker is spun up as part
-of the `docker compose up -d` command and you can push in a contract manually from a json file
-by using the below command (example json included in this repo):
-
-```shell
-curl -i -X PUT -d '@./docs/support_files/pact_contract.json' \
--H 'Content-Type: application/json' \
-http://localhost:9292/pacts/provider/lpa_data_sirius/consumer/lpa_data/version/x12345
-```
-
-You can then check it has uploaded by browsing to `localhost:9292`.
-
-To tag the pact we can now run this. We will want to tag the consumer as
-the verification command is best used with tags:
-
-```shell
-curl -i -X PUT -H 'Content-Type: application/json' \
-http://localhost:9292/pacticipants/lpa_data/versions/x12345/tags/v1
-```
-
-You can check it has worked here:
-
-`http://localhost:9292/matrix/provider/lpa_data_sirius/consumer/lpa_data`
-
-Run the secret creation against mock
-
-```python3 ./mock_aws_services/create_secret.py```
-
-You can verify the pact as follows (assuming your path to pact-provider-verifier is correct):
-
-```shell
-../pact/bin/pact-provider-verifier --provider-base-url=http://localhost:4343 \
---custom-provider-header 'Authorization: asdf1234567890' \
---pact-broker-base-url="http://localhost:9292" \
---provider="lpa_data_sirius" \
---consumer-version-tag=v1 \
---provider-version-tag=v1 \
---publish-verification-results \
---provider-app-version=z12345
-```
