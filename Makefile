@@ -46,4 +46,17 @@ logs:
 	docker-compose logs --tail=100 -f $(c)
 
 unit-tests-all:
-	docker-compose run unit-test-lpa-data
+	docker-compose run --rm unit-test-lpa-data
+
+publish-pacts: ## publish pacts to the broker
+	docker run --rm \
+		-v ${PWD}/build/output/$(SUITE):/tmp/output \
+		-e PACT_BROKER_PASSWORD \
+		pactfoundation/pact-cli:latest \
+		publish \
+		/tmp/output \
+		--broker-base-url https://pact-broker.api.opg.service.justice.gov.uk \
+		--broker-username admin \
+		--consumer-app-version $(PACT_CONSUMER_VERSION) \
+		--branch $(PACT_CONSUMER_BRANCH) \
+		--tag $(PACT_CONSUMER_TAG)

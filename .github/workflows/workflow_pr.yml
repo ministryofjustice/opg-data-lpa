@@ -45,6 +45,7 @@ jobs:
     outputs:
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
       semver_tag: ${{ steps.semver_tag.outputs.created_tag }}
+      commit_sha: ${{ steps.commit_sha.outputs.sha }}
     steps:
       - name: Set terraform version - environment
         id: terraform_version_environment
@@ -58,6 +59,14 @@ jobs:
           prerelease: true
           with_v: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Commit"
+        id: commit_sha
+        run: |
+          if [ "${{ github.head_ref }}" == "" ]; then
+              echo "sha=${{github.sha}}" >> $GITHUB_OUTPUT
+          else
+              echo "sha=${{github.event.pull_request.head.sha}}" >> $GITHUB_OUTPUT
+          fi
 
   terraform_environment_lint:
     name: Terraform - Environment - Lint
@@ -72,8 +81,13 @@ jobs:
   python_unit_tests:
     name: Python Unit Tests
     needs:
+      - branch_name
       - set_variables
     uses: ./.github/workflows/_python_unit_tests.yml
+    with:
+      branch_name: ${{ needs.branch_name.outputs.branch_name }}
+      commit_sha: ${{ needs.set_variables.outputs.commit_sha }}
+      semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
 
   docker_build_scan_push:
     name: Build, Scan and Push
