@@ -4,7 +4,7 @@ import os
 class Config(object):
     DEBUG = False
     TESTING = False
-    LOGGER_LEVEL = os.environ.get("LOGGER_LEVEL", "INFO")
+    LOGGER_LEVEL = "INFO"
     API_VERSION = "v1"
     API_NAME = "opg-data-lpa"
     ENVIRONMENT = os.environ.get("ENVIRONMENT")

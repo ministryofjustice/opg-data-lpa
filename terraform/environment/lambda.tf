@@ -16,7 +16,7 @@ module "lambda_lpa_v1" {
   memory_size            = 256
   package_type           = "Image"
   tags                   = local.default_tags
-  timeout                = 15
+  timeout                = 20
   tracing_mode           = "Active"
   vpc_security_group_ids = [aws_security_group.lpa_redis_sg.id, data.aws_security_group.lambda_api_ingress.id]
   vpc_subnet_ids         = data.aws_subnet.private.*.id
@@ -59,7 +59,7 @@ module "lambda_lpa_v1" {
     SESSION_DATA        = local.account.session_data
     REQUEST_CACHING     = "enabled"
     REQUEST_CACHING_TTL = tostring(local.account.request_caching_ttl)
-    REQUEST_TIMEOUT     = "10"
+    REQUEST_TIMEOUT     = "3"
     REDIS_URL           = aws_route53_record.lpa_redis.name
   }
 
