@@ -19,6 +19,7 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   replication_group_id        = "lpa-${local.redis_c_rg_name}-cache-rg"
   security_group_ids          = [aws_security_group.lpa_redis_sg.id]
   snapshot_retention_limit    = 7
+  snapshot_window             = "03:00-04:00"
   subnet_group_name           = "private-redis"
   tags                        = local.default_tags
 }
