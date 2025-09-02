@@ -2,23 +2,25 @@ data "aws_availability_zones" "available" {
 }
 
 resource "aws_elasticache_replication_group" "lpa_redis" {
-  automatic_failover_enabled  = local.account.elasticache_count == 1 ? false : true
-  engine                      = "redis"
-  engine_version              = "5.0.6"
-  replication_group_id        = "lpa-${local.redis_c_rg_name}-cache-rg"
-  description                 = "Replication Group for LPA Data"
-  node_type                   = "cache.t2.small"
-  multi_az_enabled            = local.account.elasticache_count == 1 ? false : true
-  preferred_cache_cluster_azs = local.account.elasticache_count == 1 ? ["eu-west-1a"] : data.aws_availability_zones.available.names
-  num_cache_clusters          = local.account.elasticache_count
-  parameter_group_name        = "default.redis5.0"
-  port                        = 6379
-  subnet_group_name           = "private-redis"
-  security_group_ids          = [aws_security_group.lpa_redis_sg.id]
-  tags                        = local.default_tags
-  apply_immediately           = true
+  apply_immediately           = local.account.account_mapping != "production" ? true : false
   at_rest_encryption_enabled  = true
+  automatic_failover_enabled  = local.account.elasticache_count == 1 ? false : true
+  description                 = "Replication Group for LPA Data"
+  engine                      = "redis"
+  engine_version              = "6.x"
   kms_key_id                  = aws_kms_alias.elasticache_kms_alias.target_key_arn
+  maintenance_window          = "tue:05:00-tue:06:00"
+  multi_az_enabled            = local.account.elasticache_count == 1 ? false : true
+  node_type                   = "cache.t2.small"
+  num_cache_clusters          = local.account.elasticache_count
+  parameter_group_name        = "default.redis6.x"
+  port                        = 6379
+  preferred_cache_cluster_azs = local.account.elasticache_count == 1 ? ["eu-west-1a"] : data.aws_availability_zones.available.names
+  replication_group_id        = "lpa-${local.redis_c_rg_name}-cache-rg"
+  security_group_ids          = [aws_security_group.lpa_redis_sg.id]
+  snapshot_retention_limit    = 7
+  subnet_group_name           = "private-redis"
+  tags                        = local.default_tags
 }
 
 resource "aws_security_group" "lpa_redis_sg" {
@@ -75,6 +77,7 @@ resource "aws_security_group_rule" "lpa_redis_rules" {
 
 resource "aws_kms_key" "elasticache_kms" {
   description             = "KMS Key for elasticache"
+  enable_key_rotation     = true
   policy                  = data.aws_iam_policy_document.elasticache_kms_key.json
   deletion_window_in_days = 7
 }
