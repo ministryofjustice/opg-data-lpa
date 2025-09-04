@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres
+    image: postgres@sha256:29e0bb09c8e7e7fc265ea9f4367de9622e55bae6b0b97e7cce740c2d63c2ebc0
     ports:
       - "5433:5432"
     environment:
@@ -28,7 +28,7 @@ services:
       - "4566:4566"
 
   redis:
-    image: "redis:alpine"
+    image: "redis:alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232"
     ports:
      - "0.0.0.0:6379:6379"
 
