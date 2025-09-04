@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.13.2025.08.15.14@sha256:308f4e536a543fe608649a4cb552203c695dda353b7b5aea15d1bd053aa36058 AS build
+FROM public.ecr.aws/lambda/python:3.13.2025.09.04.12@sha256:991ef99493003ec21686302b8beb0d0e995c5ad5eb219684194fd961d4a321ff AS build
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
     dnf -y update sqlite-libs libxml2 && \
     dnf clean all
 
-FROM public.ecr.aws/lambda/python:3.13.2025.08.15.14@sha256:308f4e536a543fe608649a4cb552203c695dda353b7b5aea15d1bd053aa36058 AS runtime
+FROM public.ecr.aws/lambda/python:3.13.2025.09.04.12@sha256:991ef99493003ec21686302b8beb0d0e995c5ad5eb219684194fd961d4a321ff AS runtime
 
 WORKDIR /var/task
 
