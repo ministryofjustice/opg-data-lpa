@@ -37,7 +37,7 @@ jobs:
 
   branch_name:
     name: "Generate a safe branch name"
-    uses:  ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@ce7e03453712dee1e56accf0a83a4349b1a97c42 # v3.10.0
+    uses:  ministryofjustice/opg-github-workflows/workflows/data-parse-branch-name.yml@ce7e03453712dee1e56accf0a83a4349b1a97c42 # v3.10.0
 
   set_variables:
     name: output workflow variables
@@ -49,12 +49,12 @@ jobs:
     steps:
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           terraform_directory: "./terraform/environment"
       - name: "Semver tag"
         id: semver_tag
-        uses: ministryofjustice/opg-github-actions/.github/actions/semver-tag@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
+        uses: ministryofjustice/opg-github-actions/actions/semver-tag@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
           prerelease: true
           with_v: true
@@ -72,7 +72,7 @@ jobs:
     name: Terraform - Environment - Lint
     needs:
       - set_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/workflows/linting-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
       tflint_check: false
@@ -104,7 +104,7 @@ jobs:
 
   ephemeral_environment:
     name: Create Ephemeral Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
+    uses: ministryofjustice/opg-github-workflows/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
     needs:
       - set_variables
       - docker_build_scan_push
