@@ -58,8 +58,6 @@ jobs:
         id: semver_tag
         uses: ministryofjustice/opg-github-actions/actions/semver@9c80e2dfa5701930bcd444f26081c1183d951409 # v4.3.2
         with:
-          prerelease: true
-          with_v: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: "Commit"
         id: commit_sha
