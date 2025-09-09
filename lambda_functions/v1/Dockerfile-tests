@@ -2,6 +2,7 @@ FROM public.ecr.aws/lambda/python:3.13@sha256:991ef99493003ec21686302b8beb0d0e99
 
 COPY /functions/lpa/ ${LAMBDA_TASK_ROOT}/lambda_functions/v1/functions/lpa
 COPY /tests/  ${LAMBDA_TASK_ROOT}/lambda_functions/v1/tests
+COPY /opg_sirius_service/  ${LAMBDA_TASK_ROOT}/lambda_functions/v1/opg_sirius_service
 COPY requirements/requirements.txt requirements.txt
 COPY requirements/dev-requirements.txt dev-requirements.txt
 
@@ -16,7 +17,7 @@ RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
         dnf clean all && \
         dnf -y update sqlite-libs libxml2 && \
         dnf clean all
-        
+
 
 ENV PYTHONPATH "${PYTHONPATH}:${LAMBDA_TASK_ROOT}"
 
