@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
-      semver_tag: ${{ steps.semver_tag.outputs.created_tag }}
+      semver_tag: ${{ steps.semver_tag.outputs.tag }}
     steps:
       - name: Set terraform version - environment
         id: terraform_version_environment

@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
-      semver_tag: ${{ steps.semver_tag.outputs.created_tag }}
+      semver_tag: ${{ steps.semver_tag.outputs.tag }}
       commit_sha: ${{ steps.commit_sha.outputs.sha }}
     steps:
       - name: Set terraform version - environment
