@@ -1,4 +1,4 @@
-from opg_sirius_service import sirius_handler
+from lambda_functions.v1.functions.lpa.app.opg_sirius_service import sirius_handler
 from pact.v3 import match
 
 
@@ -84,7 +84,9 @@ def test_request_code_pact(
     )
 
     (
-        pact.upon_receiving("A request for a new code for actor 7000-2838-2199 on LPA 7000-3764-4871")
+        pact.upon_receiving(
+            "A request for a new code for actor 7000-2838-2199 on LPA 7000-3764-4871"
+        )
         .given("An LPA with UID 7000-3764-4871 exists")
         .with_request("post", "/api/public/v1/lpas/requestCode")
         .with_body(
