@@ -98,18 +98,13 @@ class SiriusService:
 
         return secret
 
-    def _build_sirius_headers(self, content_type="application/json"):
+    def _build_sirius_headers(self):
         """
         Builds headers for Sirius request, including JWT auth
 
-        Args:
-            content_type: string, defaults to 'application/json'
         Returns:
             Header dictionary with content type and auth token
         """
-
-        if not content_type:
-            content_type = "application/json"
 
         session_data = self.session_data
 
@@ -124,7 +119,7 @@ class SiriusService:
         )
 
         return {
-            "Content-Type": content_type,
+            "Content-Type": "application/json",
             "Authorization": "Bearer " + encoded_jwt,
         }
 
@@ -169,12 +164,12 @@ class SiriusService:
             logger.error(f"Unable to connect to cache: {e}")
             return False
 
-    def send_request_to_sirius(self, key, url, method, content_type=None, data=None):
+    def send_request_to_sirius(self, key, url, method, data=None):
         cache_enabled = True if self.request_caching == "enabled" else False
         self.use_cache = False
         if self.check_sirius_available():
             sirius_status_code, sirius_data = self._get_data_from_sirius(
-                url, method, content_type, data
+                url, method, data
             )
             logger.debug(f"sirius_status_code: {sirius_status_code}")
             logger.debug(f"cache_enabled: {cache_enabled}")
@@ -203,9 +198,9 @@ class SiriusService:
                 )
                 return sirius_status_code, sirius_data
 
-    def _get_data_from_sirius(self, url, method, content_type=None, data=None):
+    def _get_data_from_sirius(self, url, method, data=None):
         logger.debug("_get_data_from_sirius")
-        headers = self._build_sirius_headers(content_type)
+        headers = self._build_sirius_headers()
 
         try:
             if method == "PUT":

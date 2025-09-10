@@ -12,6 +12,7 @@
     "Dependencies",
     "Renovate"
   ],
+  "configMigration": true,
   "packageRules": [
     {
       "description": "Terraform: bundle all updates together",
