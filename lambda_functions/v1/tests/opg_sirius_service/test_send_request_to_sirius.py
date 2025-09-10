@@ -36,7 +36,7 @@ def mock_get_data_from_sirius_success(monkeypatch):
     monkeypatch.setattr(
         test_sirius_service,
         "_get_data_from_sirius",
-        lambda x, y, z, p: (200, sirius_test_data),
+        lambda url, method, p: (200, sirius_test_data),
     )
 
 
@@ -45,14 +45,14 @@ def mock_get_data_from_sirius_deleted(monkeypatch):
     monkeypatch.setattr(
         test_sirius_service,
         "_get_data_from_sirius",
-        lambda x, y, z, p: (410, sirius_test_data),
+        lambda url, method, p: (410, sirius_test_data),
     )
 
 
 @pytest.fixture()
 def mock_get_data_from_sirius_failed(monkeypatch):
     monkeypatch.setattr(
-        test_sirius_service, "_get_data_from_sirius", lambda x, y, z, p: (500, "error")
+        test_sirius_service, "_get_data_from_sirius", lambda url, method, p: (500, "error")
     )
 
 
@@ -82,7 +82,7 @@ def test_send_request_to_sirius_success(
     test_sirius_service.request_caching = cache_enabled
 
     result_status_code, result_data = test_sirius_service.send_request_to_sirius(
-        key, url, method, content_type=None, data=None
+        key, url, method, data=None
     )
 
     assert result_status_code == expected_status_code
@@ -120,7 +120,7 @@ def test_send_request_to_sirius_deleted(
     test_sirius_service.request_caching = cache_enabled
 
     result_status_code, result_data = test_sirius_service.send_request_to_sirius(
-        key, url, method, content_type=None, data=None
+        key, url, method, data=None
     )
 
     assert result_status_code == expected_status_code
@@ -165,7 +165,7 @@ def test_send_request_to_sirius_request_fails(
 ):
     test_sirius_service.request_caching = cache_enabled
     result_status_code, result_data = test_sirius_service.send_request_to_sirius(
-        key, url, method, content_type=None, data=None
+        key, url, method, data=None
     )
 
     assert result_status_code == expected_status_code
@@ -211,7 +211,7 @@ def test_send_request_to_sirius_but_sirius_is_broken_value_in_cache(
     test_sirius_service.request_caching = cache_enabled
 
     result_status_code, result_data = test_sirius_service.send_request_to_sirius(
-        key, url, method, content_type=None, data=None
+        key, url, method, data=None
     )
 
     assert result_status_code == expected_status_code
@@ -249,7 +249,7 @@ def test_send_request_to_sirius_but_sirius_is_broken_value_not_in_cache(
     test_sirius_service.request_caching = cache_enabled
 
     result_status_code, result_data = test_sirius_service.send_request_to_sirius(
-        key, url, method, content_type=None, data=None
+        key, url, method, data=None
     )
 
     assert result_status_code == expected_status_code

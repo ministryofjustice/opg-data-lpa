@@ -36,7 +36,7 @@ def patched_build_sirius_headers(monkeypatch):
     def mock_headers(*args, **kwargs):
 
         return {
-            "Content-Type": args[0] if args[0] else "application/json",
+            "Content-Type": "application/json",
             "Authorization": "Bearer not-a-real-token",
         }
 

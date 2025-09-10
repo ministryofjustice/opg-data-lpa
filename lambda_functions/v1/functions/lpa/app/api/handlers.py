@@ -155,7 +155,6 @@ def request_code(body):
             key=None,
             url=sirius_url,
             method="POST",
-            content_type="application/json",
             data=json.dumps(body) if isinstance(body, dict) else body,
         )
     except Exception as e:
