@@ -85,12 +85,11 @@ def send_a_request(
     method=None,
     payload=None,
     extra_headers=None,
-    content_type=None,
 ):
     print(f"Using test_config: {test_config['name']}")
 
     headers = {
-        "Content-Type": content_type if content_type else "application/json",
+        "Content-Type": "application/json",
     }
 
     if extra_headers:

@@ -6,7 +6,6 @@ from hypothesis import given, settings, example, HealthCheck
 from .conftest import max_examples
 from .strategies import (
     url_as_string,
-    content_type,
 )
 
 from .conftest import test_sirius_service
@@ -15,28 +14,23 @@ from .conftest import test_sirius_service
 @given(
     url=url_as_string(),
     method=st.sampled_from(["GET", "POST", "PUT"]),
-    content_type=content_type(),
     data=st.dictionaries(st.text(), st.text()),
 )
-@example(url="http://not-an-url.com", method="GET", content_type=None, data=None)
-@example(url="http://not-an-url.com", method="POST", content_type=None, data=None)
-@example(url="http://not-an-url.com", method="PUT", content_type=None, data=None)
+@example(url="http://not-an-url.com", method="GET", data=None)
+@example(url="http://not-an-url.com", method="POST", data=None)
+@example(url="http://not-an-url.com", method="PUT", data=None)
 @settings(max_examples=max_examples, suppress_health_check=[HealthCheck.function_scoped_fixture])
 def test_get_data_from_sirius(
-    url, method, content_type, data, patched_build_sirius_headers, patched_requests
+    url, method, data, patched_build_sirius_headers, patched_requests
 ):
-    default_content_type = "application/json"
-
     result_status, result_data = test_sirius_service._get_data_from_sirius(
-        url=url, method=method, content_type=content_type, data=json.dumps(data)
+        url=url, method=method, data=json.dumps(data)
     )
 
     assert result_status == 200
     assert result_data["request_type"].lower() == method.lower()
-    if content_type:
-        assert result_data["headers"]["Content-Type"] == content_type
-    else:
-        assert result_data["headers"]["Content-Type"] == default_content_type
+    assert result_data["headers"]["Content-Type"] == "application/json"
+
     if method in ["POST", "PUT"]:
         assert len(result_data["data"]) > 0
     if method in ["GET"]:
