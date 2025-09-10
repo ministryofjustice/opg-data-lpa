@@ -1,7 +1,4 @@
-import logging
-
 import hypothesis.strategies as st
-import pytest
 import validators
 from hypothesis import given, settings, example, HealthCheck
 from .conftest import (
@@ -14,10 +11,9 @@ from .conftest import (
     endpoint=st.text(), url_params=st.dictionaries(st.text(), st.text()),
 )
 @example(
-    endpoint="v1/api/public/documents",
+    endpoint="v1/api/public/lpas",
     url_params={
-        "metadata[submission_id]": 11111,
-        "metadata[report_id]": "d0a43b67-3084-4a74-ab55-a7542cfadd37",
+        "lpa-online-tool-id": "A123567890",
     },
 )
 @settings(max_examples=max_examples, suppress_health_check=[HealthCheck.function_scoped_fixture])
