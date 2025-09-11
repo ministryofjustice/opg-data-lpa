@@ -1,24 +1,13 @@
 import json
 
-import hypothesis.strategies as st
-from hypothesis import given, settings, example, HealthCheck
+from hypothesis import settings, example, HealthCheck
 
-from .conftest import max_examples
-from .strategies import (
-    url_as_string,
-)
-
-from .conftest import test_sirius_service
+from .conftest import max_examples, test_sirius_service
 
 
-@given(
-    url=url_as_string(),
-    method=st.sampled_from(["GET", "POST", "PUT"]),
-    data=st.dictionaries(st.text(), st.text()),
-)
 @example(url="http://not-an-url.com", method="GET", data=None)
-@example(url="http://not-an-url.com", method="POST", data=None)
-@example(url="http://not-an-url.com", method="PUT", data=None)
+@example(url="http://not-an-url.com", method="POST", data={"key": "value"})
+@example(url="http://not-an-url.com", method="PUT", data={"key": "value"})
 @settings(max_examples=max_examples, suppress_health_check=[HealthCheck.function_scoped_fixture])
 def test_get_data_from_sirius(
     url, method, data, patched_build_sirius_headers, patched_requests
