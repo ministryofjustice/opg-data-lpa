@@ -1,51 +1,36 @@
 services:
-  postgres:
-    image: postgres@sha256:29e0bb09c8e7e7fc265ea9f4367de9622e55bae6b0b97e7cce740c2d63c2ebc0
-    ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password #pragma: allowlist secret
-      POSTGRES_DB: postgres
-
   mock-sirius:
     build:
       context: ./mock_sirius_backend
       dockerfile: Dockerfile
-    environment:
-      - MOCKING_ENV
     volumes:
       - ./mock_sirius_backend/:/var/www/mock_sirius_backend/
     ports:
       - "5001:5001"
 
-  motoserver:
-    build:
-      context: ./mock_aws_services
-      dockerfile: Dockerfile
-    ports:
-      - "4584:4584"
-      - "4566:4566"
+  localstack:
+    image: localstack/localstack:4.6
+    volumes:
+      - "./localstack/init:/etc/localstack/init/ready.d"
+    environment:
+      AWS_DEFAULT_REGION: eu-west-1
+    restart: unless-stopped
 
   redis:
     image: "redis:alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232"
     ports:
-     - "0.0.0.0:6379:6379"
+      - "0.0.0.0:6379:6379"
 
   api_gateway:
     build:
       context: ./lambda_functions/v1
-    links:
-      - mock-sirius
-      - motoserver
     depends_on:
+      - localstack
       - mock-sirius
-      - motoserver
+      - redis
     volumes:
       - ./lambda_functions/v1/:/var/www/lambda_functions/v1/
-      - ./mock_aws_services/create_secret.py:/var/www/mock_aws_services/create_secret.py
     environment:
-      LOCAL_URL: host.docker.internal
       ENVIRONMENT: local
       AWS_ACCESS_KEY_ID: testing
       AWS_SECRET_ACCESS_KEY: testing
@@ -55,7 +40,7 @@ services:
       SIRIUS_BASE_URL: http://mock-sirius:5001
       SIRIUS_API_VERSION: v1
       SESSION_DATA: publicapi@opgtest.com
-      LOCALSTACK_HOST: motoserver
+      LOCALSTACK_HOST: localstack
       REQUEST_CACHING: enabled
       REQUEST_CACHING_TTL: 48
       REQUEST_CACHING_NAME: opg-data-lpa
