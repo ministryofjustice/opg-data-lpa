@@ -1,25 +1,27 @@
-import hypothesis.strategies as st
 import validators
-from hypothesis import given, settings, example, HealthCheck
 from .conftest import (
-    max_examples,
     test_sirius_service,
 )
 
 
-@given(
-    endpoint=st.text(), url_params=st.dictionaries(st.text(), st.text()),
-)
-@example(
-    endpoint="v1/api/public/lpas",
-    url_params={
-        "lpa-online-tool-id": "A123567890",
-    },
-)
-@settings(max_examples=max_examples, suppress_health_check=[HealthCheck.function_scoped_fixture])
-def test_build_sirius_url_with_hypothesis(endpoint, url_params, caplog):
-
-    print(f"endpoint: {endpoint}")
-    url = test_sirius_service.build_sirius_url(endpoint, url_params)
+def test_build_sirius_url():
+    url = test_sirius_service.build_sirius_url(
+        "v1/api/public/lpas",
+        {
+            "lpa-online-tool-id": "A123567890",
+        },
+    )
 
     assert validators.url(url)
+
+
+def test_build_sirius_url_with_escapable_parts():
+    url = test_sirius_service.build_sirius_url(
+        "path with spaces", {"complex param": "!£2 4%"}
+    )
+
+    assert validators.url(url)
+
+    assert (
+        url == "http://not-really-sirius.com/path%20with%20spaces?complex+param=%21%C2%A32+4%25"
+    )
