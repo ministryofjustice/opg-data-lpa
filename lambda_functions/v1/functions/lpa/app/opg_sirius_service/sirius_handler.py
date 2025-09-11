@@ -81,7 +81,9 @@ class SiriusService:
 
         if environment == "local":  # pragma: no cover
             logger.debug("Using local AWS Secrets Manager")  # pragma: no cover
-            current_session = localstack_client.session.Session()  # pragma: no cover
+            current_session = localstack_client.session.Session(
+                region_name=region_name
+            )  # pragma: no cover
 
         else:
             current_session = boto3.session.Session()

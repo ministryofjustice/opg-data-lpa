@@ -18,5 +18,4 @@ class SiriusServiceTestConfig:
 
     # specific to local testing
     HYPOTHESIS_MAX_EXAMPLES = 50
-    LOCALSTACK_HOST = "motoserver"
     JWT_SECRET = "THIS_IS_MY_SECRET_KEY"  # pragma: allowlist secret
