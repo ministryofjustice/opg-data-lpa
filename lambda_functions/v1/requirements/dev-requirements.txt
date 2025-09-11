@@ -2,7 +2,6 @@ connexion==3.2.0
 fakeredis==2.31.1
 flake8==7.3.0
 flake8-quotes==3.4.0
-hypothesis==6.138.14
 moto==5.1.11
 pytest==8.4.2
 pytest-cov==6.2.1

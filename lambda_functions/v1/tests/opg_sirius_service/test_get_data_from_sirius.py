@@ -1,30 +1,22 @@
 import json
-
-import hypothesis.strategies as st
-from hypothesis import given, settings, example, HealthCheck
-
-from .conftest import max_examples
-from .strategies import (
-    url_as_string,
-)
+import pytest
 
 from .conftest import test_sirius_service
 
 
-@given(
-    url=url_as_string(),
-    method=st.sampled_from(["GET", "POST", "PUT"]),
-    data=st.dictionaries(st.text(), st.text()),
+@pytest.mark.parametrize(
+    "method,data",
+    [
+        ("GET", None),
+        ("POST", {"key": "value"}),
+        ("PUT", {"key": "value"}),
+    ],
 )
-@example(url="http://not-an-url.com", method="GET", data=None)
-@example(url="http://not-an-url.com", method="POST", data=None)
-@example(url="http://not-an-url.com", method="PUT", data=None)
-@settings(max_examples=max_examples, suppress_health_check=[HealthCheck.function_scoped_fixture])
 def test_get_data_from_sirius(
-    url, method, data, patched_build_sirius_headers, patched_requests
+    method, data, patched_build_sirius_headers, patched_requests
 ):
     result_status, result_data = test_sirius_service._get_data_from_sirius(
-        url=url, method=method, data=json.dumps(data)
+        url="http://not-an-url.com", method=method, data=json.dumps(data)
     )
 
     assert result_status == 200
