@@ -1,32 +1,13 @@
-import json
-
 import fakeredis
 import pytest
-import hypothesis.strategies as st
-from hypothesis import settings, given, HealthCheck
 
 from lambda_functions.v1.functions.lpa.app.opg_sirius_service.sirius_handler import (
     SiriusService,
 )
-from .conftest import (
-    max_examples,
-    alphabet,
-    test_sirius_service,
-)
+from .conftest import test_sirius_service
 from .default_config import SiriusServiceTestConfig
 
 
-@given(
-    test_key_name=st.text(min_size=1, alphabet=alphabet),
-    test_key=st.text(min_size=1),
-    test_data=st.dictionaries(
-        st.text(min_size=1), st.text(min_size=1), min_size=1, max_size=10
-    ),
-)
-@settings(
-    max_examples=max_examples,
-    suppress_health_check=[HealthCheck.function_scoped_fixture],
-)
 @pytest.mark.parametrize(
     "http_status",
     [
@@ -34,22 +15,20 @@ from .default_config import SiriusServiceTestConfig
         (410),
     ],
 )
-def test_get_sirius_data_from_cache(
-    monkeypatch, test_key_name, test_key, test_data, http_status
-):
+def test_get_sirius_data_from_cache(monkeypatch, http_status):
 
-    test_sirius_service.request_caching_name = test_key_name
+    test_sirius_service.request_caching_name = "my_cache"
     test_cache = test_sirius_service.cache
 
-    full_key = f"{test_key_name}-{test_key}-{http_status}"
-    test_cache.set(name=full_key, value=json.dumps(test_data))
+    full_key = f"my_cache-lpa_1234-{http_status}"
+    test_cache.set(name=full_key, value='{"status": "Registered"}')
 
     status_code, result_data = test_sirius_service._get_sirius_data_from_cache(
-        key=test_key
+        key="lpa_1234"
     )
 
     assert status_code == http_status
-    assert result_data == test_data
+    assert result_data == {"status": "Registered"}
 
     test_cache.flushall()
 

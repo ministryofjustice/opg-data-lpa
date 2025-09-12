@@ -2,7 +2,6 @@ import jwt
 import pytest
 
 from .conftest import test_sirius_service
-from .strategies import content_type
 
 
 def test_build_sirius_headers_content_type(patched_get_secret):
