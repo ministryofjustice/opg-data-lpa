@@ -17,5 +17,4 @@ class SiriusServiceTestConfig:
     REDIS_URL = "redis://redis:6379"
 
     # specific to local testing
-    LOCALSTACK_HOST = "motoserver"
     JWT_SECRET = "THIS_IS_MY_SECRET_KEY"  # pragma: allowlist secret
