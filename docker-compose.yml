@@ -1,12 +1,15 @@
 services:
   mock-sirius:
-    build:
-      context: ./mock_sirius_backend
-      dockerfile: Dockerfile
+    image: outofcoffee/imposter:4.7.0
+    healthcheck:
+      test: [ "CMD", "imposter", "list", "-x" ]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
     volumes:
-      - ./mock_sirius_backend/:/var/www/mock_sirius_backend/
-    ports:
-      - "5001:5001"
+      - ./mock_sirius_backend:/opt/imposter/config
 
   localstack:
     image: localstack/localstack:4.6
@@ -37,7 +40,7 @@ services:
       AWS_SECURITY_TOKEN: testing
       AWS_SESSION_TOKEN: testing
       AWS_DEFAULT_REGION: eu-west-1
-      SIRIUS_BASE_URL: http://mock-sirius:5001
+      SIRIUS_BASE_URL: http://mock-sirius:8080
       SIRIUS_API_VERSION: v1
       SESSION_DATA: publicapi@opgtest.com
       LOCALSTACK_HOST: localstack
