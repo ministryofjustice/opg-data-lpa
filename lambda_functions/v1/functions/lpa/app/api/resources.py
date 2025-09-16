@@ -34,6 +34,9 @@ def handle403(error=None):
 
 @api.app_errorhandler(404)
 def handle404(error=None):
+    logger.info(request.path)
+    logger.info(request.endpoint)
+
     return error_message(404, "An LPA with the passed ID Not Found")
 
 
