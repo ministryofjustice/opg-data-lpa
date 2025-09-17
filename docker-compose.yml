@@ -12,7 +12,7 @@ services:
       - ./mock_sirius_backend:/opt/imposter/config
 
   localstack:
-    image: localstack/localstack:4.6
+    image: localstack/localstack:4.7@sha256:12253acd9676770e9bd31cbfcf17c5ca6fd7fb5c0c62f3c46dd701f20304260c
     volumes:
       - "./localstack/init:/etc/localstack/init/ready.d"
     environment:
