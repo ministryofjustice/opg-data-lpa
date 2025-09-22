@@ -1,6 +1,6 @@
 services:
   mock-sirius:
-    image: outofcoffee/imposter:4.7.0
+    image: outofcoffee/imposter:4.7.0@sha256:2a2f964e6ee7bea2f9a54eac6d976441351d0805833117fc2e45c541b8d58ae9
     healthcheck:
       test: [ "CMD", "imposter", "list", "-x" ]
       interval: 15s
