@@ -39,5 +39,4 @@ process.yml
 lambda_functions/v1/lambda_layers/python/lib/python3.8/site-packages/*
 !lambda_functions/v1/lambda_layers/python/lib/python3.8/site-packages/README.md
 /integration_tests/v1/report.html
-*.hypothesis
 **/report.html

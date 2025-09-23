@@ -1,61 +1,49 @@
 services:
-  postgres:
-    image: postgres
-    ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password #pragma: allowlist secret
-      POSTGRES_DB: postgres
-
   mock-sirius:
-    build:
-      context: ./mock_sirius_backend
-      dockerfile: Dockerfile
-    environment:
-      - MOCKING_ENV
+    image: outofcoffee/imposter:4.7.0@sha256:2a2f964e6ee7bea2f9a54eac6d976441351d0805833117fc2e45c541b8d58ae9
+    healthcheck:
+      test: [ "CMD", "imposter", "list", "-x" ]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
     volumes:
-      - ./mock_sirius_backend/:/var/www/mock_sirius_backend/
-    ports:
-      - "5001:5001"
+      - ./mock_sirius_backend:/opt/imposter/config
 
-  motoserver:
-    build:
-      context: ./mock_aws_services
-      dockerfile: Dockerfile
-    ports:
-      - "4584:4584"
-      - "4566:4566"
+  localstack:
+    image: localstack/localstack:4.7@sha256:12253acd9676770e9bd31cbfcf17c5ca6fd7fb5c0c62f3c46dd701f20304260c
+    volumes:
+      - "./localstack/init:/etc/localstack/init/ready.d"
+    environment:
+      AWS_DEFAULT_REGION: eu-west-1
+    restart: unless-stopped
 
   redis:
-    image: "redis:alpine"
+    image: "redis:alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232"
     ports:
-     - "0.0.0.0:6379:6379"
+      - "0.0.0.0:6379:6379"
 
   api_gateway:
     build:
       context: ./lambda_functions/v1
-    links:
-      - mock-sirius
-      - motoserver
     depends_on:
+      - localstack
       - mock-sirius
-      - motoserver
+      - redis
     volumes:
       - ./lambda_functions/v1/:/var/www/lambda_functions/v1/
-      - ./mock_aws_services/create_secret.py:/var/www/mock_aws_services/create_secret.py
     environment:
-      LOCAL_URL: host.docker.internal
       ENVIRONMENT: local
       AWS_ACCESS_KEY_ID: testing
       AWS_SECRET_ACCESS_KEY: testing
       AWS_SECURITY_TOKEN: testing
       AWS_SESSION_TOKEN: testing
       AWS_DEFAULT_REGION: eu-west-1
-      SIRIUS_BASE_URL: http://mock-sirius:5001
+      SIRIUS_BASE_URL: http://mock-sirius:8080
       SIRIUS_API_VERSION: v1
       SESSION_DATA: publicapi@opgtest.com
-      LOCALSTACK_HOST: motoserver
+      LOCALSTACK_HOST: localstack
       REQUEST_CACHING: enabled
       REQUEST_CACHING_TTL: 48
       REQUEST_CACHING_NAME: opg-data-lpa

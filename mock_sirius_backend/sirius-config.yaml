@@ -1,0 +1,42 @@
+plugin: openapi
+specFile: ./sirius_api.yaml
+
+resources:
+  - path: /api/public/v1/lpas
+    queryParams:
+      uid: 700000000013
+    method: get
+    response:
+      file: mock_data/lpa_online_tool_successful_response.json
+      statusCode: 200
+  - path: /api/public/v1/lpas
+    queryParams:
+      lpa-online-tool-id: A39721583862
+    method: get
+    response:
+      file: mock_data/lpa_online_tool_successful_response.json
+      statusCode: 200
+  - path: /api/public/v1/lpas
+    queryParams:
+      uid: 700000000617
+    method: get
+    response:
+      file: mock_data/use_an_lpa_response.json
+      statusCode: 200
+  - path: /api/public/v1/lpas
+    queryParams:
+      uid: 700000151667
+    method: get
+    response:
+      statusCode: 410
+      content: '{"detail": "LPA with UID 7000-0015-1667 has been deleted"}'
+  - path: /api/public/v1/lpas
+    queryParams:
+      uid: A37638705049
+    method: get
+    response:
+      statusCode: 410
+      content: '{"detail": "LPA with UID 7000-0015-1667 has been deleted"}'
+
+validation:
+  request: false

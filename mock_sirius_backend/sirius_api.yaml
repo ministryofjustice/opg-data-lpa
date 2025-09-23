@@ -12,7 +12,7 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-basePath: /api/public/v1
+basePath: /api
 schemes:
   - https
 consumes:
@@ -20,7 +20,7 @@ consumes:
 produces:
   - application/json
 paths:
-  /lpas:
+  /public/v1/lpas:
     get:
       description: |
         This end point retrieves information on a LPA (Legal Power Attorney), by specifying the Database ID or Online Tool ID (Barcode).
@@ -52,7 +52,7 @@ paths:
             $ref: '#/definitions/Error'
         '500':
           description: Unexpected error
-  /lpas/requestCode:
+  /public/v1/lpas/requestCode:
     post:
       x-swagger-router-controller: app
       operationId: requestCode
@@ -91,7 +91,7 @@ paths:
           description: Invalid request
         '500':
           description: Unexpected error
-  /orders:
+  /public/v1/orders:
     post:
       description: |
         Creates a new Client, order and set of deputies in Sirius and attaches a set of documents to the order. Each request must use a unique CASREC number.
@@ -131,7 +131,7 @@ paths:
             $ref: '#/definitions/Error'
         '500':
           description: Unexpected error
-  /documents:
+  /public/v1/documents:
     post:
       description: Post a document to be stored within Sirius
       x-swagger-router-controller: app
@@ -252,7 +252,7 @@ paths:
             $ref: '#/definitions/Error'
         '500':
           description: Unexpected error
-  /correspondence/update-send-status:
+  /public/v1/correspondence/update-send-status:
     put:
       description: Update the state of the letter in the database after the queue consumer successfully processes a letter
       x-swagger-router-controller: app
@@ -280,6 +280,21 @@ paths:
           description: The status was updated
         '400':
           description: Invalid request
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+  /health-check:
+    get:
+      summary: Sirius healthcheck
+      x-swagger-router-controller: app
+      operationId: healthcheck
+      responses:
+        '200':
+          description: Record found and retrieved
+
+        '400':
+          description: Invalid query
           schema:
             $ref: '#/definitions/Error'
         '500':

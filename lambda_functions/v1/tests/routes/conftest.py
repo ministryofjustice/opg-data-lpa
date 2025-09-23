@@ -7,7 +7,7 @@ from flask import Flask
 from lambda_functions.v1.functions.lpa.app import create_app
 from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
 
-from opg_sirius_service import sirius_handler
+from lambda_functions.v1.functions.lpa.app.opg_sirius_service import sirius_handler
 from lambda_functions.v1.tests.helpers import load_data
 from pact.v3 import Pact
 
