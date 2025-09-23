@@ -8,16 +8,6 @@ resource "aws_api_gateway_rest_api" "lpa" {
     types = ["REGIONAL"]
   }
   tags = local.default_tags
-  lifecycle {
-    replace_triggered_by = [null_resource.open_api]
-  }
-}
-
-resource "null_resource" "open_api" {
-  triggers = {
-    open_api_sha        = local.open_api_sha
-    rest_api_policy_sha = local.rest_api_policy_sha
-  }
 }
 
 locals {
