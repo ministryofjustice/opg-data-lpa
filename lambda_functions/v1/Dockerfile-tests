@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.13@sha256:5d94179d6515bbd3c63e0e31cfe45fff1c876ae74958051e36a177d693713886
+FROM public.ecr.aws/lambda/python:3.13@sha256:d8aaa1ac9827c257e5b3fe8f6df861bbcd0984348a55c33caf609a73fa7e1f81
 
 COPY /functions/lpa/ ${LAMBDA_TASK_ROOT}/lambda_functions/v1/functions/lpa
 COPY /tests/  ${LAMBDA_TASK_ROOT}/lambda_functions/v1/tests
