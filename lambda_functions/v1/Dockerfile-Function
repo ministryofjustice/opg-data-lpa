@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.13.2025.09.17.11@sha256:7078abe96f3137e8cd19d04566c30c2c879a30856d0b7f70121ab6ce1e8e5a9e AS build
+FROM public.ecr.aws/lambda/python:3.13@sha256:f3ed51a5bddffbc2b73480c0829f1eb0e7dc0c3ddc6bead52ac1a0fbd14ce14f AS build
 
 WORKDIR /app
 
@@ -8,12 +8,7 @@ RUN pip install -r requirements.txt -t python/
 
 COPY lambda_functions/v1/functions/lpa/ python/
 
-RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
-    dnf clean all && \
-    dnf -y update sqlite-libs libxml2 && \
-    dnf clean all
-
-FROM public.ecr.aws/lambda/python:3.13.2025.09.17.11@sha256:7078abe96f3137e8cd19d04566c30c2c879a30856d0b7f70121ab6ce1e8e5a9e AS runtime
+FROM public.ecr.aws/lambda/python:3.31@sha256:f3ed51a5bddffbc2b73480c0829f1eb0e7dc0c3ddc6bead52ac1a0fbd14ce14f AS runtime
 
 WORKDIR /var/task
 
