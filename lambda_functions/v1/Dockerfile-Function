@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.13@sha256:92ba8cd1c32cac11c6ce0986bcf0494c87e1eb13b6181b8d16e1d588a9974111 AS build
+FROM public.ecr.aws/lambda/python:3.13@sha256:0ab8146b9166e4cf74c16ad998f6db0e8bf276de659fb36f5fabef16ee7c2fa1 AS build
 
 WORKDIR /app
 
