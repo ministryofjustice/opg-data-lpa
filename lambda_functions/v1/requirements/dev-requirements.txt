@@ -1,8 +1,8 @@
 connexion==3.3.0
-fakeredis==2.32.1
+fakeredis==2.33.0
 flake8==7.3.0
 flake8-quotes==3.4.0
-moto==5.1.17
+moto==5.1.18
 pytest==9.0.2
 pytest-cov==7.0.0
 pytest-env==1.2.0
@@ -13,4 +13,4 @@ yarl==1.22.0
 importlib-metadata==8.7.0
 typing-extensions==4.15.0
 pact-python==3.2.1
-boto3==1.41.5
+boto3==1.42.13
