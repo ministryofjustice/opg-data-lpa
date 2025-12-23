@@ -1,25 +1,23 @@
-FROM public.ecr.aws/lambda/python:3.13@sha256:da91b03913bc525dbee8755fac06469337038504769f1167be2951d8444e2b13
+FROM python:3.13-alpine3.23 AS build
 
-COPY /functions/lpa/ ${LAMBDA_TASK_ROOT}/lambda_functions/v1/functions/lpa
-COPY /tests/  ${LAMBDA_TASK_ROOT}/lambda_functions/v1/tests
+RUN apk add --no-cache autoconf automake cmake make g++ elfutils-dev libcurl libtool
+
+WORKDIR /var/task
+
+COPY /functions/lpa/ /var/task/lambda_functions/v1/functions/lpa
+COPY /tests/  /var/task/lambda_functions/v1/tests
 COPY requirements/requirements.txt requirements.txt
 COPY requirements/dev-requirements.txt dev-requirements.txt
 
-RUN python -m pip install --upgrade pip && \
-        python -m pip install \
-        --target ${LAMBDA_TASK_ROOT} \
-        --requirement requirements.txt \
-        --requirement dev-requirements.txt && \
-        python -m pip install coverage==7.5.0
+RUN pip install --upgrade pip
+RUN pip install \
+        --target /var/task \
+        -r requirements.txt \
+        -r dev-requirements.txt
+RUN pip install coverage==7.5.0
 
-RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
-        dnf clean all && \
-        dnf -y update sqlite-libs libxml2 && \
-        dnf clean all
-        
-
-ENV PYTHONPATH "${PYTHONPATH}:${LAMBDA_TASK_ROOT}"
+ENV PYTHONPATH "${PYTHONPATH}:/var/task"
 
 COPY --chmod=755 run-tests.sh run-tests.sh
 
-ENTRYPOINT [ "./run-tests.sh" ]
+ENTRYPOINT ["sh", "./run-tests.sh" ]
