@@ -1,4 +1,6 @@
-FROM public.ecr.aws/lambda/python:3.13@sha256:da91b03913bc525dbee8755fac06469337038504769f1167be2951d8444e2b13 AS build
+FROM python:3.13-alpine3.23 AS build
+
+RUN apk add --no-cache autoconf automake cmake make g++ elfutils-dev libcurl libtool
 
 WORKDIR /app
 
@@ -8,7 +10,7 @@ RUN pip install -r requirements.txt -t python/
 
 COPY lambda_functions/v1/functions/lpa/ python/
 
-FROM public.ecr.aws/lambda/python:3.13@sha256:da91b03913bc525dbee8755fac06469337038504769f1167be2951d8444e2b13 AS runtime
+FROM python:3.13-alpine3.23 AS runtime
 
 WORKDIR /var/task
 
@@ -16,4 +18,5 @@ COPY --from=build /app/python ./
 
 RUN rm -f /usr/local/bin/aws-lambda-rie
 
+ENTRYPOINT [ "/usr/local/bin/python", "-m", "awslambdaric" ]
 CMD [ "app.lpa.lambda_handler" ]

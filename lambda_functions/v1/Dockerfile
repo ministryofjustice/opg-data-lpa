@@ -1,4 +1,7 @@
-FROM python:3.11-slim-buster@sha256:c46b0ae5728c2247b99903098ade3176a58e274d9c7d2efeaaab3e0621a53935
+FROM python:3.13-alpine3.23 AS build
+
+RUN apk add --no-cache autoconf automake cmake make g++ elfutils-dev libcurl libtool
+
 WORKDIR /var/www/lambda_functions/v1
 
 # Install Python Dependencies
