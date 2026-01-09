@@ -13,4 +13,4 @@ yarl==1.22.0
 importlib-metadata==8.7.1
 typing-extensions==4.15.0
 pact-python==3.2.1
-boto3==1.42.19
+boto3==1.42.22
