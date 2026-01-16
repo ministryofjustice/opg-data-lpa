@@ -1,1 +1,5 @@
+*       @ministryofjustice/opg-lpa-team
+/.github/workflows/  @ministryofjustice/opg-webops
+/.github/CODEOWNERS  @ministryofjustice/opg-webops
+
 /terraform/     @ministryofjustice/opg-webops
