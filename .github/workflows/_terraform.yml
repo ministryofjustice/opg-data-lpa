@@ -60,7 +60,6 @@ jobs:
       TF_WORKSPACE: ${{ inputs.workspace_name }}
       TF_VAR_default_role: ${{ inputs.default_role }}
       TF_VAR_management_role: ${{ inputs.management_role }}
-      TF_VAR_backup_role: ${{ inputs.backup_role }}
       TF_VAR_lambda_image_uri: ${{ inputs.version_tag }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -124,5 +123,5 @@ jobs:
       - name: Terraform Outputs
         if: inputs.apply == true
         id: terraform_outputs
-        run: echo "api_gateway_url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
+        run: echo "base_url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
         working-directory: ${{ env.tf_dir }}

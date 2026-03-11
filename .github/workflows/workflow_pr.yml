@@ -89,6 +89,41 @@ jobs:
       semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit # pragma: allowlist secret
 
+  plan-environment:
+    strategy:
+      matrix:
+        include:
+          - workspace_name: development
+            oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+            default_role: ${{ vars.DEVELOPMENT_ROLE }}
+            management_role: ${{ vars.MANAGEMENT_ROLE }}
+          - workspace_name: preproduction
+            oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+            default_role: ${{ vars.PREPRODUCTION_PULL_REQUEST_ROLE }}
+            management_role: ${{ vars.MANAGEMENT_ROLE }}
+          - workspace_name: production
+            oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+            default_role: ${{ vars.PRODUCTION_PULL_REQUEST_ROLE }}
+            management_role: ${{ vars.MANAGEMENT_ROLE }}
+    name: "TF Plan Environment: ${{ matrix.workspace_name }}"
+    needs: 
+      [
+        set_variables,
+        docker_build_scan_push,
+        branch_name,
+      ]
+    uses: ./.github/workflows/terraform.yml
+    with:
+      apply: false
+      workspace_name: ${{ matrix.workspace_name }}
+      oidc_role: ${{ matrix.oidc_role }}
+      default_role: ${{ matrix.default_role }}
+      management_role: ${{ matrix.management_role }}
+      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+    secrets:
+      allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
   ephemeral_environment:
     name: Create Ephemeral Environment
     needs:
@@ -97,7 +132,7 @@ jobs:
         docker_build_scan_push,
         branch_name,
       ]
-    uses: ./.github/workflows/_terraform_deploy.yml
+    uses: ./.github/workflows/_terraform.yml
     with:
       workspace_name: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.safe }}
       oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
@@ -108,6 +143,8 @@ jobs:
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+
 
   integration_tests:
     name: Run Integration Tests on Ephemeral Environment
