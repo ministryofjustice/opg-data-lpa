@@ -48,13 +48,13 @@ on:
     outputs:
       base_url:
         description: "Base URL of API"
-        value: ${{ jobs.terraform_environment_workflow.outputs.url }}
+        value: ${{ jobs.terraform_environment_workflow.outputs.base_url }}
 
 jobs:
   terraform_environment_workflow:
     runs-on: ubuntu-latest
     outputs:
-      url: ${{ steps.terraform_outputs.outputs.url }}
+      base_url: ${{ steps.terraform_outputs.outputs.base_url }}
     env:
       tf_dir: "./terraform/environment"
       TF_WORKSPACE: ${{ inputs.workspace_name }}
