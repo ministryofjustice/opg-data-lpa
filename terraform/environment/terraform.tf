@@ -3,10 +3,11 @@ terraform {
     assume_role = {
       role_arn = "arn:aws:iam::311462405659:role/opg-data-lpa-terraform-state-access"
     }
-    bucket  = "opg.terraform.state"
-    encrypt = true
-    key     = "opg-data-lpa/terraform.tfstate"
-    region  = "eu-west-1"
+    bucket       = "opg.terraform.state"
+    encrypt      = true
+    key          = "opg-data-lpa/terraform.tfstate"
+    region       = "eu-west-1"
+    use_lockfile = true
   }
 }
 

@@ -112,7 +112,7 @@ jobs:
         docker_build_scan_push,
         branch_name,
       ]
-    uses: ./.github/workflows/terraform.yml
+    uses: ./.github/workflows/_terraform.yml
     with:
       apply: false
       workspace_name: ${{ matrix.workspace_name }}
