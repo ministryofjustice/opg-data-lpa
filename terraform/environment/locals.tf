@@ -22,8 +22,6 @@ locals {
   api_template_vars = {
     region            = "eu-west-1"
     environment       = local.environment
-    allowed_roles     = join(", ", local.account.allowed_roles)
-    allowed_ip_ranges = []
     account_id        = local.account.account_id
   }
 

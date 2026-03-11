@@ -1,0 +1,128 @@
+name: "[Job] Deploy to Environment"
+
+permissions:
+  id-token: write
+
+on:
+  workflow_call:
+    inputs:
+      workspace_name:
+        description: "The terraform workspace to target for environment actions"
+        required: true
+        type: string
+
+      oidc_role:
+        description: "The OIDC role to assume for AWS access"
+        required: true
+        type: string
+
+      default_role:
+        description: "The default CI role to assume"
+        required: true
+        type: string
+
+      management_role:
+        description: "The management CI role to assume"
+        required: true
+        type: string
+
+      version_tag:
+        description: "The docker image tag to deploy in the environment"
+        required: true
+        type: string
+
+      apply:
+        description: "Whether to apply the deployment"
+        required: false
+        type: boolean
+        default: false
+
+    secrets:
+      allowlist_deploy_key:
+        description: "SSH Deploy Key"
+        required: true
+      github_access_token:
+        description: "Github Token"
+        required: true
+
+    outputs:
+      base_url:
+        description: "Base URL of API"
+        value: ${{ jobs.terraform_environment_workflow.outputs.url }}
+
+jobs:
+  terraform_environment_workflow:
+    runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.terraform_outputs.outputs.url }}
+    env:
+      tf_dir: "./terraform/environment"
+      TF_WORKSPACE: ${{ inputs.workspace_name }}
+      TF_VAR_default_role: ${{ inputs.default_role }}
+      TF_VAR_management_role: ${{ inputs.management_role }}
+      TF_VAR_backup_role: ${{ inputs.backup_role }}
+      TF_VAR_lambda_image_uri: ${{ inputs.version_tag }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: "0"
+      - uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c # 1.0.8
+      - name: "Parse terraform version [directory: ${{ env.tf_dir }}]"
+        id: tf_version
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        with:
+          terraform_directory: ${{ env.tf_dir }}
+      - name: "Terraform version [${{ steps.tf_version.outputs.version }}]"
+        run: echo "terraform version [${{ steps.tf_version.outputs.version }}]" >> $GITHUB_STEP_SUMMARY
+        working-directory: ${{ env.tf_dir }}
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with:
+          terraform_version: ${{ steps.tf_version.outputs.version }}
+          terraform_wrapper: false
+      - name: Configure AWS Credentials For Terraform
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ inputs.oidc_role }}
+          role-duration-seconds: 3600
+          role-session-name: environment-deploy-github-action
+      - uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.allowlist_deploy_key }}
+    
+      - name: Format Terraform
+        run: terraform fmt -check -recursive
+        working-directory: ${{ env.tf_dir }}
+        
+      - uses: terraform-linters/setup-tflint@4cb9feea73331a35b422df102992a03a44a3bb33 # v6.2.1
+        name: Setup TFLint
+        with:
+            tflint_version: v0.60.0
+            
+      - name: Lint Terraform
+        id: tf_lint
+        working-directory: ${{ env.tf_dir }}
+        run: tflint --recursive
+
+      - name: Terraform Init
+        env:
+          TF_WORKSPACE: default
+        run: terraform init -input=false
+        working-directory: ${{ env.tf_dir }}
+
+      - name: Terraform Plan
+        run: |
+          terraform workspace show
+          terraform plan -lock-timeout=300s -input=false -parallelism=30 -out=terraform.plan
+        working-directory: ${{ env.tf_dir }}
+
+      - name: Terraform Apply
+        if: inputs.apply == true
+        run: terraform apply -lock-timeout=300s -input=false -auto-approve -parallelism=30 terraform.plan
+        working-directory: ${{ env.tf_dir }}
+
+      - name: Terraform Outputs
+        if: inputs.apply == true
+        id: terraform_outputs
+        run: echo "api_gateway_url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
+        working-directory: ${{ env.tf_dir }}

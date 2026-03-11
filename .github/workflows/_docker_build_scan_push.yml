@@ -3,6 +3,7 @@ permissions:
   checks: read
   contents: read
   deployments: none
+  id-token: write
   issues: none
   packages: none
   pull-requests: none
@@ -44,15 +45,13 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-      - name: Configure AWS Credentials With Assumed Role to Management
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
         with:
-          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}'
-          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}'
           aws-region: eu-west-1
-          role-to-assume: 'arn:aws:iam::311462405659:role/integrations-ci'
-          role-duration-seconds: 900
-          role-session-name: OPGLPADataGithubAction
+          role-to-assume: ${{ vars.OIDC_MANAGEMENT_ECR_ROLE }}
+          role-duration-seconds: 3600
+          role-session-name: OPGLPADataGithubActionECRPush
 
       - name: ECR Login
         id: login_ecr
