@@ -1,11 +1,3 @@
-variable "default_role" {
-  default = "integrations-ci"
-}
-
-variable "management_role" {
-  default = "integrations-ci"
-}
-
 variable "accounts" {
   type = map(
     object({
@@ -23,12 +15,20 @@ variable "accounts" {
   )
 }
 
+variable "default_role" {
+  type = string
+}
+
 variable "environment_mapping" {
   type = map(string)
 }
 
 variable "lambda_image_uri" {
-  type        = string
-  description = "The URI of the container image that contains your Lambda function. Optional if package_type is not Image."
   default     = null
+  description = "The URI of the container image that contains your Lambda function. Optional if package_type is not Image."
+  type        = string
+}
+
+variable "management_role" {
+  type = string
 }

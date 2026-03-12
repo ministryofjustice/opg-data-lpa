@@ -61,3 +61,8 @@ services:
     volumes:
       - "./pact:/tmp/pact"
       - /var/run/docker.sock:/var/run/docker.sock
+
+  lpa-data:
+    image: lpa-data-lambda:latest
+    build:
+      dockerfile: lambda_functions/v1/Dockerfile-Function
