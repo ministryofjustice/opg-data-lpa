@@ -8,7 +8,6 @@ from boto3.session import Session
 from jsonschema import validate, exceptions
 from requests_aws4auth import AWS4Auth
 
-# DATA_LPA_API_URL = "https://128uml-3399-smoke-2.dev.lpa.api.opg.service.justice.gov.uk/v1"
 DATA_LPA_API_URL = os.getenv("DATA_LPA_API_URL")
 HEALTHCHECK_URL = f"{DATA_LPA_API_URL}/healthcheck"
 ONLINE_TOOL_URL = f"{DATA_LPA_API_URL}/lpa-online-tool/lpas"
@@ -101,36 +100,11 @@ def send_a_request(
     else:
         body = None
 
-    if "CI" in os.environ:
-        role_name = "integrations-ci"
-    else:
-        role_name = "operator"
-
     boto3.setup_default_session(
         region_name="eu-west-1",
     )
 
-    client = boto3.client("sts")
-    client.get_caller_identity()["Account"]
-
-    if DATA_LPA_API_URL == "https://pre.lpa.api.opg.service.justice.gov.uk/v1":
-        role_to_assume = f"arn:aws:iam::492687888235:role/{role_name}"
-    else:
-        role_to_assume = f"arn:aws:iam::288342028542:role/{role_name}"
-
-    response = client.assume_role(
-        RoleArn=role_to_assume, RoleSessionName="assumed_role"
-    )
-
-    session = Session(
-        aws_access_key_id=response["Credentials"]["AccessKeyId"],
-        aws_secret_access_key=response["Credentials"]["SecretAccessKey"],
-        aws_session_token=response["Credentials"]["SessionToken"],
-    )
-
-    client = session.client("sts")
-    client.get_caller_identity()["Account"]
-
+    session = boto3.Session()
     credentials = session.get_credentials()
 
     credentials = credentials.get_frozen_credentials()

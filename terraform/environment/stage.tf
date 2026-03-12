@@ -34,13 +34,9 @@ module "deploy_v1" {
   source = "./modules/stage"
 
   account_name    = local.account.account_mapping
-  api_name        = local.api_name
-  aws_subnet_ids  = data.aws_subnet.private.*.id
-  environment     = local.environment
   openapi_version = "v1"
-  region_name     = data.aws_region.region.name
+  region_name     = data.aws_region.region.region
   tags            = local.default_tags
-  vpc_id          = local.account.vpc_id
   //Modify here for new version - point to different version
   domain_name                 = aws_api_gateway_domain_name.lpa_data
   lpa_lambda_function_name    = module.lambda_lpa_v1.lambda_function_name

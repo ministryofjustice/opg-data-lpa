@@ -1,0 +1,78 @@
+name: "[Job] Lint Terraform"
+
+permissions:
+  id-token: write
+
+on:
+  workflow_call:
+    inputs:
+      oidc_role:
+        description: "The OIDC role to assume for AWS access"
+        required: true
+        type: string
+
+    secrets:
+      allowlist_deploy_key:
+        description: "SSH Deploy Key"
+        required: true
+      github_access_token:
+        description: "Github Token"
+        required: true
+
+jobs:
+  terraform_lint_workflow:
+    runs-on: ubuntu-latest
+    env:
+      tf_dir: "./terraform/environment"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: "0"
+      - uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c # 1.0.8
+      - name: "Parse terraform version [directory: ${{ env.tf_dir }}]"
+        id: tf_version
+        uses: ministryofjustice/opg-github-actions/.github/actions/terraform-version@ea1e81f43e7593acd74cc114085930f5f54914a2 # v3.1.7
+        with:
+          terraform_directory: ${{ env.tf_dir }}
+      - name: "Terraform version [${{ steps.tf_version.outputs.version }}]"
+        run: echo "terraform version [${{ steps.tf_version.outputs.version }}]" >> $GITHUB_STEP_SUMMARY
+        working-directory: ${{ env.tf_dir }}
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with:
+          terraform_version: ${{ steps.tf_version.outputs.version }}
+          terraform_wrapper: false
+      - name: Configure AWS Credentials For Terraform
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ inputs.oidc_role }}
+          role-duration-seconds: 3600
+          role-session-name: environment-deploy-github-action
+      - uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.allowlist_deploy_key }}
+    
+      - name: Format Terraform
+        run: terraform fmt -check -recursive
+        working-directory: ${{ env.tf_dir }}
+        
+      - uses: terraform-linters/setup-tflint@4cb9feea73331a35b422df102992a03a44a3bb33 # v6.2.1
+        name: Setup TFLint
+        with:
+            tflint_version: v0.60.0
+            
+      - name: Lint Terraform
+        id: tf_lint
+        working-directory: ${{ env.tf_dir }}
+        run: tflint --recursive
+
+      - name: Terraform Init
+        env:
+          TF_WORKSPACE: default
+        run: terraform init -input=false
+        working-directory: ${{ env.tf_dir }}
+    
+      - name: Validate Terraform
+        id: tf_validate
+        working-directory: ${{ env.tf_dir }}
+        run: terraform validate

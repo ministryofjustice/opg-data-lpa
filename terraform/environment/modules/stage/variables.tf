@@ -1,26 +1,8 @@
-variable "account_name" {}
-
-variable "api_name" {}
-
-variable "aws_subnet_ids" {
-  type = list(string)
-}
-
-variable "domain_name" {}
-
-variable "environment" {
+variable "account_name" {
   type = string
 }
 
-variable "openapi_version" {}
-
-variable "region_name" {}
-
-variable "rest_api" {}
-
-variable "tags" {}
-
-variable "vpc_id" {
+variable "content_api_policy_sha" {
   type = string
 }
 
@@ -28,8 +10,8 @@ variable "content_api_sha" {
   type = string
 }
 
-variable "content_api_policy_sha" {
-  type = string
+variable "domain_name" {
+  type = object({})
 }
 
 variable "lpa_lambda_function_name" {
@@ -40,4 +22,23 @@ variable "lpa_lambda_function_name" {
 variable "lpa_lambda_source_code_hash" {
   type        = string
   description = "The source code hash of the Lambda function"
+}
+
+variable "openapi_version" {
+  type = string
+}
+
+variable "region_name" {
+  type = string
+}
+
+variable "rest_api" {
+  type = object({
+    id   = string
+    name = string
+  })
+}
+
+variable "tags" {
+  type = any
 }

@@ -3,6 +3,7 @@ permissions:
   checks: read
   contents: read
   deployments: none
+  id-token: write
   issues: none
   packages: none
   pull-requests: none
@@ -44,15 +45,13 @@ jobs:
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-      - name: Configure AWS Credentials With Assumed Role to Management
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
         with:
-          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}'
-          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}'
           aws-region: eu-west-1
-          role-to-assume: 'arn:aws:iam::311462405659:role/integrations-ci'
-          role-duration-seconds: 900
-          role-session-name: OPGLPADataGithubAction
+          role-to-assume: ${{ vars.OIDC_MANAGEMENT_ECR_ROLE }}
+          role-duration-seconds: 3600
+          role-session-name: OPGLPADataGithubActionECRPush
 
       - name: ECR Login
         id: login_ecr
@@ -91,21 +90,24 @@ jobs:
           tags: '${{ steps.docker_tags.outputs.tags }}'
           provenance: false
 
-      - name: Trivy scan
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
+      - name: Trivy Image Vulnerability Scanner 
+        id: trivy_scan
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
           TRIVY_JAVA_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1
         with:
+          version: v0.69.2
           image-ref: '${{ steps.docker_tags.outputs.semver_tag }}'
-          severity: 'HIGH,CRITICAL'
-          ignore-unfixed: true
-          format: sarif
-          output: '${{ env.sarif_file }}'
-
-      - name: Trivy scan upload to github
-        uses: github/codeql-action/upload-sarif@5d4e8d1aca955e8d8589aabd499c5cae939e33c7 # v4.31.9
+          exit-code: '1'
+          severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          vuln-type: 'os,library'
+      
+      - name: Upload Trivy scan results to GitHub Security tab
+        id: trivy_upload_sarif
+        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
         if: always()
         with:
-          sarif_file: '${{ env.sarif_file }}'
+          sarif_file: "trivy-results.sarif"
