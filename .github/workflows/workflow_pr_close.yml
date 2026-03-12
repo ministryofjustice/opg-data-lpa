@@ -32,7 +32,7 @@ jobs:
   destroy-pr-env:
     name: Destroy PR Environment
     needs: [generate-environment-workspace-name]
-    uses: ./.github/workflows/env-destroy.yml
+    uses: ./.github/workflows/_destroy_environment.yml
     with:
       workspace_name: ${{ needs.generate-environment-workspace-name.outputs.environment_workspace_name }}
     secrets:
