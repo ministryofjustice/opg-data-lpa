@@ -55,7 +55,7 @@ jobs:
           aws-region: eu-west-1
           role-to-assume: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
           role-duration-seconds: 3600
-          role-session-name: oidc-lpa-store-pull-request-github-action
+          role-session-name: oidc-opg-data-lpa-destory-environment-github-action
       - uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
         with:
           ssh-private-key: ${{ secrets.allowlist_deploy_key }}

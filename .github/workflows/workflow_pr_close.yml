@@ -28,20 +28,12 @@ jobs:
           echo ${workspace}
     outputs:
       environment_workspace_name: ${{ steps.name_workspace.outputs.name }}
-  
-  print-workspace:
-    runs-on: ubuntu-latest
-    name: Print Workspace
+     
+  destroy-pr-env:
+    name: Destroy PR Environment
     needs: [generate-environment-workspace-name]
-    steps:
-      - name: Print Workspace Name
-        run: echo "Destroying Workspace ${{ needs.generate-environment-workspace-name.outputs.environment_workspace_name }}"
-    
-  # destroy-pr-env:
-  #   name: Destroy PR Environment
-  #   needs: [generate-environment-workspace-name]
-  #   uses: ./.github/workflows/env-destroy.yml
-  #   with:
-  #     workspace_name: ${{ needs.generate-environment-workspace-name.outputs.environment_workspace_name }}
-  #   secrets:
-  #     allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
+    uses: ./.github/workflows/env-destroy.yml
+    with:
+      workspace_name: ${{ needs.generate-environment-workspace-name.outputs.environment_workspace_name }}
+    secrets:
+      allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
