@@ -18,6 +18,10 @@ on:
         description: 'The url of the data lpa api gateway'
         required: true
         type: string
+      oidc_role:
+        description: "The OIDC role to assume for AWS access"
+        required: true
+        type: string
       working_directory:
         description: 'Working Directory to run tests from'
         required: true
@@ -44,7 +48,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ vars.OIDC_DEVELOPMENT_TEST_RUNNER_ROLE }}
+          role-to-assume: ${{ inputs.oidc_role }}
           role-duration-seconds: 3600
           role-session-name: oidc-opg-data-lpa-test-runner-github-action
 
