@@ -99,7 +99,8 @@ jobs:
         with:
           version: v0.69.2
           image-ref: '${{ steps.docker_tags.outputs.semver_tag }}'
-          severity: "HIGH,CRITICAL"
+          exit-code: '1'
+          severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
           format: "sarif"
           output: "trivy-results.sarif"
           vuln-type: 'os,library'
