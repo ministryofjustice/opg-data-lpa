@@ -140,7 +140,7 @@ data "aws_iam_policy_document" "elasticache_kms_key" {
     condition {
       test     = "StringEquals"
       variable = "kms:ViaService"
-      values   = ["elasticache.${data.aws_region.region.name}.amazonaws.com", "dax.${data.aws_region.region.name}.amazonaws.com"]
+      values   = ["elasticache.${data.aws_region.region.region}.amazonaws.com", "dax.${data.aws_region.region.region}.amazonaws.com"]
     }
 
     condition {

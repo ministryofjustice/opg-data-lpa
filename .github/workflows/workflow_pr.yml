@@ -89,6 +89,15 @@ jobs:
       semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit # pragma: allowlist secret
 
+  terraform_lint:
+    name: Lint & Validate Terraform
+    uses: ./.github/workflows/_terraform_lint.yml
+    with:
+      oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+    secrets:
+      allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
   plan-environment:
     strategy:
       matrix:
@@ -108,9 +117,10 @@ jobs:
     name: "TF Plan Environment: ${{ matrix.workspace_name }}"
     needs: 
       [
-        set_variables,
-        docker_build_scan_push,
         branch_name,
+        docker_build_scan_push,
+        set_variables,
+        terraform_lint
       ]
     uses: ./.github/workflows/_terraform.yml
     with:
@@ -128,9 +138,10 @@ jobs:
     name: Create Ephemeral Environment
     needs:
       [
-        set_variables,
-        docker_build_scan_push,
         branch_name,
+        docker_build_scan_push,
+        set_variables,
+        terraform_lint
       ]
     uses: ./.github/workflows/_terraform.yml
     with:

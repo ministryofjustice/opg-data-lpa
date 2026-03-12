@@ -19,7 +19,7 @@ module "lambda_lpa_v1" {
   timeout                = 20
   tracing_mode           = "Active"
   vpc_security_group_ids = [aws_security_group.lpa_redis_sg.id, data.aws_security_group.lambda_api_ingress.id]
-  vpc_subnet_ids         = data.aws_subnet.private.*.id
+  vpc_subnet_ids         = data.aws_subnet.private[*].id
 
   # Let the module create a role for us
   create_role                   = true
