@@ -144,8 +144,6 @@ jobs:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
-
-
   integration_tests:
     name: Run Integration Tests on Ephemeral Environment
     needs:
@@ -155,5 +153,3 @@ jobs:
       data_lpa_api_url: "https://${{ needs.ephemeral_environment.outputs.base_url }}/v1"
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
-    secrets: inherit # pragma: allowlist secret
-
