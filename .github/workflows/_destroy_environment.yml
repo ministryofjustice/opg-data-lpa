@@ -59,6 +59,10 @@ jobs:
       - uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
         with:
           ssh-private-key: ${{ secrets.allowlist_deploy_key }}
+      
+      - name: Terraform Init
+        run: terraform init -input=false
+        working-directory: ${{ env.tf_dir }}
 
       - name: Terraform Destroy
         env:
