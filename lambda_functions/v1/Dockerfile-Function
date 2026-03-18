@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.13@sha256:9d4188fd11f641450a5c83d6efb2d03642cd34231337bdee1c945e8ffea4da35 AS build
+FROM public.ecr.aws/lambda/python:3.13@sha256:94fba3db411aa55b762db473af64c49b8551ef6fbe9c95c913aef5aa44c278da AS build
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ RUN pip install -r requirements.txt -t python/
 
 COPY lambda_functions/v1/functions/lpa/ python/
 
-FROM public.ecr.aws/lambda/python:3.13@sha256:9d4188fd11f641450a5c83d6efb2d03642cd34231337bdee1c945e8ffea4da35 AS runtime
+FROM public.ecr.aws/lambda/python:3.13@sha256:94fba3db411aa55b762db473af64c49b8551ef6fbe9c95c913aef5aa44c278da AS runtime
 
 WORKDIR /var/task
 
