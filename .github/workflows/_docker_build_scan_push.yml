@@ -22,6 +22,9 @@ on:
         description: Semver tag
         required: true
         type: string
+    secrets:
+      SNYK_OPG_ORG_TOKEN:
+        required: true
     outputs:
       ecr_image_uri:
         value: '${{ jobs.docker_build_scan_push.outputs.ecr_image_uri }}'
@@ -38,10 +41,9 @@ jobs:
         data:
           - name: lpa-data-lambda
             docker_build_directory: lambda_functions/v1
+            snyk_policy_path: lambda_functions/v1/.snyk
             ecr_repository: integrations
             dockerfile: Function
-    env:
-      sarif_file: trivy-results.sarif
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
@@ -87,27 +89,19 @@ jobs:
             ${{ matrix.data.docker_build_directory }}/Dockerfile-${{
             matrix.data.dockerfile }}
           push: true
+          load: true
           tags: '${{ steps.docker_tags.outputs.tags }}'
           provenance: false
 
-      - name: Trivy Image Vulnerability Scanner 
-        id: trivy_scan
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
-        env:
-          TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
-          TRIVY_JAVA_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1
+      - name: Snyk Scan
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@8dea82fc8b8e7ffca431f0fb83848d523147ccd8 #v4.5.0
         with:
-          version: v0.69.2
-          image-ref: '${{ steps.docker_tags.outputs.semver_tag }}'
-          exit-code: '1'
-          severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
-          format: "sarif"
-          output: "trivy-results.sarif"
-          vuln-type: 'os,library'
+          SNYK_TEST_IMAGE: ${{ steps.docker_tags.outputs.semver_tag }}
+          SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+          snyk_policy_path: ./${{ matrix.data.snyk_policy_path }}
       
-      - name: Upload Trivy scan results to GitHub Security tab
-        id: trivy_upload_sarif
-        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
+      - name: Upload Snyk scan results
+        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 #v4.32.6
         if: always()
         with:
-          sarif_file: "trivy-results.sarif"
+          sarif_file: test-results/snyk.sarif
