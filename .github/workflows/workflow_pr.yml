@@ -13,6 +13,7 @@ permissions:
   checks: read
   contents: write
   deployments: none
+  id-token: write
   issues: none
   packages: none
   pull-requests: write
@@ -29,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Label PR
     steps:
-      - uses: actions/labeler@main
+      - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
         with:
           configuration-path: ".github/labeller.yml"
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
@@ -37,7 +38,7 @@ jobs:
 
   branch_name:
     name: "Generate a safe branch name"
-    uses:  ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@ce7e03453712dee1e56accf0a83a4349b1a97c42 # v3.10.0
+    uses:  ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
 
   set_variables:
     name: output workflow variables
@@ -48,14 +49,9 @@ jobs:
       commit_sha: ${{ steps.commit_sha.outputs.sha }}
     steps:
       - name: checkout the project
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: "0"
-      - name: Set terraform version - environment
-        id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@4f345be3f706950d1fdc05bc86383967a149bd99 # v4.3.4
-        with:
-          terraform_directory: "./terraform/environment"
       - name: "Semver tag"
         id: semver_tag
         uses: ministryofjustice/opg-github-actions/actions/semver@4f345be3f706950d1fdc05bc86383967a149bd99 # v4.3.4
@@ -69,16 +65,6 @@ jobs:
           else
               echo "sha=${{github.event.pull_request.head.sha}}" >> $GITHUB_OUTPUT
           fi
-
-  terraform_environment_lint:
-    name: Terraform - Environment - Lint
-    needs:
-      - set_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
-    with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      tflint_check: false
-      directory: "./terraform/environment"
 
   python_unit_tests:
     name: Python Unit Tests
@@ -98,59 +84,84 @@ jobs:
     needs:
       - set_variables
       - python_unit_tests
-      - terraform_environment_lint
     uses: ./.github/workflows/_docker_build_scan_push.yml
     with:
       semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit # pragma: allowlist secret
 
+  terraform_lint:
+    name: Lint & Validate Terraform
+    uses: ./.github/workflows/_terraform_lint.yml
+    with:
+      oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+    secrets:
+      allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+  plan-environment:
+    strategy:
+      matrix:
+        include:
+          - workspace_name: development
+            oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+            default_role: ${{ vars.DEVELOPMENT_ROLE }}
+            management_role: ${{ vars.MANAGEMENT_ROLE }}
+          - workspace_name: preproduction
+            oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+            default_role: ${{ vars.PREPRODUCTION_PULL_REQUEST_ROLE }}
+            management_role: ${{ vars.MANAGEMENT_ROLE }}
+          - workspace_name: production
+            oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+            default_role: ${{ vars.PRODUCTION_PULL_REQUEST_ROLE }}
+            management_role: ${{ vars.MANAGEMENT_ROLE }}
+    name: "TF Plan Environment: ${{ matrix.workspace_name }}"
+    needs: 
+      [
+        branch_name,
+        docker_build_scan_push,
+        set_variables,
+        terraform_lint
+      ]
+    uses: ./.github/workflows/_terraform.yml
+    with:
+      apply: false
+      workspace_name: ${{ matrix.workspace_name }}
+      oidc_role: ${{ matrix.oidc_role }}
+      default_role: ${{ matrix.default_role }}
+      management_role: ${{ matrix.management_role }}
+      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+    secrets:
+      allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
   ephemeral_environment:
     name: Create Ephemeral Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@27a0f72b83c6b026fa4131230289bfbed9049cc7 # v3.15.0
     needs:
-      - set_variables
-      - docker_build_scan_push
-      - branch_name
+      [
+        branch_name,
+        docker_build_scan_push,
+        set_variables,
+        terraform_lint
+      ]
+    uses: ./.github/workflows/_terraform.yml
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      terraform_directory: "./terraform/environment"
-      terraform_workspace: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.safe }}
-      is_ephemeral: true
-      workspace_manager_aws_account_id: "288342028542"
-      workspace_manager_aws_iam_role: integrations-ci
-      use_ssh_private_key: true
-      terraform_apply: true
-      terraform_variables: "-var=lambda_image_uri=${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}"
+      workspace_name: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.safe }}
+      oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+      default_role: ${{ vars.DEVELOPMENT_ROLE }}
+      management_role: ${{ vars.MANAGEMENT_ROLE }}
+      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+      apply: true
     secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PAGERDUTY_TOKEN: ""
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
-
-  get_terraform_output:
-    name: Get Terraform Outputs
-    runs-on: ubuntu-latest
-    needs:
-      - ephemeral_environment
-    outputs:
-      data_lpa_api_url: ${{ steps.data_lpa_api_url.outputs.data_lpa_api_url }}
-    steps:
-      - name: Set Data LPA API URL
-        id: data_lpa_api_url
-        run: |
-          data_lpa_api_url=$(echo -e ${{ needs.ephemeral_environment.outputs.terraform_output_as_json }} | jq -r '.api_gateway_url.value')
-          echo data_lpa_api_url=${data_lpa_api_url} >> $GITHUB_OUTPUT
+      allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
   integration_tests:
     name: Run Integration Tests on Ephemeral Environment
     needs:
       - ephemeral_environment
-      - get_terraform_output
     uses: ./.github/workflows/_integration_tests.yml
     with:
-      data_lpa_api_url: "https://${{ needs.get_terraform_output.outputs.data_lpa_api_url }}/v1"
+      data_lpa_api_url: "https://${{ needs.ephemeral_environment.outputs.base_url }}/v1"
+      oidc_role: ${{ vars.OIDC_DEVELOPMENT_TEST_RUNNER_ROLE }}
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
-    secrets: inherit # pragma: allowlist secret
-

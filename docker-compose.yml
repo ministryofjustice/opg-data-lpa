@@ -12,7 +12,7 @@ services:
       - ./mock_sirius_backend:/opt/imposter/config
 
   localstack:
-    image: localstack/localstack:4.7@sha256:12253acd9676770e9bd31cbfcf17c5ca6fd7fb5c0c62f3c46dd701f20304260c
+    image: localstack/localstack:4.12@sha256:0df3a97da57de03a588c05d9b8f390f15c7033fc7c4512f94619d344bc3cd317
     volumes:
       - "./localstack/init:/etc/localstack/init/ready.d"
     environment:
@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
 
   redis:
-    image: "redis:alpine@sha256:987c376c727652f99625c7d205a1cba3cb2c53b92b0b62aade2bd48ee1593232"
+    image: "redis:alpine@sha256:6cbef353e480a8a6e7f10ec545f13d7d3fa85a212cdcc5ffaf5a1c818b9d3798"
     ports:
       - "0.0.0.0:6379:6379"
 
@@ -61,3 +61,8 @@ services:
     volumes:
       - "./pact:/tmp/pact"
       - /var/run/docker.sock:/var/run/docker.sock
+
+  lpa-data:
+    image: lpa-data-lambda:latest
+    build:
+      dockerfile: lambda_functions/v1/Dockerfile-Function

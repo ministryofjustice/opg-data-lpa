@@ -7,7 +7,7 @@ data "aws_kms_key" "secrets_manager" {
 }
 
 module "lambda_lpa_v1" {
-  source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v8.1.0"
+  source = "github.com/terraform-aws-modules/terraform-aws-lambda.git?ref=v8.2.0"
 
   create_package         = false
   function_name          = "lpa-${local.environment}-v1"
@@ -19,7 +19,7 @@ module "lambda_lpa_v1" {
   timeout                = 20
   tracing_mode           = "Active"
   vpc_security_group_ids = [aws_security_group.lpa_redis_sg.id, data.aws_security_group.lambda_api_ingress.id]
-  vpc_subnet_ids         = data.aws_subnet.private.*.id
+  vpc_subnet_ids         = data.aws_subnet.private[*].id
 
   # Let the module create a role for us
   create_role                   = true

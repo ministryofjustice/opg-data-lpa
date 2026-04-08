@@ -3,6 +3,7 @@ permissions:
   checks: read
   contents: read
   deployments: none
+  id-token: write
   issues: none
   packages: none
   pull-requests: none
@@ -21,6 +22,9 @@ on:
         description: Semver tag
         required: true
         type: string
+    secrets:
+      SNYK_OPG_ORG_TOKEN:
+        required: true
     outputs:
       ecr_image_uri:
         value: '${{ jobs.docker_build_scan_push.outputs.ecr_image_uri }}'
@@ -37,22 +41,19 @@ jobs:
         data:
           - name: lpa-data-lambda
             docker_build_directory: lambda_functions/v1
+            snyk_policy_path: lambda_functions/v1/.snyk
             ecr_repository: integrations
             dockerfile: Function
-    env:
-      sarif_file: trivy-results.sarif
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-      - name: Configure AWS Credentials With Assumed Role to Management
-        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838 # v5.0.0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
         with:
-          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}'
-          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}'
           aws-region: eu-west-1
-          role-to-assume: 'arn:aws:iam::311462405659:role/integrations-ci'
-          role-duration-seconds: 900
-          role-session-name: OPGLPADataGithubAction
+          role-to-assume: ${{ vars.OIDC_MANAGEMENT_ECR_ROLE }}
+          role-duration-seconds: 3600
+          role-session-name: OPGLPADataGithubActionECRPush
 
       - name: ECR Login
         id: login_ecr
@@ -76,9 +77,9 @@ jobs:
           fi
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
       - name: Build and push
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
@@ -88,24 +89,19 @@ jobs:
             ${{ matrix.data.docker_build_directory }}/Dockerfile-${{
             matrix.data.dockerfile }}
           push: true
+          load: true
           tags: '${{ steps.docker_tags.outputs.tags }}'
           provenance: false
 
-      - name: Trivy scan
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
-          TRIVY_JAVA_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1
+      - name: Snyk Scan
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@8dea82fc8b8e7ffca431f0fb83848d523147ccd8 # v4.5.0
         with:
-          image-ref: '${{ steps.docker_tags.outputs.semver_tag }}'
-          severity: 'HIGH,CRITICAL'
-          ignore-unfixed: true
-          format: sarif
-          output: '${{ env.sarif_file }}'
-
-      - name: Trivy scan upload to github
-        uses: github/codeql-action/upload-sarif@192325c86100d080feab897ff886c34abd4c83a3 # v3.30.3
+          SNYK_TEST_IMAGE: ${{ steps.docker_tags.outputs.semver_tag }}
+          SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+          snyk_policy_path: ./${{ matrix.data.snyk_policy_path }}
+      
+      - name: Upload Snyk scan results
+        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
         if: always()
         with:
-          sarif_file: '${{ env.sarif_file }}'
+          sarif_file: test-results/snyk.sarif

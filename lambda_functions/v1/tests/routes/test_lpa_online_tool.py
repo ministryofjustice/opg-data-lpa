@@ -1,7 +1,7 @@
 import pytest
 
 from lambda_functions.v1.functions.lpa.app.opg_sirius_service import sirius_handler
-from pact.v3 import match
+from pact import match
 
 import json
 

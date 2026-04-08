@@ -9,7 +9,7 @@ from lambda_functions.v1.functions.lpa.app.config import LocalTestingConfig
 
 from lambda_functions.v1.functions.lpa.app.opg_sirius_service import sirius_handler
 from lambda_functions.v1.tests.helpers import load_data
-from pact.v3 import Pact
+from pact import Pact
 
 mock_redis_server = fakeredis.FakeServer()
 

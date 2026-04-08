@@ -56,7 +56,6 @@
         "Dependencies",
         "Renovate"
       ],
-      "prTitle": "chore(deps): update GitHub Actions",
       "prBody": "Updates the following GitHub Actions dependencies:\n\n{{#each dependencies}}- {{this.name}}\n{{/each}}",
       "prCreation": "immediate",
       "schedule": [
@@ -74,8 +73,7 @@
       "Renovate"
     ],
     "prCreation": "immediate",
-    "rangeStrategy": "pin",
-    "prPriority": 1
+    "rangeStrategy": "pin"
   },
   "branchConcurrentLimit": 5,
   "prConcurrentLimit": 3,
@@ -91,7 +89,6 @@
     "rangeStrategy": "pin",
     "commitMessagePrefix": "[SECURITY]",
     "branchTopic": "{{{datasource}}}-{{{depName}}}-vulnerability",
-    "prCreation": "immediate",
-    "prPriority": 5
+    "prCreation": "immediate"
   }
 }
