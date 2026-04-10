@@ -22,8 +22,8 @@ jobs:
     name: output workflow variables
     runs-on: ubuntu-latest
     outputs:
-      environment_terraform_version: ${{ steps.terraform_version_environment.outputs.version }}
       semver_tag: ${{ steps.semver_tag.outputs.tag }}
+      commit_sha: ${{ steps.commit_sha.outputs.sha }}
     steps:
       - name: checkout the project
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -40,6 +40,9 @@ jobs:
         with:
           prerelease: false
           github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit
+        id: commit_sha
+        run: echo "sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
 
   terraform_lint:
     name: Lint & Validate Terraform
