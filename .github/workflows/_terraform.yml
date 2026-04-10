@@ -65,7 +65,6 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: "0"
-      - uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c # 1.0.8
       - name: "Parse terraform version [directory: ${{ env.tf_dir }}]"
         id: tf_version
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@b605e1e2c94b399e8139c4c2be2c8730700e0004 # v4.5.2
@@ -85,9 +84,9 @@ jobs:
           role-to-assume: ${{ inputs.oidc_role }}
           role-duration-seconds: 3600
           role-session-name: environment-deploy-github-action
-      - uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
+      - uses: ministryofjustice/opg-github-actions/actions/github-deploy-key@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
         with:
-          ssh-private-key: ${{ secrets.allowlist_deploy_key }}
+          deploy_key: ${{ secrets.allowlist_deploy_key }}
 
       - name: Terraform Init
         env:
