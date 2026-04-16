@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
 
   redis:
-    image: "redis:alpine@sha256:6cbef353e480a8a6e7f10ec545f13d7d3fa85a212cdcc5ffaf5a1c818b9d3798"
+    image: "redis:alpine@sha256:885cba5f568cc9b05cbeb1fd7d41b860da06983c24bbb0d7027332a2e82def87"
     ports:
       - "0.0.0.0:6379:6379"
 
