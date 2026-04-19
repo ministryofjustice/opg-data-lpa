@@ -1,6 +1,6 @@
 services:
   mock-sirius:
-    image: outofcoffee/imposter:4.7.0@sha256:2a2f964e6ee7bea2f9a54eac6d976441351d0805833117fc2e45c541b8d58ae9
+    image: outofcoffee/imposter:4.9.1@sha256:c3327177cac65387b9ebbf82d88b5853797b15d393d0d19d623929f146524c87
     healthcheck:
       test: [ "CMD", "imposter", "list", "-x" ]
       interval: 15s
@@ -12,7 +12,7 @@ services:
       - ./mock_sirius_backend:/opt/imposter/config
 
   localstack:
-    image: localstack/localstack:4.12@sha256:0df3a97da57de03a588c05d9b8f390f15c7033fc7c4512f94619d344bc3cd317
+    image: localstack/localstack:4.14@sha256:3ebc37595918b8accb852f8048fef2aff047d465167edd655528065b07bc364a
     volumes:
       - "./localstack/init:/etc/localstack/init/ready.d"
     environment:
