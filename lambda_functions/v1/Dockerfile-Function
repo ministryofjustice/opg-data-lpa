@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.13@sha256:9d4188fd11f641450a5c83d6efb2d03642cd34231337bdee1c945e8ffea4da35 AS build
+FROM public.ecr.aws/lambda/python:3.13@sha256:38d3ac05ffdf36bff2d2edc8860221b67a94256914a4346c5d783637091a23c3 AS build
 
 WORKDIR /app
 
@@ -9,16 +9,12 @@ RUN pip install -r requirements.txt -t python/
 
 COPY lambda_functions/v1/functions/lpa/ python/
 
-FROM public.ecr.aws/lambda/python:3.13@sha256:9d4188fd11f641450a5c83d6efb2d03642cd34231337bdee1c945e8ffea4da35 AS runtime
+FROM public.ecr.aws/lambda/python:3.13@sha256:38d3ac05ffdf36bff2d2edc8860221b67a94256914a4346c5d783637091a23c3 AS runtime
 
 WORKDIR /var/task
 
 COPY --from=build /app/python ./
 
 RUN rm -f /usr/local/bin/aws-lambda-rie
-
-# Patch Vulns
-RUN dnf update -y libxml2-2.10.4-1.amzn2023.0.18 --releasever 2023.10.20260302 && \
-    pip install --upgrade pip 
 
 CMD [ "app.lpa.lambda_handler" ]
