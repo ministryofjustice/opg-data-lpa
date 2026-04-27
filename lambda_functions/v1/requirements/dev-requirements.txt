@@ -12,5 +12,5 @@ validators==0.35.0
 yarl==1.23.0
 importlib-metadata==8.9.0
 typing-extensions==4.15.0
-pact-python==3.2.1
-boto3==1.42.88
+pact-python==3.3.0
+boto3==1.42.91
