@@ -16,7 +16,7 @@ defaults:
 jobs:
   branch_name:
     name: "Generate a safe branch name"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@863532319d23caac0b770f97c98f9cdebde14495 # v3.19.5
 
   set_variables:
     name: output workflow variables
