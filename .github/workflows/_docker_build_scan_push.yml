@@ -43,7 +43,6 @@ jobs:
             docker_build_directory: lambda_functions/v1
             snyk_policy_path: lambda_functions/v1/.snyk
             ecr_repository: integrations
-            dockerfile: Function
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
@@ -86,8 +85,7 @@ jobs:
           context: .
           platforms: 'linux/amd64'
           file: >-
-            ${{ matrix.data.docker_build_directory }}/Dockerfile-${{
-            matrix.data.dockerfile }}
+            ${{ matrix.data.docker_build_directory }}/Dockerfile
           push: true
           load: true
           tags: '${{ steps.docker_tags.outputs.tags }}'
@@ -101,7 +99,7 @@ jobs:
           snyk_policy_path: ./${{ matrix.data.snyk_policy_path }}
           snyk_test_args: >
             --severity-threshold=high
-      
+
       - name: Upload Snyk scan results
         uses: github/codeql-action/upload-sarif@95e58e9a2cdfd71adc6e0353d5c52f41a045d225 # v4.35.2
         if: always()
