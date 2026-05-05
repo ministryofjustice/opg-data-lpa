@@ -7,6 +7,11 @@ RUN cat ./requirements/*.txt | uniq | grep -v "#" > ./requirements/local-require
 RUN pip install --upgrade pip
 RUN pip install -r --no-cache-dir ./requirements/local-requirements.txt
 
+RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
+        dnf clean all && \
+        dnf -y update glibc && \
+        dnf clean all
+
 EXPOSE 4343
 
 WORKDIR /var/www/lambda_functions/v1/functions/lpa/app
