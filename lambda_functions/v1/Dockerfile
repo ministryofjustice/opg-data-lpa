@@ -1,23 +1,19 @@
-FROM python:3.11-slim-buster@sha256:c46b0ae5728c2247b99903098ade3176a58e274d9c7d2efeaaab3e0621a53935
-WORKDIR /var/www/lambda_functions/v1
+# I don't think this docker file is used
+# FROM python:3.11-slim-buster@sha256:c46b0ae5728c2247b99903098ade3176a58e274d9c7d2efeaaab3e0621a53935
+# WORKDIR /var/www/lambda_functions/v1
 
-# Install Python Dependencies
-COPY requirements requirements
-RUN cat ./requirements/*.txt | uniq | grep -v "#" > ./requirements/local-requirements.txt
-RUN pip install --upgrade pip
-RUN pip install -r --no-cache-dir ./requirements/local-requirements.txt
+# # Install Python Dependencies
+# COPY requirements requirements
+# RUN cat ./requirements/*.txt | uniq | grep -v "#" > ./requirements/local-requirements.txt
+# RUN pip install --upgrade pip
+# RUN pip install -r --no-cache-dir ./requirements/local-requirements.txt
 
-RUN echo "2023.11.20260413" > /etc/dnf/vars/releasever && \
-        dnf clean all && \
-        dnf -y update glibc@2.34-231.amzn2023.0.4 && \
-        dnf clean all
+# EXPOSE 4343
 
-EXPOSE 4343
+# WORKDIR /var/www/lambda_functions/v1/functions/lpa/app
 
-WORKDIR /var/www/lambda_functions/v1/functions/lpa/app
+# ENV FLASK_APP "lpa_local.py"
+# ENV FLASK_ENV "development"
+# ENV FLASK_DEBUG True
 
-ENV FLASK_APP "lpa_local.py"
-ENV FLASK_ENV "development"
-ENV FLASK_DEBUG True
-
-CMD flask run --host=0.0.0.0 --port=4343
+# CMD flask run --host=0.0.0.0 --port=4343
