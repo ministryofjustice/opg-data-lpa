@@ -1,19 +1,20 @@
-# I don't think this docker file is used
-# FROM python:3.11-slim-buster@sha256:c46b0ae5728c2247b99903098ade3176a58e274d9c7d2efeaaab3e0621a53935
-# WORKDIR /var/www/lambda_functions/v1
+FROM public.ecr.aws/lambda/python:3.13@sha256:38d3ac05ffdf36bff2d2edc8860221b67a94256914a4346c5d783637091a23c3 AS build
 
-# # Install Python Dependencies
-# COPY requirements requirements
-# RUN cat ./requirements/*.txt | uniq | grep -v "#" > ./requirements/local-requirements.txt
-# RUN pip install --upgrade pip
-# RUN pip install -r --no-cache-dir ./requirements/local-requirements.txt
+WORKDIR /app
 
-# EXPOSE 4343
+COPY lambda_functions/v1/requirements/requirements.txt requirements.txt
 
-# WORKDIR /var/www/lambda_functions/v1/functions/lpa/app
+RUN pip install --upgrade pip -t python/
+RUN pip install -r requirements.txt -t python/
 
-# ENV FLASK_APP "lpa_local.py"
-# ENV FLASK_ENV "development"
-# ENV FLASK_DEBUG True
+COPY lambda_functions/v1/functions/lpa/ python/
 
-# CMD flask run --host=0.0.0.0 --port=4343
+FROM public.ecr.aws/lambda/python:3.13@sha256:38d3ac05ffdf36bff2d2edc8860221b67a94256914a4346c5d783637091a23c3 AS runtime
+
+WORKDIR /var/task
+
+COPY --from=build /app/python ./
+
+RUN rm -f /usr/local/bin/aws-lambda-rie
+
+CMD [ "app.lpa.lambda_handler" ]
