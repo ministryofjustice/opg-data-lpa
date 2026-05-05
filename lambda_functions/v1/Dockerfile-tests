@@ -16,7 +16,7 @@ RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
         dnf clean all && \
         dnf -y update sqlite-libs libxml2 && \
         dnf clean all
-        
+
 
 ENV PYTHONPATH "${PYTHONPATH}:${LAMBDA_TASK_ROOT}"
 

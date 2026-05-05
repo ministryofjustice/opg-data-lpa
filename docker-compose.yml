@@ -65,4 +65,4 @@ services:
   lpa-data:
     image: lpa-data-lambda:latest
     build:
-      dockerfile: lambda_functions/v1/Dockerfile-Function
+      dockerfile: lambda_functions/v1/Dockerfile
