@@ -7,9 +7,9 @@ RUN cat ./requirements/*.txt | uniq | grep -v "#" > ./requirements/local-require
 RUN pip install --upgrade pip
 RUN pip install -r --no-cache-dir ./requirements/local-requirements.txt
 
-RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
+RUN echo "2023.11.20260413" > /etc/dnf/vars/releasever && \
         dnf clean all && \
-        dnf -y update glibc && \
+        dnf -y update glibc@2.34-231.amzn2023.0.4 && \
         dnf clean all
 
 EXPOSE 4343
