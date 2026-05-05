@@ -5,7 +5,7 @@ WORKDIR /var/www/lambda_functions/v1
 COPY requirements requirements
 RUN cat ./requirements/*.txt | uniq | grep -v "#" > ./requirements/local-requirements.txt
 RUN pip install --upgrade pip
-RUN pip install -r ./requirements/local-requirements.txt
+RUN pip install -r --no-cache-dir ./requirements/local-requirements.txt
 
 EXPOSE 4343
 
@@ -15,8 +15,4 @@ ENV FLASK_APP "lpa_local.py"
 ENV FLASK_ENV "development"
 ENV FLASK_DEBUG True
 
-
 CMD flask run --host=0.0.0.0 --port=4343
-
-
-
