@@ -1,4 +1,5 @@
 connexion==3.3.0
+coverage==7.13.5
 fakeredis==2.35.1
 flake8==7.3.0
 flake8-quotes==3.4.0

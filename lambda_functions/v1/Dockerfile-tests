@@ -9,14 +9,13 @@ RUN python -m pip install --upgrade pip && \
         python -m pip install \
         --target ${LAMBDA_TASK_ROOT} \
         --requirement requirements.txt \
-        --requirement dev-requirements.txt && \
-        python -m pip install coverage==7.5.0
+        --requirement dev-requirements.txt
 
 RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
         dnf clean all && \
         dnf -y update sqlite-libs libxml2 && \
         dnf clean all
-        
+
 
 ENV PYTHONPATH "${PYTHONPATH}:${LAMBDA_TASK_ROOT}"
 

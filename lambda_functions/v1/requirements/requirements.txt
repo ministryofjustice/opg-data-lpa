@@ -40,7 +40,7 @@ pyjwt==2.12.1
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via botocore
-redis==6.4.0
+redis==7.4.0
     # via -r requirements.in
 requests==2.33.1
     # via
