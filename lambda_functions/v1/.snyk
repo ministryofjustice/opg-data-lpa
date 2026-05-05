@@ -2,24 +2,5 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  SNYK-AMZN2023-GLIBC-16352073:
-    - '*':
-        reason: None Given
-        expires: 2026-06-04T09:48:18.244Z
-        created: 2026-05-05T09:48:18.246Z
-  SNYK-AMZN2023-GLIBCCOMMON-16351407:
-    - '*':
-        reason: None Given
-        expires: 2026-06-04T09:48:29.512Z
-        created: 2026-05-05T09:48:29.520Z
-  SNYK-AMZN2023-GLIBCLANGPACKEN-16352084:
-    - '*':
-        reason: None Given
-        expires: 2026-06-04T09:48:42.171Z
-        created: 2026-05-05T09:48:42.177Z
-  SNYK-AMZN2023-GLIBCMINIMALLANGPACK-16352081:
-    - '*':
-        reason: None Given
-        expires: 2026-06-04T09:48:58.160Z
-        created: 2026-05-05T09:48:58.172Z
+
 patch: {}
