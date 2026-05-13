@@ -13,28 +13,15 @@ defaults:
     shell: bash
 
 jobs:
-  generate-environment-workspace-name:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Generate workspace name
-        id: name_workspace
-        run: |
-          workspace=${{ github.event.number }}$GITHUB_HEAD_REF
-          workspace=${workspace//-}
-          workspace=${workspace//_}
-          workspace=${workspace//\/}
-          workspace=${workspace:0:11}
-          workspace=$(echo ${workspace} | tr '[:upper:]' '[:lower:]')
-          echo "name=${workspace}" >> $GITHUB_OUTPUT
-          echo ${workspace}
-    outputs:
-      environment_workspace_name: ${{ steps.name_workspace.outputs.name }}
+  branch_name:
+    name: "Generate a safe branch name"
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@17ca444d0b23a0f9f6c612f1bfb8dc9be358f235 # v3.19.6
      
   destroy-pr-env:
     name: Destroy PR Environment
-    needs: [generate-environment-workspace-name]
+    needs: [branch_name]
     uses: ./.github/workflows/_destroy_environment.yml
     with:
-      workspace_name: ${{ needs.generate-environment-workspace-name.outputs.environment_workspace_name }}
+      workspace_name: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.safe }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
