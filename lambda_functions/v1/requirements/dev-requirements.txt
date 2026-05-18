@@ -10,11 +10,11 @@ attrs==26.1.0
     # via
     #   jsonschema
     #   referencing
-boto3==1.43.3
+boto3==1.43.6
     # via
     #   -r dev-requirements.in
     #   moto
-botocore==1.43.3
+botocore==1.43.6
     # via
     #   boto3
     #   moto
@@ -32,7 +32,7 @@ charset-normalizer==3.4.7
     # via requests
 connexion==3.3.0
     # via -r dev-requirements.in
-coverage==7.13.5
+coverage==7.14.0
     # via
     #   -r dev-requirements.in
     #   pytest-cov
@@ -52,7 +52,7 @@ httpcore==1.0.9
     # via httpx
 httpx==0.28.1
     # via connexion
-idna==3.13
+idna==3.14
     # via
     #   anyio
     #   httpx
@@ -83,13 +83,13 @@ markupsafe==3.0.3
     #   werkzeug
 mccabe==0.7.0
     # via flake8
-moto==5.1.22
+moto==5.2.1
     # via -r dev-requirements.in
 multidict==6.7.1
     # via yarl
 packaging==26.2
     # via pytest
-pact-python==3.3.1
+pact-python==3.4.0
     # via -r dev-requirements.in
 pact-python-ffi==0.5.4.0
     # via pact-python
@@ -97,7 +97,7 @@ pluggy==1.6.0
     # via
     #   pytest
     #   pytest-cov
-propcache==0.4.1
+propcache==0.5.2
     # via yarl
 pycodestyle==2.14.0
     # via flake8
@@ -128,7 +128,7 @@ python-dateutil==2.9.0.post0
     #   moto
 python-dotenv==1.2.2
     # via pytest-env
-python-multipart==0.0.27
+python-multipart==0.0.28
     # via connexion
 pyyaml==6.0.3
     # via
