@@ -52,7 +52,7 @@ httpcore==1.0.9
     # via httpx
 httpx==0.28.1
     # via connexion
-idna==3.14
+idna==3.15
     # via
     #   anyio
     #   httpx
@@ -140,7 +140,7 @@ referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.33.1
+requests==2.34.0
     # via
     #   connexion
     #   moto
