@@ -10,11 +10,11 @@ attrs==26.1.0
     # via
     #   jsonschema
     #   referencing
-boto3==1.43.6
+boto3==1.43.9
     # via
     #   -r dev-requirements.in
     #   moto
-botocore==1.43.6
+botocore==1.43.9
     # via
     #   boto3
     #   moto
@@ -128,7 +128,7 @@ python-dateutil==2.9.0.post0
     #   moto
 python-dotenv==1.2.2
     # via pytest-env
-python-multipart==0.0.28
+python-multipart==0.0.29
     # via connexion
 pyyaml==6.0.3
     # via
@@ -140,7 +140,7 @@ referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.34.0
+requests==2.34.2
     # via
     #   connexion
     #   moto
