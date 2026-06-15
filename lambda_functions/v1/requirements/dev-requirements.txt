@@ -10,16 +10,16 @@ attrs==26.1.0
     # via
     #   jsonschema
     #   referencing
-boto3==1.43.10
+boto3==1.43.24
     # via
     #   -r dev-requirements.in
     #   moto
-botocore==1.43.10
+botocore==1.43.24
     # via
     #   boto3
     #   moto
     #   s3transfer
-certifi==2026.4.22
+certifi==2026.5.20
     # via
     #   httpcore
     #   httpx
@@ -32,13 +32,13 @@ charset-normalizer==3.4.7
     # via requests
 connexion==3.3.0
     # via -r dev-requirements.in
-coverage==7.14.0
+coverage==7.14.1
     # via
     #   -r dev-requirements.in
     #   pytest-cov
 cryptography==48.0.0
     # via moto
-fakeredis==2.35.1
+fakeredis==2.36.1
     # via -r dev-requirements.in
 flake8==7.3.0
     # via
@@ -52,7 +52,7 @@ httpcore==1.0.9
     # via httpx
 httpx==0.28.1
     # via connexion
-idna==3.15
+idna==3.18
     # via
     #   anyio
     #   httpx
@@ -83,7 +83,7 @@ markupsafe==3.0.3
     #   werkzeug
 mccabe==0.7.0
     # via flake8
-moto==5.2.1
+moto==5.2.2
     # via -r dev-requirements.in
 multidict==6.7.1
     # via yarl
@@ -128,13 +128,13 @@ python-dateutil==2.9.0.post0
     #   moto
 python-dotenv==1.2.2
     # via pytest-env
-python-multipart==0.0.29
+python-multipart==0.0.32
     # via connexion
 pyyaml==6.0.3
     # via
     #   connexion
     #   responses
-redis==7.4.0
+redis==7.4.1
     # via fakeredis
 referencing==0.37.0
     # via
@@ -145,13 +145,13 @@ requests==2.34.2
     #   connexion
     #   moto
     #   responses
-responses==0.26.0
+responses==0.26.1
     # via moto
 rpds-py==0.30.0
     # via
     #   jsonschema
     #   referencing
-s3transfer==0.17.0
+s3transfer==0.18.0
     # via boto3
 setuptools==82.0.1
     # via flake8-quotes
@@ -159,7 +159,7 @@ six==1.17.0
     # via python-dateutil
 sortedcontainers==2.4.0
     # via fakeredis
-starlette==1.0.0
+starlette==1.0.1
     # via connexion
 tenacity==9.1.4
     # via -r dev-requirements.in
@@ -180,7 +180,7 @@ werkzeug==3.1.8
     #   moto
 xmltodict==1.0.4
     # via moto
-yarl==1.23.0
+yarl==1.24.2
     # via
     #   -r dev-requirements.in
     #   pact-python
