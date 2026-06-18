@@ -1,26 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
-ignore:
-  SNYK-AMZN2023-LIBSOLV-17288582:
-    - '*':
-        reason: Get other patches pushed
-        expires: 2026-06-18T13:32:18.246Z
-        created: 2026-06-17T13:32:18.246Z
-  SNYK-AMZN2023-LIBSOLV-17289937:
-    - '*':
-        reason: Get other patches pushed
-        expires: 2026-06-18T13:32:18.246Z
-        created: 2026-06-17T13:32:18.246Z
-  SNYK-AMZN2023-LIBSOLV-17289989:
-    - '*':
-        reason: Get other patches pushed
-        expires: 2026-06-18T13:32:18.246Z
-        created: 2026-06-17T13:32:18.246Z
-  SNYK-AMZN2023-LIBSOLV-17290186:
-    - '*':
-        reason: Get other patches pushed
-        expires: 2026-06-18T13:32:18.246Z
-        created: 2026-06-17T13:32:18.246Z
-    
+ignore: {}
 patch: {}
