@@ -7,13 +7,13 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   automatic_failover_enabled  = local.account.elasticache_count == 1 ? false : true
   description                 = "Replication Group for LPA Data"
   engine                      = "redis"
-  engine_version              = "6.x"
+  engine_version              = "7.1"
   kms_key_id                  = aws_kms_alias.elasticache_kms_alias.target_key_arn
-  maintenance_window          = "tue:05:00-tue:06:00"
+  maintenance_window          = "fri:05:00-fri:06:00"
   multi_az_enabled            = local.account.elasticache_count == 1 ? false : true
   node_type                   = "cache.t2.small"
   num_cache_clusters          = local.account.elasticache_count
-  parameter_group_name        = "default.redis6.x"
+  parameter_group_name        = "default.redis7"
   port                        = 6379
   preferred_cache_cluster_azs = local.account.elasticache_count == 1 ? ["eu-west-1a"] : data.aws_availability_zones.available.names
   replication_group_id        = "lpa-${local.redis_c_rg_name}-cache-rg"

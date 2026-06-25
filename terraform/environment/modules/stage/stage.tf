@@ -14,7 +14,7 @@ resource "aws_api_gateway_stage" "currentstage" {
   depends_on           = [aws_cloudwatch_log_group.lpa_data]
   rest_api_id          = var.rest_api.id
   deployment_id        = aws_api_gateway_deployment.deploy.id
-  xray_tracing_enabled = false
+  xray_tracing_enabled = true
   tags                 = var.tags
   //Modify here for new version - replace with new code (comment out old code)
   variables = local.v1
