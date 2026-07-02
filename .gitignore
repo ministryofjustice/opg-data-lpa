@@ -17,9 +17,6 @@ __pycache__/
 # lambda stuff
 lambda*.zip
 
-# Ruby
-*.lock
-
 # IDE & development
 .vscode/
 *.iml

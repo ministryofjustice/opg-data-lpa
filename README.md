@@ -177,6 +177,7 @@ Some tests use a Pact mock service to record and assert interactions. These are 
 1. Run the tests
 
     ```shell
-    aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
-    aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
+    cd integration_tests
+    uv sync --locked --project ./v1
+    aws-vault exec identity -- uv run --project ./v1 pytest -n2 --dist=loadfile --html=report.html --self-contained-html
     ```
