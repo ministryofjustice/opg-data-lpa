@@ -4,7 +4,7 @@ COPY --from=ghcr.io/astral-sh/uv@sha256:b46b03ddfcfbf8f547af7e9eaefdf8a39c8cebcb
 
 WORKDIR /app
 COPY lambda_functions/v1/deps/pyproject.toml lambda_functions/v1/deps/uv.lock ./
-RUN uv export --frozen --no-dev --no-editable -o requirements.txt
+RUN uv export --frozen --no-dev -o requirements.txt
 
 FROM public.ecr.aws/lambda/python:3.13@sha256:044c120ac73fd263df0e1eeb8b2938a8b7038c8f045747091ee21f60eef38615 AS runtime
 
