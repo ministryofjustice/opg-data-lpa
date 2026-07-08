@@ -1,22 +1,27 @@
-FROM public.ecr.aws/lambda/python:3.13@sha256:c21f77540024d0f2043362aba786ab03ec3d1b26de94a987a8ad1461e8e1c797
+FROM public.ecr.aws/lambda/python:3.13@sha256:044c120ac73fd263df0e1eeb8b2938a8b7038c8f045747091ee21f60eef38615 AS deps
+
+COPY --from=ghcr.io/astral-sh/uv@sha256:b46b03ddfcfbf8f547af7e9eaefdf8a39c8cebcba7c98858d3162bd28cf536f6 /uv /uvx /bin/
+
+WORKDIR /app
+COPY deps/pyproject.toml deps/uv.lock ./
+RUN uv export --frozen --group dev -o requirements.txt
+
+
+FROM public.ecr.aws/lambda/python:3.13@sha256:044c120ac73fd263df0e1eeb8b2938a8b7038c8f045747091ee21f60eef38615
 
 COPY /functions/lpa/ ${LAMBDA_TASK_ROOT}/lambda_functions/v1/functions/lpa
 COPY /tests/  ${LAMBDA_TASK_ROOT}/lambda_functions/v1/tests
-COPY requirements/requirements.txt requirements.txt
-COPY requirements/dev-requirements.txt dev-requirements.txt
+COPY --from=deps /app/requirements.txt requirements.txt
 
 RUN python -m pip install --upgrade pip && \
         python -m pip install \
         --target ${LAMBDA_TASK_ROOT} \
-        --requirement requirements.txt \
-        --requirement dev-requirements.txt && \
-        python -m pip install coverage==7.5.0
+        --requirement requirements.txt
 
 RUN echo "2023.7.20250512" > /etc/dnf/vars/releasever && \
-        dnf clean all && \
-        dnf -y update sqlite-libs libxml2 && \
-        dnf clean all
-
+    dnf clean all && \
+    dnf -y update sqlite-libs libxml2 && \
+    dnf clean all
 
 ENV PYTHONPATH "${PYTHONPATH}:${LAMBDA_TASK_ROOT}"
 
