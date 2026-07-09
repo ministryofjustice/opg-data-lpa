@@ -15,15 +15,11 @@ To set up for the integration tests you should check a few things first:
 
 
  ### Run the tests
- create a virtualenv:
+ `cd` into this folder and sync the locked dependencies:
 
- - `virtualenv venv`
- - `source venv/bin/activate`
+ - `uv sync --locked --project ./v1`
 
- `cd` into this folder and run `pip install -r requirements.txt` or
- whatever requirements you need for your version.
-
- Run `aws-vault exec sirius-dev-operator -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html` and all integration tests will run against your setup.
+ Run `aws-vault exec sirius-dev-operator -- uv run --project ./v1 pytest -n2 --dist=loadfile --html=report.html --self-contained-html` and all integration tests will run against your setup.
 
 
  ### Gotchas

@@ -77,17 +77,8 @@ or  change the protection TTL in DynamoDB.
 If you wish to develop against this environment and don't want to be dealing with Docker containers then there
 is a bit more of an in depth set up process required.
 
-1. Create a virtual environment
-
-    ```shell
-    python3 -m venv venv
-    ```
-
-1. Start the virtual env
-
-    ```shell
-    source venv/bin/activate
-    ```
+This project uses [uv](https://docs.astral.sh/uv/) to manage the Python environment and dependencies, so you don't
+need to create or activate a virtual environment manually, uv handles that for you.
 
 1. Add all the env vars:
 
@@ -95,17 +86,16 @@ is a bit more of an in depth set up process required.
     source .env
     ```
 
-1. Install the dev requirements
-    - Install the dev requirements
+1. Install the dependencies (including dev dependencies) and create a venv using uv:
 
     ```shell
-    pip3 install -r lambda_functions/v1/requirements/dev-requirements.txt -r lambda_functions/v1/requirements/requirements.txt
+    uv sync --project lambda_functions/v1/deps
     ```
 
 ### Running Flask app locally
 
 1. `cd lambda_functions/v1/functions/lpa/app`
-2. `FLASK_APP=lpa SIRIUS_BASE_URL=http://localhost:5001 flask run &`
+2. `FLASK_APP=lpa SIRIUS_BASE_URL=http://localhost:5001 uv run --project ../../../deps flask run`
 3. Endpoints should be available on `http://localhost:5000`
 
 ## Unit Tests
@@ -115,13 +105,13 @@ is a bit more of an in depth set up process required.
 1. Run the tests command-line style
 
     ```shell
-    python3 -m pytest -m "not (smoke_test or pact_test)"
+    uv run --project lambda_functions/v1/deps pytest -m "not (smoke_test or pact_test)"
     ```
 
 1. Run the tests command-line style with coverage
 
     ```shell
-    python3 -m pytest lambda_functions/v1/tests --cov=lambda_functions/v1/functions/lpa/app/api --cov-fail-under=80
+    uv run --project lambda_functions/v1/deps pytest lambda_functions/v1/tests --cov=lambda_functions/v1/functions/lpa/app/api --cov-fail-under=80
     ```
 
 1. Run the tests in PyCharm
@@ -177,6 +167,7 @@ Some tests use a Pact mock service to record and assert interactions. These are 
 1. Run the tests
 
     ```shell
-    aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
-    aws-vault exec identity -- python -m pytest -n2 --dist=loadfile --html=report.html --self-contained-html
+    cd integration_tests
+    uv sync --locked --project ./v1
+    aws-vault exec identity -- uv run --project ./v1 pytest -n2 --dist=loadfile --html=report.html --self-contained-html
     ```
