@@ -23,7 +23,6 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_5xx_errors" {
   ok_actions                = [data.aws_sns_topic.rest_api.arn]
   period                    = 60
   statistic                 = "Sum"
-  tags                      = {}
   threshold                 = 1
   treat_missing_data        = "notBreaching"
 }
@@ -45,7 +44,6 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_high_count" {
   ok_actions                = [data.aws_sns_topic.rest_api.arn]
   period                    = 60
   statistic                 = "Sum"
-  tags                      = {}
   threshold                 = 1000
   treat_missing_data        = "notBreaching"
 }
@@ -68,7 +66,6 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_slow_response" {
   ok_actions                = [data.aws_sns_topic.lpa_data_api.arn]
   period                    = 60
   statistic                 = "Average"
-  tags                      = {}
   threshold                 = 3500
   treat_missing_data        = "notBreaching"
 }

@@ -7,7 +7,6 @@ resource "aws_api_gateway_rest_api" "lpa" {
   endpoint_configuration {
     types = ["REGIONAL"]
   }
-  tags = local.default_tags
 }
 
 locals {

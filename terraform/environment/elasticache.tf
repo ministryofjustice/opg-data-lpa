@@ -23,7 +23,6 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   subnet_group_name           = "private-redis"
   transit_encryption_enabled  = true
   transit_encryption_mode     = "preferred"
-  tags                        = local.default_tags
 }
 
 resource "aws_security_group" "lpa_redis_sg" {
@@ -36,12 +35,9 @@ resource "aws_security_group" "lpa_redis_sg" {
 
   revoke_rules_on_delete = true
 
-  tags = merge(
-    local.default_tags,
-    {
-      "Name" = "${local.environment}-redis-sg"
-    },
-  )
+  tags = {
+    "Name" = "${local.environment}-redis-sg"
+  }
 }
 
 locals {

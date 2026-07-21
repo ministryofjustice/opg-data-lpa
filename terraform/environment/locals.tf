@@ -8,12 +8,13 @@ locals {
   target_environment = contains(keys(var.environment_mapping), local.environment) ? var.environment_mapping[local.environment] : var.environment_mapping.default
 
   default_tags = {
-    business-unit          = "OPG"
     application            = "Data-lpa"
+    business-unit          = "OPG"
     environment-name       = local.environment
-    owner                  = "OPG Supervision"
     infrastructure-support = "OPG WebOps: opgteam@digital.justice.gov.uk"
     is-production          = local.account.is_production
+    owner                  = "OPG POAS"
+    service-area           = "POAS"
     source-code            = "https://github.com/ministryofjustice/opg-data-lpa"
   }
 

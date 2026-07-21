@@ -26,8 +26,6 @@ resource "aws_api_gateway_domain_name" "lpa_data" {
   endpoint_configuration {
     types = ["REGIONAL"]
   }
-
-  tags = local.default_tags
 }
 
 //Modify here for new version - create new one. keep original
@@ -37,14 +35,13 @@ module "deploy_v1" {
   account_name    = local.account.account_mapping
   openapi_version = "v1"
   region_name     = data.aws_region.region.region
-  tags            = local.default_tags
   //Modify here for new version - point to different version
+  content_api_policy_sha      = local.rest_api_policy_sha
+  content_api_sha             = local.open_api_sha
   domain_name                 = aws_api_gateway_domain_name.lpa_data
   lpa_lambda_function_name    = module.lambda_lpa_v1.lambda_function_name
   lpa_lambda_source_code_hash = module.lambda_lpa_v1.lambda_function_source_code_hash
   rest_api                    = aws_api_gateway_rest_api.lpa
-  content_api_sha             = local.open_api_sha
-  content_api_policy_sha      = local.rest_api_policy_sha
 }
 
 //Modify here for new version - replace with new code (comment out old code)
