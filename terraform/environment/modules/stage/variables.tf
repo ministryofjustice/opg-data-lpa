@@ -38,7 +38,3 @@ variable "rest_api" {
     name = string
   })
 }
-
-variable "tags" {
-  type = any
-}
