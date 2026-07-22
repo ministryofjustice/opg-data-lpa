@@ -3,6 +3,7 @@ variable "accounts" {
     object({
       account_id          = string
       account_mapping     = string
+      active_regions      = map(bool)
       allowed_roles       = list(string)
       is_production       = string
       logger_level        = string
@@ -26,6 +27,11 @@ variable "environment_mapping" {
 variable "lambda_image_uri" {
   default     = null
   description = "The URI of the container image that contains your Lambda function. Optional if package_type is not Image."
+  type        = string
+}
+
+variable "lambda_image_tag" {
+  description = "The Tag of the Lambda Image to Deploy"
   type        = string
 }
 

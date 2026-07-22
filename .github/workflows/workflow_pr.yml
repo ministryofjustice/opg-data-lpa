@@ -115,12 +115,10 @@ jobs:
             management_role: ${{ vars.MANAGEMENT_ROLE }}
     name: "TF Plan Environment: ${{ matrix.workspace_name }}"
     needs: 
-      [
-        branch_name,
-        docker_build_scan_push,
-        set_variables,
-        terraform_lint
-      ]
+      - branch_name
+      - docker_build_scan_push
+      - set_variables
+      - terraform_lint
     uses: ./.github/workflows/_terraform.yml
     with:
       apply: false
@@ -129,6 +127,7 @@ jobs:
       default_role: ${{ matrix.default_role }}
       management_role: ${{ matrix.management_role }}
       version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+      lambda_image_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
@@ -136,12 +135,10 @@ jobs:
   ephemeral_environment:
     name: Create Ephemeral Environment
     needs:
-      [
-        branch_name,
-        docker_build_scan_push,
-        set_variables,
-        terraform_lint
-      ]
+      - branch_name
+      - docker_build_scan_push
+      - set_variables
+      - terraform_lint
     uses: ./.github/workflows/_terraform.yml
     with:
       workspace_name: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.safe }}
@@ -149,6 +146,7 @@ jobs:
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
       version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+      lambda_image_tag: ${{ needs.set_variables.outputs.semver_tag }}
       apply: true
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY}}
