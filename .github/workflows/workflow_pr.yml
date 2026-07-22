@@ -114,7 +114,7 @@ jobs:
             default_role: ${{ vars.PRODUCTION_PULL_REQUEST_ROLE }}
             management_role: ${{ vars.MANAGEMENT_ROLE }}
     name: "TF Plan Environment: ${{ matrix.workspace_name }}"
-    needs: 
+    needs:
       - branch_name
       - docker_build_scan_push
       - set_variables

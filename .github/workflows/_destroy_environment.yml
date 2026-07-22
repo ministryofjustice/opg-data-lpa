@@ -60,7 +60,7 @@ jobs:
       - uses: ministryofjustice/opg-github-actions/actions/github-deploy-key@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
         with:
           deploy_key: ${{ secrets.allowlist_deploy_key }}
-      
+
       - name: Terraform Init
         run: terraform init -input=false
         working-directory: ${{ env.tf_dir }}
