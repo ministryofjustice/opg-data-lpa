@@ -81,12 +81,10 @@ jobs:
   terraform_development_environment_apply:
     name: "Terraform Apply Development"
     needs:
-      [
-        branch_name,
-        docker_build_scan_push,
-        set_variables,
-        terraform_lint
-      ]
+      - branch_name
+      - docker_build_scan_push
+      - set_variables
+      - terraform_lint
     uses: ./.github/workflows/_terraform.yml
     with:
       apply: true
@@ -95,6 +93,7 @@ jobs:
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
       version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+      lambda_image_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
@@ -112,6 +111,7 @@ jobs:
   terraform_preprod_environment_apply:
     name: "Terraform Apply Preproduction"
     needs:
+      - set_variables
       - docker_build_scan_push
       - integration_test_development
     uses: ./.github/workflows/_terraform.yml
@@ -122,6 +122,7 @@ jobs:
       default_role: ${{ vars.PREPRODUCTION_MAIN_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
       version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+      lambda_image_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
@@ -140,6 +141,7 @@ jobs:
   terraform_prod_environment_apply:
     name: "Terraform Apply Production"
     needs:
+      - set_variables
       - docker_build_scan_push
       - smoke_test_preprod
     uses: ./.github/workflows/_terraform.yml
@@ -150,6 +152,7 @@ jobs:
       default_role: ${{ vars.PRODUCTION_MAIN_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
       version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+      lambda_image_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
@@ -157,8 +160,9 @@ jobs:
   terraform_integration_environment_apply:
     name: "Terraform Apply Integration"
     needs:
-        - docker_build_scan_push
-        - terraform_prod_environment_apply
+      - set_variables
+      - docker_build_scan_push
+      - terraform_prod_environment_apply
     uses: ./.github/workflows/_terraform.yml
     with:
       apply: true
@@ -167,6 +171,7 @@ jobs:
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
       version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+      lambda_image_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
@@ -174,8 +179,9 @@ jobs:
   terraform_demo_environment_apply:
     name: "Terraform Apply Demo"
     needs:
-        - docker_build_scan_push
-        - terraform_prod_environment_apply
+      - set_variables
+      - docker_build_scan_push
+      - terraform_prod_environment_apply
     uses: ./.github/workflows/_terraform.yml
     with:
       apply: true
@@ -184,6 +190,7 @@ jobs:
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
       version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
+      lambda_image_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
       github_access_token: ${{ secrets.GITHUB_TOKEN }}

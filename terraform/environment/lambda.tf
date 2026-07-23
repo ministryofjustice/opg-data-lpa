@@ -74,15 +74,3 @@ module "lambda_lpa_v1" {
     }
   }
 }
-
-moved {
-  from = module.lambda_lpa_v1.aws_lambda_function.lambda_function
-  to   = module.lambda_lpa_v1.aws_lambda_function.this[0]
-}
-
-moved {
-  from = module.lambda_lpa_v1.aws_lambda_permission.lambda_permission
-  to   = module.lambda_lpa_v1.aws_lambda_permission.unqualified_alias_triggers["APIGatewayTrigger"]
-}
-
-//Modify here for new version - create new one. keep original

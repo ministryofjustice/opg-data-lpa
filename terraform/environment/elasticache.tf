@@ -74,6 +74,16 @@ resource "aws_security_group_rule" "lpa_redis_rules" {
   self                     = each.value.target_type == "self" ? each.value.target : null
 }
 
+resource "aws_security_group_rule" "elasticache_ingress_from_lambda" {
+  description              = "Allow Lambda to call ElastiCache"
+  type                     = "ingress"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.lpa_redis_sg.id
+  source_security_group_id = module.region["eu-west-1"].lambda_security_group.id
+}
+
 resource "aws_kms_key" "elasticache_kms" {
   description             = "KMS Key for elasticache"
   enable_key_rotation     = true

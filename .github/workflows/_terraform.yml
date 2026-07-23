@@ -27,6 +27,11 @@ on:
         type: string
 
       version_tag:
+        description: "The full docker image to deploy in the environment"
+        required: true
+        type: string
+
+      lambda_image_tag:
         description: "The docker image tag to deploy in the environment"
         required: true
         type: string
@@ -61,6 +66,7 @@ jobs:
       TF_VAR_default_role: ${{ inputs.default_role }}
       TF_VAR_management_role: ${{ inputs.management_role }}
       TF_VAR_lambda_image_uri: ${{ inputs.version_tag }}
+      TF_VAR_lambda_image_tag: ${{ inputs.lambda_image_tag }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:

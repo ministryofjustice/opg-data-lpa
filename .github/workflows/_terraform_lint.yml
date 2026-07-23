@@ -50,16 +50,16 @@ jobs:
       - uses: ministryofjustice/opg-github-actions/actions/github-deploy-key@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
         with:
           deploy_key: ${{ secrets.allowlist_deploy_key }}
-    
+
       - name: Format Terraform
         run: terraform fmt -check -recursive
         working-directory: ${{ env.tf_dir }}
-        
+
       - uses: terraform-linters/setup-tflint@b480b8fcdaa6f2c577f8e4fa799e89e756bb7c93 # v6.2.2
         name: Setup TFLint
         with:
             tflint_version: v0.60.0
-            
+
       - name: Lint Terraform
         id: tf_lint
         working-directory: ${{ env.tf_dir }}
@@ -70,7 +70,7 @@ jobs:
           TF_WORKSPACE: default
         run: terraform init -input=false
         working-directory: ${{ env.tf_dir }}
-    
+
       - name: Validate Terraform
         id: tf_validate
         working-directory: ${{ env.tf_dir }}
