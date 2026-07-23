@@ -1,5 +1,5 @@
 locals {
-  regional_lambda_enabled = false
+  regional_lambda_enabled = true
 }
 
 module "region" {
