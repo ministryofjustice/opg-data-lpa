@@ -19,11 +19,6 @@ variable "lpa_lambda_function_name" {
   description = "The name of the Lambda function"
 }
 
-variable "lpa_lambda_source_code_hash" {
-  type        = string
-  description = "The source code hash of the Lambda function"
-}
-
 variable "openapi_version" {
   type = string
 }

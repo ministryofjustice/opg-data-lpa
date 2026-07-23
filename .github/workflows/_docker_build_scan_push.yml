@@ -25,17 +25,11 @@ on:
     secrets:
       SNYK_OPG_ORG_TOKEN:
         required: true
-    outputs:
-      ecr_image_uri:
-        value: '${{ jobs.docker_build_scan_push.outputs.ecr_image_uri }}'
-        description: ECR image URI
 
 jobs:
   docker_build_scan_push:
     name: 'Build, Scan and Push Lambdas'
     runs-on: ubuntu-latest
-    outputs:
-      ecr_image_uri: ${{ steps.docker_tags.outputs.semver_tag }}
     strategy:
       matrix:
         data:
