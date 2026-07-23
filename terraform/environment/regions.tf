@@ -1,7 +1,3 @@
-locals {
-  regional_lambda_enabled = true
-}
-
 module "region" {
   source   = "./modules/region"
   for_each = tomap(local.account.active_regions)

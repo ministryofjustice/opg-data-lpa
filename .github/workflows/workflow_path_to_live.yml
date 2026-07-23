@@ -92,7 +92,6 @@ jobs:
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
-      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
       lambda_image_tag: ${{ needs.branch_name.outputs.branch_name }}-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
@@ -122,7 +121,6 @@ jobs:
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.PREPRODUCTION_MAIN_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
-      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
       lambda_image_tag: ${{ needs.branch_name.outputs.branch_name }}-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
@@ -153,7 +151,6 @@ jobs:
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.PRODUCTION_MAIN_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
-      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
       lambda_image_tag: ${{ needs.branch_name.outputs.branch_name }}-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
@@ -173,7 +170,6 @@ jobs:
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
-      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
       lambda_image_tag: ${{ needs.branch_name.outputs.branch_name }}-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
@@ -193,7 +189,6 @@ jobs:
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
-      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
       lambda_image_tag: ${{ needs.branch_name.outputs.branch_name }}-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}

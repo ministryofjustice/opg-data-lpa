@@ -3,7 +3,6 @@ locals {
   account            = contains(keys(var.accounts), local.environment) ? var.accounts[local.environment] : var.accounts.development
   branch_build_flag  = contains(keys(var.accounts), local.environment) ? false : true
   a_record           = local.branch_build_flag ? lower("${local.environment}.${data.aws_route53_zone.environment_cert.name}") : lower(data.aws_route53_zone.environment_cert.name)
-  redis_c_name       = local.branch_build_flag ? lower("${local.environment}-redis.${data.aws_route53_zone.environment_cert.name}") : lower("redis.${data.aws_route53_zone.environment_cert.name}")
   redis_c_rg_name    = substr(local.environment, 0, 26)
   target_environment = contains(keys(var.environment_mapping), local.environment) ? var.environment_mapping[local.environment] : var.environment_mapping.default
 

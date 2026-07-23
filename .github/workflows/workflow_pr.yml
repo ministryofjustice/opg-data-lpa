@@ -126,7 +126,6 @@ jobs:
       oidc_role: ${{ matrix.oidc_role }}
       default_role: ${{ matrix.default_role }}
       management_role: ${{ matrix.management_role }}
-      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
       lambda_image_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
@@ -145,7 +144,6 @@ jobs:
       oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
-      version_tag: ${{ needs.docker_build_scan_push.outputs.ecr_image_uri }}
       lambda_image_tag: ${{ needs.set_variables.outputs.semver_tag }}
       apply: true
     secrets:
