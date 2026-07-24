@@ -38,19 +38,16 @@ variable "region" {
   type        = string
 }
 
+variable "region_active" {
+  description = "Whether this region is active"
+  type        = bool
+}
+
 variable "target_environment" {
   description = "Sirius Environment the Lambda will connect to"
   type        = string
 }
 
 variable "tmp_execution_arn" {
-  type = string
-}
-
-variable "tmp_redis_endpoint" {
-  type = string
-}
-
-variable "tmp_redis_sg_id" {
   type = string
 }

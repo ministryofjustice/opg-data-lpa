@@ -17,7 +17,7 @@ resource "aws_lambda_function" "data_lpa" {
       REQUEST_CACHING     = "enabled"
       REQUEST_CACHING_TTL = tostring(var.account.request_caching_ttl)
       REQUEST_TIMEOUT     = "3"
-      REDIS_URL           = var.tmp_redis_endpoint
+      REDIS_URL           = var.region_active ? aws_elasticache_replication_group.lpa_redis[0].primary_endpoint_address : "PLACEHOLDER VALUE - REGION NOT ACTIVE"
     }
   }
 
