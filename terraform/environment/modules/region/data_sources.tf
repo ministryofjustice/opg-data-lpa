@@ -7,6 +7,9 @@ data "aws_region" "current" {
   region = var.region
 }
 
+data "aws_availability_zones" "available" {
+  region = var.region
+}
 data "aws_secretsmanager_secret" "jwt_secret_key" {
   name   = "${var.account.account_mapping}/jwt-key"
   region = var.region
