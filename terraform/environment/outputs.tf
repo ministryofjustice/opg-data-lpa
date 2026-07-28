@@ -1,4 +1,4 @@
 output "api_gateway_url" {
-  value       = aws_api_gateway_domain_name.lpa_data.domain_name
+  value       = module.region["eu-west-1"].api_gateway_url
   description = "The Custom Domain of the API Gateway"
 }
