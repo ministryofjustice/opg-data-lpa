@@ -1,16 +1,18 @@
 data "aws_sns_topic" "rest_api" {
-  name = "rest-api"
+  name   = "rest-api"
+  region = var.region
 }
 
 data "aws_sns_topic" "lpa_data_api" {
-  name = "CloudWatch-LPA-Data-to-PagerDuty-${local.account.account_mapping}-eu-west-1"
+  name   = "CloudWatch-LPA-Data-to-PagerDuty-${var.account.account_mapping}-${var.region}"
+  region = var.region
 }
 
 resource "aws_cloudwatch_metric_alarm" "rest_api_5xx_errors" {
   actions_enabled     = true
   alarm_actions       = [data.aws_sns_topic.rest_api.arn]
-  alarm_description   = "Number of 5XX Errors returned for LPA Data Rest API in ${terraform.workspace}"
-  alarm_name          = "lpa-${local.environment}-rest-api-5xx-errors"
+  alarm_description   = "Number of 5XX Errors returned for LPA Data Rest API in ${terraform.workspace} in ${var.region}"
+  alarm_name          = "lpa-${var.environment}-rest-api-5xx-errors"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
   dimensions = {
@@ -25,13 +27,14 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_5xx_errors" {
   statistic                 = "Sum"
   threshold                 = 1
   treat_missing_data        = "notBreaching"
+  region                    = var.region
 }
 
 resource "aws_cloudwatch_metric_alarm" "rest_api_high_count" {
   actions_enabled     = true
   alarm_actions       = [data.aws_sns_topic.rest_api.arn]
-  alarm_description   = "Number of requests for LPA Data Rest API in ${terraform.workspace}"
-  alarm_name          = "lpa-${local.environment}-rest-api-high-count"
+  alarm_description   = "Number of requests for LPA Data Rest API in ${terraform.workspace} in ${var.region}"
+  alarm_name          = "lpa-${var.environment}-rest-api-high-count"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
   dimensions = {
@@ -46,14 +49,15 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_high_count" {
   statistic                 = "Sum"
   threshold                 = 1000
   treat_missing_data        = "notBreaching"
+  region                    = var.region
 }
 
 resource "aws_cloudwatch_metric_alarm" "rest_api_slow_response" {
-  count               = local.account.is_production ? 1 : 0
+  count               = var.account.is_production ? 1 : 0
   actions_enabled     = true
   alarm_actions       = [data.aws_sns_topic.lpa_data_api.arn]
-  alarm_description   = "Average response time over a minute for LPA Data Rest API in ${terraform.workspace}"
-  alarm_name          = "lpa-${local.environment}-rest-api-slow-response"
+  alarm_description   = "Average response time over a minute for LPA Data Rest API in ${terraform.workspace} in ${var.region}"
+  alarm_name          = "lpa-${var.environment}-rest-api-slow-response"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
   dimensions = {
@@ -68,4 +72,5 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_slow_response" {
   statistic                 = "Average"
   threshold                 = 3500
   treat_missing_data        = "notBreaching"
+  region                    = var.region
 }

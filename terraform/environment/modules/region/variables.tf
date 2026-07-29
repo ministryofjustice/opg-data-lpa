@@ -20,6 +20,11 @@ variable "environment" {
   type        = string
 }
 
+variable "is_ephemeral" {
+  description = "Whether this is an ephemeral environment"
+  type        = bool
+}
+
 variable "lambda_iam_role" {
   description = "IAM Role Object of the Lambda Role"
   type = object({
@@ -46,8 +51,4 @@ variable "region_active" {
 variable "target_environment" {
   description = "Sirius Environment the Lambda will connect to"
   type        = string
-}
-
-variable "tmp_execution_arn" {
-  type = string
 }
