@@ -1,3 +1,21 @@
+data "aws_availability_zones" "available" {
+  region = var.region
+}
+
+data "aws_caller_identity" "current" {}
+
+data "aws_ecr_image" "data_lpa_lambda_image" {
+  repository_name = data.aws_ecr_repository.data_lpa_lambda_image.name
+  image_tag       = var.lambda_image_tag
+  provider        = aws.management
+  region          = var.region
+}
+data "aws_ecr_repository" "data_lpa_lambda_image" {
+  name     = "integrations/lpa-data-lambda"
+  provider = aws.management
+  region   = var.region
+}
+
 data "aws_kms_key" "secrets_manager" {
   key_id = "alias/secrets-manager-regional-kms-key"
   region = var.region
@@ -7,11 +25,16 @@ data "aws_region" "current" {
   region = var.region
 }
 
-data "aws_availability_zones" "available" {
-  region = var.region
-}
 data "aws_secretsmanager_secret" "jwt_secret_key" {
   name   = "${var.account.account_mapping}/jwt-key"
+  region = var.region
+}
+
+data "aws_security_group" "lambda_sirius_api_ingress" {
+  filter {
+    name   = "tag:Name"
+    values = ["integration-lambda-api-access-${var.target_environment}"]
+  }
   region = var.region
 }
 
@@ -37,13 +60,3 @@ data "aws_vpc" "sirius" {
   }
   region = var.region
 }
-
-data "aws_security_group" "lambda_sirius_api_ingress" {
-  filter {
-    name   = "tag:Name"
-    values = ["integration-lambda-api-access-${var.target_environment}"]
-  }
-  region = var.region
-}
-
-data "aws_caller_identity" "current" {}

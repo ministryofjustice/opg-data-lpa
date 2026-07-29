@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "data_lpa" {
   function_name = "data-lpa-${var.environment}-v1"
   package_type  = "Image"
-  image_uri     = "311462405659.dkr.ecr.${data.aws_region.current.region}.amazonaws.com/integrations/lpa-data-lambda:${var.lambda_image_tag}"
+  image_uri     = "${data.aws_ecr_repository.data_lpa_lambda_image.repository_url}@${data.aws_ecr_image.data_lpa_lambda_image.image_digest}"
   role          = var.lambda_iam_role.arn
   timeout       = 20
   memory_size   = 256

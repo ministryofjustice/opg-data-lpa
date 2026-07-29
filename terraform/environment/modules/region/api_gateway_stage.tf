@@ -42,11 +42,13 @@ resource "aws_api_gateway_method_settings" "global_gateway_settings" {
 resource "aws_cloudwatch_log_group" "lpa_data" {
   name              = "API-Gateway-Execution-Logs-${aws_api_gateway_rest_api.lpa.name}-v1"
   retention_in_days = 30
+  region            = var.region
 }
 
 data "aws_wafv2_web_acl" "integrations" {
-  name  = "integrations-${var.account.account_mapping}-${var.region}-web-acl"
-  scope = "REGIONAL"
+  name   = "integrations-${var.account.account_mapping}-${var.region}-web-acl"
+  scope  = "REGIONAL"
+  region = var.region
 }
 
 resource "aws_wafv2_web_acl_association" "api_gateway_stage" {
