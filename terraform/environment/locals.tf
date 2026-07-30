@@ -1,5 +1,5 @@
 locals {
-  account            = contains(keys(var.accounts), local.environment) ? var.accounts[local.environment] : var.accounts.development
+  account            = contains(keys(var.accounts), local.environment) ? var.accounts[local.environment] : var.accounts.ephemeral
   environment        = replace(terraform.workspace, "_", "-")
   is_ephemeral       = contains(keys(var.accounts), local.environment) ? false : true
   target_environment = contains(keys(var.environment_mapping), local.environment) ? var.environment_mapping[local.environment] : var.environment_mapping.default
