@@ -97,7 +97,40 @@ jobs:
       allowlist_deploy_key: ${{ secrets.SSH_PRIVATE_KEY_ALLOW_LIST_REPOSITORY }}
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
-  plan-environment:
+  plan_account:
+    strategy:
+      matrix:
+        include:
+          - workspace_name: development
+            oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+            default_role: ${{ vars.DEVELOPMENT_ROLE }}
+            management_role: ${{ vars.MANAGEMENT_ROLE }}
+          - workspace_name: preproduction
+            oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+            default_role: ${{ vars.PREPRODUCTION_PULL_REQUEST_ROLE }}
+            management_role: ${{ vars.MANAGEMENT_ROLE }}
+          - workspace_name: production
+            oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
+            default_role: ${{ vars.PRODUCTION_PULL_REQUEST_ROLE }}
+            management_role: ${{ vars.MANAGEMENT_ROLE }}
+    name: "TF Plan Account: ${{ matrix.workspace_name }}"
+    needs:
+      - branch_name
+      - docker_build_scan_push
+      - set_variables
+      - terraform_lint
+    uses: ./.github/workflows/_terraform.yml
+    with:
+      apply: false
+      workspace_name: ${{ matrix.workspace_name }}
+      level: account
+      oidc_role: ${{ matrix.oidc_role }}
+      default_role: ${{ matrix.default_role }}
+      management_role: ${{ matrix.management_role }}
+    secrets:
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+  plan_environment:
     strategy:
       matrix:
         include:
@@ -117,12 +150,15 @@ jobs:
     needs:
       - branch_name
       - docker_build_scan_push
+      - plan_account
       - set_variables
       - terraform_lint
     uses: ./.github/workflows/_terraform.yml
     with:
       apply: false
       workspace_name: ${{ matrix.workspace_name }}
+      level: environment
+      load_ssh_key: true
       oidc_role: ${{ matrix.oidc_role }}
       default_role: ${{ matrix.default_role }}
       management_role: ${{ matrix.management_role }}
@@ -141,6 +177,8 @@ jobs:
     uses: ./.github/workflows/_terraform.yml
     with:
       workspace_name: ${{ github.event.pull_request.number }}${{ needs.branch_name.outputs.safe }}
+      level: environment
+      load_ssh_key: true
       oidc_role: ${{ vars.OIDC_PULL_REQUEST_ROLE }}
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
