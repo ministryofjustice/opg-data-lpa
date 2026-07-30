@@ -10,6 +10,7 @@ data "aws_ecr_image" "data_lpa_lambda_image" {
   provider        = aws.management
   region          = var.region
 }
+
 data "aws_ecr_repository" "data_lpa_lambda_image" {
   name     = "integrations/lpa-data-lambda"
   provider = aws.management

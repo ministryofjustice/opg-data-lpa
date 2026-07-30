@@ -26,7 +26,7 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
 
 resource "aws_security_group" "lpa_redis_sg" {
   name_prefix = "${var.environment}-redis-sg"
-  vpc_id      = var.account.vpc_id
+  vpc_id      = data.aws_vpc.sirius.id
 
   lifecycle {
     create_before_destroy = true
