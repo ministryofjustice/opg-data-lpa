@@ -24,6 +24,7 @@ resource "aws_api_gateway_stage" "current" {
       "\"responseLength\":\"$context.responseLength\"}"
     ])
   }
+  region = var.region
 }
 
 resource "aws_api_gateway_method_settings" "global_gateway_settings" {
