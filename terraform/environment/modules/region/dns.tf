@@ -1,7 +1,23 @@
+locals {
+  a_record = var.is_ephemeral ? lower("${var.environment}.${var.account.opg_hosted_zone}") : var.account.opg_hosted_zone
+}
+
+data "aws_route53_zone" "account_hosted_zone" {
+  name     = "${var.account.opg_hosted_zone}."
+  provider = aws.management
+}
+
+data "aws_acm_certificate" "account_cert" {
+  domain      = "*.${trimsuffix(data.aws_route53_zone.account_hosted_zone.name, ".")}"
+  types       = ["AMAZON_ISSUED"]
+  most_recent = true
+  region      = var.region
+}
+
 resource "aws_route53_record" "environment_record" {
   name           = local.a_record
   type           = "A"
-  zone_id        = data.aws_route53_zone.environment_cert.id
+  zone_id        = data.aws_route53_zone.account_hosted_zone.id
   set_identifier = var.region
 
   alias {
@@ -19,11 +35,10 @@ resource "aws_route53_record" "environment_record" {
 
 resource "aws_api_gateway_domain_name" "lpa_data" {
   domain_name              = trimsuffix(local.a_record, ".")
-  regional_certificate_arn = local.certificate.arn
+  regional_certificate_arn = data.aws_acm_certificate.account_cert.arn
   security_policy          = "SecurityPolicy_TLS13_1_2_PFS_PQ_2025_09"
   endpoint_access_mode     = "BASIC"
 
-  depends_on = [local.certificate]
   endpoint_configuration {
     types = ["REGIONAL"]
   }

@@ -21,6 +21,11 @@ on:
         required: true
         type: string
 
+      level:
+        description: "Account or Environment"
+        required: true
+        type: string
+
       management_role:
         description: "The management CI role to assume"
         required: true
@@ -28,7 +33,7 @@ on:
 
       lambda_image_tag:
         description: "The docker image tag to deploy in the environment"
-        required: true
+        required: false
         type: string
 
       apply:
@@ -40,7 +45,7 @@ on:
     secrets:
       allowlist_deploy_key:
         description: "SSH Deploy Key"
-        required: true
+        required: false
       github_access_token:
         description: "Github Token"
         required: true
@@ -48,15 +53,15 @@ on:
     outputs:
       base_url:
         description: "Base URL of API"
-        value: ${{ jobs.terraform_environment_workflow.outputs.base_url }}
+        value: ${{ jobs.terraform_workflow.outputs.base_url }}
 
 jobs:
-  terraform_environment_workflow:
+  terraform_workflow:
     runs-on: ubuntu-latest
     outputs:
       base_url: ${{ steps.terraform_outputs.outputs.base_url }}
     env:
-      tf_dir: "./terraform/environment"
+      tf_dir: "./terraform/${{ inputs.level }}"
       TF_WORKSPACE: ${{ inputs.workspace_name }}
       TF_VAR_default_role: ${{ inputs.default_role }}
       TF_VAR_management_role: ${{ inputs.management_role }}
@@ -106,7 +111,7 @@ jobs:
         working-directory: ${{ env.tf_dir }}
 
       - name: Terraform Outputs
-        if: inputs.apply == true
+        if: ${{ inputs.apply == true && inputs.level == 'environment' }}
         id: terraform_outputs
         run: echo "base_url=$(terraform output -raw api_gateway_url)" >> $GITHUB_OUTPUT
         working-directory: ${{ env.tf_dir }}

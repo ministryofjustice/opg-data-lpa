@@ -78,8 +78,8 @@ jobs:
       semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
     secrets: inherit # pragma: allowlist secret
 
-  terraform_development_environment_apply:
-    name: "Terraform Apply Development"
+  terraform_development_account_apply:
+    name: "Terraform Apply Development Account Terraform"
     needs:
       - branch_name
       - docker_build_scan_push
@@ -89,6 +89,25 @@ jobs:
     with:
       apply: true
       workspace_name: development
+      level: 'account'
+      oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
+      default_role: ${{ vars.DEVELOPMENT_ROLE }}
+      management_role: ${{ vars.MANAGEMENT_ROLE }}
+    secrets:
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+  terraform_development_environment_apply:
+    name: "Terraform Apply Development Environment"
+    needs:
+      - branch_name
+      - docker_build_scan_push
+      - set_variables
+      - terraform_development_account_apply
+    uses: ./.github/workflows/_terraform.yml
+    with:
+      apply: true
+      workspace_name: development
+      level: environment
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
@@ -107,8 +126,8 @@ jobs:
       working_directory: "./integration_tests"
       tests_directory: "./integration_tests/v1"
 
-  terraform_preprod_environment_apply:
-    name: "Terraform Apply Preproduction"
+  terraform_preprod_account_apply:
+    name: "Terraform Apply Preproduction Account"
     needs:
       - branch_name
       - set_variables
@@ -118,6 +137,25 @@ jobs:
     with:
       apply: true
       workspace_name: preproduction
+      level: account
+      oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
+      default_role: ${{ vars.PREPRODUCTION_MAIN_ROLE }}
+      management_role: ${{ vars.MANAGEMENT_ROLE }}
+    secrets:
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+  terraform_preprod_environment_apply:
+    name: "Terraform Apply Preproduction"
+    needs:
+      - branch_name
+      - set_variables
+      - docker_build_scan_push
+      - terraform_preprod_account_apply
+    uses: ./.github/workflows/_terraform.yml
+    with:
+      apply: true
+      workspace_name: preproduction
+      level: environment
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.PREPRODUCTION_MAIN_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
@@ -137,8 +175,8 @@ jobs:
       tests_directory: "./integration_tests/v1"
       specific_tests: "./v1/test_healthcheck.py"
 
-  terraform_prod_environment_apply:
-    name: "Terraform Apply Production"
+  terraform_prod_account_apply:
+    name: "Terraform Apply Production Account"
     needs:
       - branch_name
       - set_variables
@@ -148,6 +186,25 @@ jobs:
     with:
       apply: true
       workspace_name: production
+      level: account
+      oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
+      default_role: ${{ vars.PRODUCTION_MAIN_ROLE }}
+      management_role: ${{ vars.MANAGEMENT_ROLE }}
+    secrets:
+      github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+  terraform_prod_environment_apply:
+    name: "Terraform Apply Production Environment"
+    needs:
+      - branch_name
+      - set_variables
+      - docker_build_scan_push
+      - terraform_prod_account_apply
+    uses: ./.github/workflows/_terraform.yml
+    with:
+      apply: true
+      workspace_name: production
+      level: environment
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.PRODUCTION_MAIN_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
@@ -157,7 +214,7 @@ jobs:
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
   terraform_integration_environment_apply:
-    name: "Terraform Apply Integration"
+    name: "Terraform Apply Integration Environment"
     needs:
       - branch_name
       - set_variables
@@ -167,6 +224,7 @@ jobs:
     with:
       apply: true
       workspace_name: integration
+      level: environment
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}
@@ -176,7 +234,7 @@ jobs:
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
   terraform_demo_environment_apply:
-    name: "Terraform Apply Demo"
+    name: "Terraform Apply Demo Environment"
     needs:
       - branch_name
       - set_variables
@@ -186,6 +244,7 @@ jobs:
     with:
       apply: true
       workspace_name: demo
+      level: environment
       oidc_role: ${{ vars.OIDC_MAIN_ROLE }}
       default_role: ${{ vars.DEVELOPMENT_ROLE }}
       management_role: ${{ vars.MANAGEMENT_ROLE }}

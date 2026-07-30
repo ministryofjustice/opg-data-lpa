@@ -8,7 +8,6 @@ variable "accounts" {
       is_production       = string
       logger_level        = string
       opg_hosted_zone     = string
-      vpc_id              = string
       session_data        = string
       elasticache_count   = number
       request_caching_ttl = number
