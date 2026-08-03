@@ -23,7 +23,7 @@ resource "aws_lambda_function" "data_lpa" {
 
   logging_config {
     log_format            = "JSON"
-    application_log_level = "INFO"
+    application_log_level = var.account.logger_level
     system_log_level      = "WARN"
   }
 

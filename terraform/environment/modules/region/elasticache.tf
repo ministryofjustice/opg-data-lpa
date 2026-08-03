@@ -9,7 +9,7 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   kms_key_id                  = aws_kms_key.elasticache_kms.arn
   maintenance_window          = "fri:05:00-fri:06:00"
   multi_az_enabled            = var.account.elasticache_count == 1 ? false : true
-  node_type                   = "cache.t2.small"
+  node_type                   = data.aws_region.current.region == "eu-west-2" ? "cache.t4g.small" : "cache.t2.small"
   num_cache_clusters          = var.account.elasticache_count
   parameter_group_name        = "default.redis7"
   port                        = 6379
