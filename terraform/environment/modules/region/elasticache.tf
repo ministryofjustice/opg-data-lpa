@@ -1,20 +1,20 @@
 resource "aws_elasticache_replication_group" "lpa_redis" {
   count                       = var.region_active ? 1 : 0
-  apply_immediately           = var.account.account_mapping != "production" ? true : false
+  apply_immediately           = var.environment.account_name != "production" ? true : false
   at_rest_encryption_enabled  = true
-  automatic_failover_enabled  = var.account.elasticache_count == 1 ? false : true
-  description                 = "ElastiCache Replication Group for Data LPA ${var.environment}"
+  automatic_failover_enabled  = var.environment.elasticache_count == 1 ? false : true
+  description                 = "ElastiCache Replication Group for Data LPA ${var.environment_name}"
   engine                      = "redis"
   engine_version              = "7.1"
   kms_key_id                  = aws_kms_key.elasticache_kms.arn
   maintenance_window          = "fri:05:00-fri:06:00"
-  multi_az_enabled            = var.account.elasticache_count == 1 ? false : true
+  multi_az_enabled            = var.environment.elasticache_count == 1 ? false : true
   node_type                   = data.aws_region.current.region == "eu-west-2" ? "cache.t4g.small" : "cache.t2.small"
-  num_cache_clusters          = var.account.elasticache_count
+  num_cache_clusters          = var.environment.elasticache_count
   parameter_group_name        = "default.redis7"
   port                        = 6379
-  preferred_cache_cluster_azs = var.account.elasticache_count == 1 ? [data.aws_availability_zones.available.names[0]] : data.aws_availability_zones.available.names
-  replication_group_id        = "lpa-${substr(var.environment, 0, 26)}-cache-rg"
+  preferred_cache_cluster_azs = var.environment.elasticache_count == 1 ? [data.aws_availability_zones.available.names[0]] : data.aws_availability_zones.available.names
+  replication_group_id        = "lpa-${substr(var.environment_name, 0, 26)}-cache-rg"
   security_group_ids          = [aws_security_group.lpa_redis_sg.id]
   snapshot_retention_limit    = 7
   snapshot_window             = "03:00-04:00"
@@ -25,7 +25,7 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
 }
 
 resource "aws_security_group" "lpa_redis_sg" {
-  name_prefix = "${var.environment}-redis-sg"
+  name_prefix = "${var.environment_name}-redis-sg"
   vpc_id      = data.aws_vpc.sirius.id
 
   lifecycle {
@@ -35,7 +35,7 @@ resource "aws_security_group" "lpa_redis_sg" {
   revoke_rules_on_delete = true
 
   tags = {
-    "Name" = "data-lpa-${var.environment}-redis-sg"
+    "Name" = "data-lpa-${var.environment_name}-redis-sg"
   }
   region = var.region
 }
@@ -46,7 +46,7 @@ resource "aws_security_group_rule" "elasticache_cluster_egress" {
   from_port         = 6379
   to_port           = 6379
   security_group_id = aws_security_group.lpa_redis_sg.id
-  description       = "Data LPA ${var.environment} ElastiCache Cluster Communication Egress"
+  description       = "Data LPA ${var.environment_name} ElastiCache Cluster Communication Egress"
   self              = true
   region            = var.region
 }
@@ -57,13 +57,13 @@ resource "aws_security_group_rule" "elasticache_cluster_ingress" {
   from_port         = 6379
   to_port           = 6379
   security_group_id = aws_security_group.lpa_redis_sg.id
-  description       = "Data LPA ${var.environment} ElastiCache Cluster Communication Ingress"
+  description       = "Data LPA ${var.environment_name} ElastiCache Cluster Communication Ingress"
   self              = true
   region            = var.region
 }
 
 resource "aws_security_group_rule" "elasticache_ingress_from_lambda" {
-  description              = "Allow Data LPA ${var.environment} Lambda to call ElastiCache"
+  description              = "Allow Data LPA ${var.environment_name} Lambda to call ElastiCache"
   type                     = "ingress"
   from_port                = 6379
   to_port                  = 6379
@@ -74,7 +74,7 @@ resource "aws_security_group_rule" "elasticache_ingress_from_lambda" {
 }
 
 resource "aws_kms_key" "elasticache_kms" {
-  description             = "KMS Key for Data LPA ${var.environment} ElastiCache Cluster Encryption"
+  description             = "KMS Key for Data LPA ${var.environment_name} ElastiCache Cluster Encryption"
   enable_key_rotation     = true
   policy                  = data.aws_iam_policy_document.elasticache_kms_key.json
   deletion_window_in_days = 7
@@ -82,7 +82,7 @@ resource "aws_kms_key" "elasticache_kms" {
 }
 
 resource "aws_kms_alias" "elasticache_kms_alias" {
-  name          = "alias/elasticache-lpa-${var.environment}"
+  name          = "alias/elasticache-lpa-${var.environment_name}"
   target_key_id = aws_kms_key.elasticache_kms.id
   region        = var.region
 }

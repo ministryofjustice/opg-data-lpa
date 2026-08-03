@@ -1,7 +1,7 @@
-variable "account" {
+variable "environment" {
   type = object({
     account_id          = string
-    account_mapping     = string
+    account_name        = string
     active_regions      = map(bool)
     allowed_roles       = list(string)
     is_production       = string
@@ -14,7 +14,7 @@ variable "account" {
   )
 }
 
-variable "environment" {
+variable "environment_name" {
   description = "Name of the Environment"
   type        = string
 }
@@ -47,7 +47,7 @@ variable "region_active" {
   type        = bool
 }
 
-variable "target_environment" {
+variable "sirius_environment" {
   description = "Sirius Environment the Lambda will connect to"
   type        = string
 }

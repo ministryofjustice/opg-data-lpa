@@ -6,7 +6,7 @@ resource "aws_cloudwatch_log_group" "lambda" {
 }
 
 resource "aws_kms_key" "lambda_cloudwatch" {
-  description             = "Data LPA Integration Lambda ${var.environment} Cloudwatch"
+  description             = "Data LPA Integration Lambda ${var.environment_name} Cloudwatch"
   deletion_window_in_days = 10
   enable_key_rotation     = true
   policy                  = data.aws_iam_policy_document.cloudwatch_kms.json
@@ -14,7 +14,7 @@ resource "aws_kms_key" "lambda_cloudwatch" {
 }
 
 resource "aws_kms_alias" "lambda_alias" {
-  name          = "alias/data-lpa-lambda-cloudwatch-${var.environment}"
+  name          = "alias/data-lpa-lambda-cloudwatch-${var.environment_name}"
   target_key_id = aws_kms_key.lambda_cloudwatch.key_id
   region        = var.region
 }

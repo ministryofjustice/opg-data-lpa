@@ -4,7 +4,7 @@ data "aws_sns_topic" "rest_api" {
 }
 
 data "aws_sns_topic" "lpa_data_api" {
-  name   = "CloudWatch-LPA-Data-to-PagerDuty-${var.account.account_mapping}-${var.region}"
+  name   = "CloudWatch-LPA-Data-to-PagerDuty-${var.environment.account_name}-${var.region}"
   region = var.region
 }
 
@@ -12,7 +12,7 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_5xx_errors" {
   actions_enabled     = true
   alarm_actions       = [data.aws_sns_topic.rest_api.arn]
   alarm_description   = "Number of 5XX Errors returned for LPA Data Rest API in ${terraform.workspace} in ${var.region}"
-  alarm_name          = "lpa-${var.environment}-rest-api-5xx-errors"
+  alarm_name          = "lpa-${var.environment_name}-rest-api-5xx-errors"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
   dimensions = {
@@ -34,7 +34,7 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_high_count" {
   actions_enabled     = true
   alarm_actions       = [data.aws_sns_topic.rest_api.arn]
   alarm_description   = "Number of requests for LPA Data Rest API in ${terraform.workspace} in ${var.region}"
-  alarm_name          = "lpa-${var.environment}-rest-api-high-count"
+  alarm_name          = "lpa-${var.environment_name}-rest-api-high-count"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
   dimensions = {
@@ -53,11 +53,11 @@ resource "aws_cloudwatch_metric_alarm" "rest_api_high_count" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "rest_api_slow_response" {
-  count               = var.account.is_production ? 1 : 0
+  count               = var.environment.is_production ? 1 : 0
   actions_enabled     = true
   alarm_actions       = [data.aws_sns_topic.lpa_data_api.arn]
   alarm_description   = "Average response time over a minute for LPA Data Rest API in ${terraform.workspace} in ${var.region}"
-  alarm_name          = "lpa-${var.environment}-rest-api-slow-response"
+  alarm_name          = "lpa-${var.environment_name}-rest-api-slow-response"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
   dimensions = {
