@@ -1,16 +1,17 @@
 variable "environment" {
   type = map(
     object({
-      account_id          = string
-      account_name        = string
-      active_regions      = map(bool)
-      allowed_roles       = list(string)
-      is_production       = string
-      logger_level        = string
-      opg_hosted_zone     = string
-      session_data        = string
-      elasticache_count   = number
-      request_caching_ttl = number
+      account_id                = string
+      account_name              = string
+      active_regions            = map(bool)
+      allowed_roles             = list(string)
+      is_production             = string
+      logger_level              = string
+      opg_hosted_zone           = string
+      session_data              = string
+      elasticache_node_count    = number
+      elasticache_instance_type = string
+      request_caching_ttl       = number
     })
   )
 }
