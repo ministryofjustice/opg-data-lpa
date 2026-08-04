@@ -1,8 +1,8 @@
-variable "accounts" {
+variable "environment" {
   type = map(
     object({
       account_id          = string
-      account_mapping     = string
+      account_name        = string
       active_regions      = map(bool)
       allowed_roles       = list(string)
       is_production       = string

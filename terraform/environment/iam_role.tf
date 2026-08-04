@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda" {
-  name               = "lambda-data-lpa-${local.environment}"
+  name               = "lambda-data-lpa-${local.environment_name}"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
   lifecycle {
     create_before_destroy = true
