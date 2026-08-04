@@ -2,18 +2,18 @@ resource "aws_elasticache_replication_group" "lpa_redis" {
   count                       = var.region_active ? 1 : 0
   apply_immediately           = var.environment.account_name != "production" ? true : false
   at_rest_encryption_enabled  = true
-  automatic_failover_enabled  = var.environment.elasticache_count == 1 ? false : true
+  automatic_failover_enabled  = var.environment.elasticache_node_count == 1 ? false : true
   description                 = "ElastiCache Replication Group for Data LPA ${var.environment_name}"
   engine                      = "redis"
   engine_version              = "7.1"
   kms_key_id                  = aws_kms_key.elasticache_kms.arn
   maintenance_window          = "fri:05:00-fri:06:00"
-  multi_az_enabled            = var.environment.elasticache_count == 1 ? false : true
-  node_type                   = data.aws_region.current.region == "eu-west-2" ? "cache.t4g.small" : "cache.t2.small"
-  num_cache_clusters          = var.environment.elasticache_count
+  multi_az_enabled            = var.environment.elasticache_node_count == 1 ? false : true
+  node_type                   = var.environment.elasticache_instance_type
+  num_cache_clusters          = var.environment.elasticache_node_count
   parameter_group_name        = "default.redis7"
   port                        = 6379
-  preferred_cache_cluster_azs = var.environment.elasticache_count == 1 ? [data.aws_availability_zones.available.names[0]] : data.aws_availability_zones.available.names
+  preferred_cache_cluster_azs = var.environment.elasticache_node_count == 1 ? [data.aws_availability_zones.available.names[0]] : data.aws_availability_zones.available.names
   replication_group_id        = "lpa-${substr(var.environment_name, 0, 26)}-cache-rg"
   security_group_ids          = [aws_security_group.lpa_redis_sg.id]
   snapshot_retention_limit    = 7

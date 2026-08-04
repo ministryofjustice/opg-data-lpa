@@ -9,4 +9,5 @@ resource "aws_api_gateway_deployment" "deploy" {
   lifecycle {
     create_before_destroy = true
   }
+  region = var.region
 }
