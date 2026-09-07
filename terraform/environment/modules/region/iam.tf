@@ -5,7 +5,7 @@ resource "aws_iam_role_policy_attachment" "regional_lambda_permissions" {
 
 
 resource "aws_iam_policy" "regional_lambda_permissions" {
-  name        = "data-lpa-lambda-permissions-${var.environment}-${data.aws_region.current.region}"
+  name        = "data-lpa-lambda-permissions-${var.environment_name}-${data.aws_region.current.region}"
   description = "Regional Permissions for Data LPA Lambda"
   policy      = data.aws_iam_policy_document.regional_lambda_permissions.json
 }

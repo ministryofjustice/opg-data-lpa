@@ -20,21 +20,21 @@ locals {
   }
 
   api_gateway_policy_sha  = substr(base64sha256(data.aws_iam_policy_document.lpa_rest_api_policy.json), 0, 5)
-  ip_restrictions_enabled = contains(["preproduction", "production"], var.account.account_mapping)
+  ip_restrictions_enabled = contains(["preproduction", "production"], var.environment.account_name)
   open_api_spec = templatefile(
     "${path.module}/../../../../lambda_functions/v1/openapi/lpa-openapi.yml",
     {
       region      = var.region
-      environment = var.environment
-      account_id  = var.account.account_id
+      environment = var.environment_name
+      account_id  = var.environment.account_id
     }
   )
   open_api_spec_sha = substr(replace(base64sha256(local.open_api_spec), "/[^0-9A-Za-z_]/", ""), 0, 5)
 }
 
 resource "aws_api_gateway_rest_api" "lpa" {
-  name        = "lpa-${var.environment}"
-  description = "API Gateway for LPA - ${var.environment}"
+  name        = "lpa-${var.environment_name}"
+  description = "API Gateway for LPA - ${var.environment_name}"
   body        = local.open_api_spec
   policy      = sensitive(data.aws_iam_policy_document.lpa_rest_api_policy.json)
 
@@ -51,10 +51,10 @@ data "aws_iam_policy_document" "lpa_rest_api_policy" {
     effect = "Allow"
     principals {
       type        = "AWS"
-      identifiers = var.account.allowed_roles
+      identifiers = var.environment.allowed_roles
     }
     actions   = ["execute-api:Invoke"]
-    resources = ["arn:aws:execute-api:eu-west-?:${var.account.account_id}:*/*/*/*"]
+    resources = ["arn:aws:execute-api:eu-west-?:${var.environment.account_id}:*/*/*/*"]
   }
 }
 
@@ -68,11 +68,11 @@ data "aws_iam_policy_document" "lpa_rest_api_ip_restriction_policy" {
       identifiers = ["*"]
     }
     actions       = ["execute-api:Invoke"]
-    not_resources = ["arn:aws:execute-api:eu-west-?:${var.account.account_id}:*/*/*/healthcheck"]
+    not_resources = ["arn:aws:execute-api:eu-west-?:${var.environment.account_id}:*/*/*/healthcheck"]
     condition {
       test     = "NotIpAddress"
       variable = "aws:SourceIp"
-      values   = sensitive(local.allow_list_mapping[var.account.account_mapping])
+      values   = sensitive(local.allow_list_mapping[var.environment.account_name])
     }
   }
 }

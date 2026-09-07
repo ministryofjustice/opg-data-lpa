@@ -77,19 +77,18 @@ class SiriusService:
 
         environment = self.environment
         secret_name = f"{environment}/jwt-key"
-        region_name = "eu-west-1"
 
         if environment == "local":  # pragma: no cover
             logger.debug("Using local AWS Secrets Manager")  # pragma: no cover
             current_session = localstack_client.session.Session(
-                region_name=region_name
+                region_name="eu-west-1"
             )  # pragma: no cover
 
         else:
             current_session = boto3.session.Session()
 
         client = current_session.client(
-            service_name="secretsmanager", region_name=region_name
+            service_name="secretsmanager"
         )
 
         try:

@@ -24,6 +24,7 @@ resource "aws_api_gateway_stage" "current" {
       "\"responseLength\":\"$context.responseLength\"}"
     ])
   }
+  region = var.region
 }
 
 resource "aws_api_gateway_method_settings" "global_gateway_settings" {
@@ -46,7 +47,7 @@ resource "aws_cloudwatch_log_group" "lpa_data" {
 }
 
 data "aws_wafv2_web_acl" "integrations" {
-  name   = "integrations-${var.account.account_mapping}-${var.region}-web-acl"
+  name   = "integrations-${var.environment.account_name}-${var.region}-web-acl"
   scope  = "REGIONAL"
   region = var.region
 }

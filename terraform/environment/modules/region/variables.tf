@@ -1,20 +1,21 @@
-variable "account" {
+variable "environment" {
   type = object({
-    account_id          = string
-    account_mapping     = string
-    active_regions      = map(bool)
-    allowed_roles       = list(string)
-    is_production       = string
-    logger_level        = string
-    opg_hosted_zone     = string
-    session_data        = string
-    elasticache_count   = number
-    request_caching_ttl = number
+    account_id                = string
+    account_name              = string
+    active_regions            = map(bool)
+    allowed_roles             = list(string)
+    is_production             = string
+    logger_level              = string
+    opg_hosted_zone           = string
+    session_data              = string
+    elasticache_node_count    = number
+    elasticache_instance_type = string
+    request_caching_ttl       = number
     }
   )
 }
 
-variable "environment" {
+variable "environment_name" {
   description = "Name of the Environment"
   type        = string
 }
@@ -47,7 +48,7 @@ variable "region_active" {
   type        = bool
 }
 
-variable "target_environment" {
+variable "sirius_environment" {
   description = "Sirius Environment the Lambda will connect to"
   type        = string
 }

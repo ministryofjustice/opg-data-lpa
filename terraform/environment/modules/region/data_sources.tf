@@ -27,14 +27,14 @@ data "aws_region" "current" {
 }
 
 data "aws_secretsmanager_secret" "jwt_secret_key" {
-  name   = "${var.account.account_mapping}/jwt-key"
+  name   = "${var.environment.account_name}/jwt-key"
   region = var.region
 }
 
 data "aws_security_group" "lambda_sirius_api_ingress" {
   filter {
     name   = "tag:Name"
-    values = ["integration-lambda-api-access-${var.target_environment}"]
+    values = ["integration-lambda-api-access-${var.sirius_environment}"]
   }
   region = var.region
 }
@@ -57,7 +57,7 @@ data "aws_subnets" "application" {
 data "aws_vpc" "sirius" {
   filter {
     name   = "tag:Name"
-    values = ["Sirius-${var.account.account_mapping}-vpc"]
+    values = ["Sirius-${var.environment.account_name}-vpc"]
   }
   region = var.region
 }

@@ -1,7 +1,7 @@
 resource "aws_security_group" "lambda" {
-  name        = "data-lpa-${var.environment}"
+  name        = "data-lpa-${var.environment_name}"
   vpc_id      = data.aws_vpc.sirius.id
-  description = "Data LPA Lambda ${var.environment} Security Group"
+  description = "Data LPA Lambda ${var.environment_name} Security Group"
   region      = var.region
 }
 

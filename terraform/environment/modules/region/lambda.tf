@@ -1,5 +1,5 @@
 resource "aws_lambda_function" "data_lpa" {
-  function_name = "data-lpa-${var.environment}-v1"
+  function_name = "data-lpa-${var.environment_name}-v1"
   package_type  = "Image"
   image_uri     = "${data.aws_ecr_repository.data_lpa_lambda_image.repository_url}@${data.aws_ecr_image.data_lpa_lambda_image.image_digest}"
   role          = var.lambda_iam_role.arn
@@ -8,14 +8,14 @@ resource "aws_lambda_function" "data_lpa" {
 
   environment {
     variables = {
-      SIRIUS_BASE_URL     = "http://api.${var.target_environment}.ecs"
+      SIRIUS_BASE_URL     = "http://api.${var.sirius_environment}.ecs"
       SIRIUS_API_VERSION  = "v1"
-      ENVIRONMENT         = var.account.account_mapping
-      LOGGER_LEVEL        = var.account.logger_level
+      ENVIRONMENT         = var.environment.account_name
+      LOGGER_LEVEL        = var.environment.logger_level
       API_VERSION         = "v1"
-      SESSION_DATA        = var.account.session_data
+      SESSION_DATA        = var.environment.session_data
       REQUEST_CACHING     = "enabled"
-      REQUEST_CACHING_TTL = tostring(var.account.request_caching_ttl)
+      REQUEST_CACHING_TTL = tostring(var.environment.request_caching_ttl)
       REQUEST_TIMEOUT     = "3"
       REDIS_URL           = var.region_active ? aws_elasticache_replication_group.lpa_redis[0].primary_endpoint_address : "PLACEHOLDER VALUE - REGION NOT ACTIVE"
     }
@@ -23,7 +23,7 @@ resource "aws_lambda_function" "data_lpa" {
 
   logging_config {
     log_format            = "JSON"
-    application_log_level = "INFO"
+    application_log_level = var.environment.logger_level
     system_log_level      = "WARN"
   }
 
