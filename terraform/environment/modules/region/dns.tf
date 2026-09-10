@@ -1,5 +1,5 @@
 locals {
-  a_record = var.is_ephemeral ? lower("${var.environment_name}.${var.environment.opg_hosted_zone}") : var.environment.opg_hosted_zone
+  a_record = var.is_ephemeral || var.environment_name == "demo" ? lower("${var.environment_name}.${var.environment.opg_hosted_zone}") : var.environment.opg_hosted_zone
 }
 
 data "aws_route53_zone" "account_hosted_zone" {
