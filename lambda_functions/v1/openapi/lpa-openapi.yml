@@ -292,8 +292,7 @@ paths:
             pattern: '(^7\d{11}$)'
           required: true
           description: Reference Number representing an LPA Uid
-          examples:
-            lpauid: 700000000054
+          example: 700000000054
       responses:
         '200':
           description: LPA details returned for the requested ID
@@ -364,14 +363,16 @@ paths:
       responses:
         '200':
           description: Letter was successfully enqueued or cleanse process started
-          schema:
-            type: object
-            required:
-              - queuedForCleansing
-            properties:
-              queuedForCleansing:
-                type: boolean
-                description: Whether the request was queued for cleansing
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - queuedForCleansing
+                properties:
+                  queuedForCleansing:
+                    type: boolean
+                    description: Whether the request was queued for cleansing
         '204':
           description: Letter was successfully enqueued
         '400':
