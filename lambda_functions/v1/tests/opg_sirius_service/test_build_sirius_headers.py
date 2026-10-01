@@ -10,6 +10,12 @@ def test_build_sirius_headers_content_type(patched_get_secret):
     assert headers["Content-Type"] == "application/json"
 
 
+def test_build_sirius_headers_trace_id(patched_get_secret):
+    headers = test_sirius_service._build_sirius_headers()
+
+    assert headers["X-Amzn-Trace-Id"] == "trace-id"
+
+
 def test_build_sirius_headers_auth(patched_get_secret):
 
     headers = test_sirius_service._build_sirius_headers()
