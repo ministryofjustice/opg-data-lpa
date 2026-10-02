@@ -21,6 +21,9 @@ FROM public.ecr.aws/lambda/python:3.13@sha256:044c120ac73fd263df0e1eeb8b2938a8b7
 RUN dnf upgrade -y --releasever=latest && \
     dnf clean all
 
+# Remove python packages from the lambda that we didn't explicitly add
+RUN pip uninstall -y -r <(pip freeze)
+
 COPY --from=build /app/ ${LAMBDA_TASK_ROOT}/
 
 COPY lambda_functions/v1/functions/lpa/ ${LAMBDA_TASK_ROOT}
