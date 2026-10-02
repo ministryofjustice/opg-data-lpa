@@ -2,10 +2,5 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  SNYK-PYTHON-URLLIB3-20302844:
-    - '/var/tasks/requirements.txt':
-        reason: Verified to be installing 2.8.0, potential build caching issue?
-        expires: 2026-11-02T13:22:00.000Z
-        created: 2026-10-02T13:22:00.000Z
 
 patch: {}
