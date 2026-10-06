@@ -1,6 +1,6 @@
 FROM ghcr.io/astral-sh/uv@sha256:606e70c71c852d03f611b1e56a195d08648507018a7057fab82c4974c4eae105 AS uv
 
-FROM public.ecr.aws/lambda/python:3.13@sha256:044c120ac73fd263df0e1eeb8b2938a8b7038c8f045747091ee21f60eef38615 AS build
+FROM public.ecr.aws/lambda/python:3.13@sha256:0fddf7542198843bd5a488b17e35473659fdf69f0788c7b3563f0231edf3384d AS build
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN --mount=from=uv,source=/uv,target=/bin/uv \
     uv export --frozen --no-emit-workspace --no-dev --no-editable -o requirements.txt && \
     uv pip install -r requirements.txt --target "/app"
 
-FROM public.ecr.aws/lambda/python:3.13@sha256:044c120ac73fd263df0e1eeb8b2938a8b7038c8f045747091ee21f60eef38615 AS runtime
+FROM public.ecr.aws/lambda/python:3.13@sha256:0fddf7542198843bd5a488b17e35473659fdf69f0788c7b3563f0231edf3384d AS runtime
 
 RUN dnf upgrade -y --releasever=latest && \
     dnf clean all
