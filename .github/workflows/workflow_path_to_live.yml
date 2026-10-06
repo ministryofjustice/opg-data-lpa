@@ -26,17 +26,17 @@ jobs:
       commit_sha: ${{ steps.commit_sha.outputs.sha }}
     steps:
       - name: checkout the project
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: "0"
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@4f345be3f706950d1fdc05bc86383967a149bd99 # v4.3.4
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ae37b9b322286123971417e82b665e56e9d6aa3f # v4.10.3
         with:
           terraform_directory: "./terraform/environment"
       - name: "Semver tag"
         id: semver_tag
-        uses: ministryofjustice/opg-github-actions/actions/semver@4f345be3f706950d1fdc05bc86383967a149bd99 # v4.3.4
+        uses: ministryofjustice/opg-github-actions/actions/semver@ae37b9b322286123971417e82b665e56e9d6aa3f # v4.10.3
         with:
           prerelease: false
           github_token: ${{ secrets.GITHUB_TOKEN }}
