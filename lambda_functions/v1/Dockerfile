@@ -24,6 +24,8 @@ RUN dnf upgrade -y --releasever=latest && \
 # Remove python packages from the lambda that we didn't explicitly add
 RUN pip uninstall -y -r <(pip freeze)
 
+ENV PYTHONPATH=${LAMBDA_TASK_ROOT}
+
 COPY --from=build /app/ ${LAMBDA_TASK_ROOT}/
 
 COPY lambda_functions/v1/functions/lpa/ ${LAMBDA_TASK_ROOT}
