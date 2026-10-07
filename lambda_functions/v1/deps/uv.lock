@@ -34,18 +34,18 @@ wheels = [
 
 [[package]]
 name = "awslambdaric"
-version = "4.1.0"
+version = "3.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "simplejson" },
     { name = "snapshot-restore-py" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9e/58/6e209eb9a4672be587114803cd2e3fa4e08d38dc5464be50e2da0c701542/awslambdaric-4.1.0.tar.gz", hash = "sha256:73a349ce4118632ac7c63bd45999c0be476d0e14a184da682b9cd83c6c05d032", size = 4507845, upload-time = "2026-09-28T15:38:23.047Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/25/9ae3c97af6dc4628cf8094dd2189a8b97388409870fba1c54f58c64d5766/awslambdaric-3.1.1.tar.gz", hash = "sha256:1c1fd30570b9a2c5cc4ccd2151c883312c5eef2dbf759c8e9d29c18cec6de2e8", size = 4500924, upload-time = "2025-05-27T16:06:05.241Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c5/24/0a64fb496626ce54db1ea193d5b5482e2e563164a16ac60e73b426b72db2/awslambdaric-4.1.0-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:b732c868614559fd7c299f87bf21aa57d7b75baf8e9749a4ad2d1a327c84a17a", size = 355728, upload-time = "2026-09-28T18:51:30.123Z" },
-    { url = "https://files.pythonhosted.org/packages/6c/f5/ef1e8b6df3e75d5e514b2fc35bc2206e90a08a70bb86a8e66f6f41a46a61/awslambdaric-4.1.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:2d06899c070ccd0d4e1f1c3542f03b7b30ba6dbef541a5904fcaf749e686db2c", size = 357684, upload-time = "2026-09-28T21:07:22.755Z" },
-    { url = "https://files.pythonhosted.org/packages/fb/85/f97d99b03c139cbc688c1d8865fcc428805960ea82ed283549bfa8132de5/awslambdaric-4.1.0-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:190acdc62501114c561420d7160ba7b07d00f23a9da3a33c7e774993cdfe9c43", size = 1332505, upload-time = "2026-09-28T18:51:31.346Z" },
-    { url = "https://files.pythonhosted.org/packages/b4/0b/5f657839c570e13c72636dd3ab12984afe6b78dd07da2d775ac887164c43/awslambdaric-4.1.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:2b8f79d5074229f7cd61b06b82ef8acfe9e6c9c264c50ed9e63f26874f6f5a3f", size = 1387468, upload-time = "2026-09-28T21:07:24.083Z" },
+    { url = "https://files.pythonhosted.org/packages/36/8c/24cd782cb5406bea659a386b8edf48d35c7ded88a7f30df533da96664eac/awslambdaric-3.1.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9bb003f14f3754a3d6912e3a478cf3a306b84febdc26b612fe23c1143a89f0fd", size = 343077, upload-time = "2025-05-27T16:05:53.286Z" },
+    { url = "https://files.pythonhosted.org/packages/c4/de/d8901e24e5a4852c3f88b7e3abaf897b1473ca00d1952100ff1cfa5ba500/awslambdaric-3.1.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:755db7118d1ed900a675a2608ea9c48c463949ede5cc91648c542a5ec89df4ed", size = 345680, upload-time = "2025-05-27T16:06:02.291Z" },
+    { url = "https://files.pythonhosted.org/packages/a9/35/0e97e4cc862f586211b22d3cbb070e9d9a8c1646aaa5a38b5a530192805c/awslambdaric-3.1.1-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:889b4bb6e9d88aab26d67cce7f9212aafa1f53c64eca2dc83cdf42a79eb3e6ec", size = 344893, upload-time = "2025-05-27T16:05:54.545Z" },
+    { url = "https://files.pythonhosted.org/packages/79/10/2cc723ad18b3bd049af5175bf620262bedc0c788433c3e2e90e67ec3d16e/awslambdaric-3.1.1-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4972127ef34729c44c9567148e68a4eacc283d685400f9d08bf51138ac4ee3d5", size = 347136, upload-time = "2025-05-27T16:06:04.053Z" },
 ]
 
 [[package]]
@@ -471,12 +471,12 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "awslambdaric", specifier = "==4.1.0" },
+    { name = "awslambdaric", specifier = "==3.1.1" },
     { name = "flask", specifier = "==3.1.3" },
     { name = "localstack-client", specifier = "==2.12" },
     { name = "markupsafe", specifier = "==3.0.3" },
-    { name = "pyjwt", specifier = "==2.15.1" },
-    { name = "redis", specifier = "==8.1.0" },
+    { name = "pyjwt", specifier = "==2.15.0" },
+    { name = "redis", specifier = "==7.4.1" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "requests-aws4auth", specifier = "==1.3.2" },
     { name = "werkzeug", specifier = "==3.1.9" },
@@ -745,11 +745,11 @@ wheels = [
 
 [[package]]
 name = "pyjwt"
-version = "2.15.1"
+version = "2.15.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/43/ea/5194e52748b0da83d71e082d75496eaec6e58f419f5e184786ded517e6a9/pyjwt-2.15.1.tar.gz", hash = "sha256:4f259e80cdfb6b3fc18a7de51fd1ef9ec79652f25019bae68975ca2468a34df8", size = 121252, upload-time = "2026-09-28T18:40:42.598Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/02/a5/5197bfd06417837ac079921c66fa6393f1dea3557272a263cebfef69e432/pyjwt-2.15.0.tar.gz", hash = "sha256:b11c5f9791d7bf51c2b39a81ed669f6b2dbbd669df2942f6c60167e9e3d1abe4", size = 120513, upload-time = "2026-09-23T16:56:00.689Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/50/ca/44de4e75f8aadc457f0634be3b542815078ded46dca30efb960edeecad6e/pyjwt-2.15.1-py3-none-any.whl", hash = "sha256:42d59d631f7768a1028a64c7ff581a9bf7519804daf91fc5b6c56e30eec5e193", size = 33860, upload-time = "2026-09-28T18:40:41.429Z" },
+    { url = "https://files.pythonhosted.org/packages/e8/55/40e45bf052ee8ee12a4dfd785519660f8effa7b065442b91646ec6828619/pyjwt-2.15.0-py3-none-any.whl", hash = "sha256:7a3742debf6b879e912dbb9819ceec1594be812452b78c5f2e2dfc56564954f8", size = 33680, upload-time = "2026-09-23T16:55:59.241Z" },
 ]
 
 [[package]]
@@ -871,11 +871,11 @@ wheels = [
 
 [[package]]
 name = "redis"
-version = "8.1.0"
+version = "7.4.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a8/99/604f0b666d4c616d891cf77ebb9db6bb21601344c051aebf1b72b9ff915f/redis-8.1.0.tar.gz", hash = "sha256:6e1a19beef9225c83efd689c7e6b7da2d5215b1f42cd13b7fc3714d0a09c7b25", size = 5254356, upload-time = "2026-07-30T08:51:00.269Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/51/93/05e7d4a65285066a74f48697f9b9cde5cfce71398033d69ed83c3d98f5c9/redis-7.4.1.tar.gz", hash = "sha256:1a1df5067062cf7cbe677994e391f8ee0840f499d370f1a71266e0dd3aa9308e", size = 4945742, upload-time = "2026-06-05T09:10:06.703Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/66/9d/c5731f6e3608663d4d3656fd8d3aecee8b509c3082818f5a13eae925baea/redis-8.1.0-py3-none-any.whl", hash = "sha256:a4fe1aac3d3b3cc791d4b3d5931c5a956045dc951ee74d1c913ee3ac4d2ee9fb", size = 560618, upload-time = "2026-07-30T08:50:58.497Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/2e/2677f3f93dae0497e7e33b6637302e7f3744efc553f34231183e32584885/redis-7.4.1-py3-none-any.whl", hash = "sha256:1fa4647af1c5e93a2c685aa248ee44cce092691146d41390518dabe9a99839b0", size = 410171, upload-time = "2026-06-05T09:10:05.128Z" },
 ]
 
 [[package]]
