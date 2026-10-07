@@ -1,7 +1,7 @@
 [project]
 name = "lambda-functions"
 version = "0.1.0"
-requires-python = "==3.13.14"
+requires-python = "==3.14.7"
 dependencies = [
     "awslambdaric==3.1.1",
     "Flask==3.1.3",
