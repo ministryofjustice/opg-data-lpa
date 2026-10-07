@@ -78,6 +78,6 @@ data "aws_iam_policy_document" "lpa_rest_api_ip_restriction_policy" {
 }
 
 module "allow_list" {
-  source = "git@github.com:ministryofjustice/opg-terraform-aws-moj-ip-allow-list.git?ref=v3.4.6"
+  source = "git@github.com:ministryofjustice/opg-terraform-aws-moj-ip-allow-list.git?ref=v3.5.2"
 }
 
