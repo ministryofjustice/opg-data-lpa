@@ -13,6 +13,9 @@
     "Renovate"
   ],
   "configMigration": true,
+  "ignoreDeps": [
+    "github.com/ministryofjustice/opg-terraform-aws-moj-ip-allow-list"
+  ],
   "packageRules": [
     {
       "description": "Terraform: bundle all updates together",
@@ -81,7 +84,8 @@
     "groupName": "Security Alerts",
     "labels": [
       "Dependencies",
-      "Renovate"
+      "Renovate",
+      "Security"
     ],
     "dependencyDashboardApproval": false,
     "minimumReleaseAge": null,
