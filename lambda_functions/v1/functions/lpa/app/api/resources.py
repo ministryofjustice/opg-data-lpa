@@ -1,6 +1,3 @@
-import logging
-import os
-
 from flask import Blueprint
 from flask import request, jsonify
 
@@ -92,7 +89,7 @@ def handle_healthcheck_route():
 
 @api.route("/lpa-online-tool/lpas/<lpa_online_tool_id>", methods=["GET"])
 def handle_lpa_online_tool(lpa_online_tool_id):
-    logging.info(f"Start /lpa-online-tool/lpas/{lpa_online_tool_id}")
+    logger.info(f"Start /lpa-online-tool/lpas/{lpa_online_tool_id}")
 
     response, status = get_by_online_tool_id(lpa_online_tool_id=lpa_online_tool_id)
 
@@ -101,7 +98,7 @@ def handle_lpa_online_tool(lpa_online_tool_id):
 
 @api.route("/use-an-lpa/lpas/<sirius_uid>", methods=["GET"])
 def handle_use_an_lpa(sirius_uid):
-    logging.info(f"Start /use-an-lpa/lpas/{sirius_uid}")
+    logger.info(f"Start /use-an-lpa/lpas/{sirius_uid}")
 
     response, status = get_by_sirius_uid(sirius_uid=sirius_uid)
 
@@ -110,7 +107,7 @@ def handle_use_an_lpa(sirius_uid):
 
 @api.route("/use-an-lpa/lpas/requestCode", methods=["POST"])
 def handle_request_code():
-    logging.info("Start /use-an-lpa/lpas/requestCode")
+    logger.info("Start /use-an-lpa/lpas/requestCode")
 
     body = request.json
     response, status = request_code(body)
