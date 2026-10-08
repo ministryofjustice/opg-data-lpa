@@ -35,6 +35,7 @@ class SiriusService:
                 if config_params.REQUEST_CACHING_TTL
                 else 48
             )
+            self.trace_id = config_params.TRACE_ID
         except Exception as e:
             raise Exception(f"Error loading config e: {e}")
 
@@ -122,6 +123,7 @@ class SiriusService:
         return {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + encoded_jwt,
+            "X-Amzn-Trace-Id": self.trace_id,
         }
 
     def _handle_sirius_error(
@@ -149,7 +151,7 @@ class SiriusService:
             return (
                 True
                 if requests.get(
-                    url=healthcheck_url, timeout=self.request_timeout
+                    url=healthcheck_url, timeout=self.request_timeout, headers={"X-Amzn-Trace-Id": self.trace_id}
                 ).status_code
                 == 200
                 else False
