@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 from urllib.parse import urlencode, quote
 
 import boto3
@@ -35,7 +36,6 @@ class SiriusService:
                 if config_params.REQUEST_CACHING_TTL
                 else 48
             )
-            self.trace_id = config_params.TRACE_ID
         except Exception as e:
             raise Exception(f"Error loading config e: {e}")
 
@@ -62,6 +62,9 @@ class SiriusService:
             url = sirius_url
 
         return url
+
+    def _get_trace_id(self):
+        return os.environ.get("_X_AMZN_TRACE_ID")
 
     def _get_secret(self):
         """
@@ -123,7 +126,7 @@ class SiriusService:
         return {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + encoded_jwt,
-            "X-Amzn-Trace-Id": self.trace_id,
+            "X-Amzn-Trace-Id": self._get_trace_id(),
         }
 
     def _handle_sirius_error(
@@ -151,7 +154,7 @@ class SiriusService:
             return (
                 True
                 if requests.get(
-                    url=healthcheck_url, timeout=self.request_timeout, headers={"X-Amzn-Trace-Id": self.trace_id}
+                    url=healthcheck_url, timeout=self.request_timeout, headers={"X-Amzn-Trace-Id": self._get_trace_id()}
                 ).status_code
                 == 200
                 else False
