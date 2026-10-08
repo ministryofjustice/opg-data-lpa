@@ -36,6 +36,7 @@ class SiriusService:
                 else 48
             )
             self.trace_id = config_params.TRACE_ID
+            logger.info(f"Trace ID: {self.trace_id}")
         except Exception as e:
             raise Exception(f"Error loading config e: {e}")
 
