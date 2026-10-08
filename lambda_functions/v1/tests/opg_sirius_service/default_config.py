@@ -7,8 +7,6 @@ class SiriusServiceTestConfig:
     API_NAME = "opg-data-lpa"
     ENVIRONMENT = "local"
 
-    TRACE_ID = "trace-id"
-
     SIRIUS_BASE_URL = "http://not-really-sirius.com"
     SESSION_DATA = "publicapi@opgtest.com"
 

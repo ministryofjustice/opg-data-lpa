@@ -8,7 +8,6 @@ class Config(object):
     API_VERSION = "v1"
     API_NAME = "opg-data-lpa"
     ENVIRONMENT = os.environ.get("ENVIRONMENT")
-    TRACE_ID = os.environ.get("_X_AMZN_TRACE_ID")
 
     # sirius
     SIRIUS_BASE_URL = os.environ.get("SIRIUS_BASE_URL")
