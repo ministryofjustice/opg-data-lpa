@@ -62,10 +62,7 @@ services:
       - "./pact:/tmp/pact"
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - AWS_ACCESS_KEY_ID=XXX
-      - AWS_SECRET_ACCESS_KEY=XXX
       - AWS_DEFAULT_REGION=eu-west-1
-      - AWS_ENDPOINT_URL=http://localstack:4566
 
   lpa-data:
     image: lpa-data-lambda:latest

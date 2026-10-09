@@ -12,10 +12,6 @@ import logging
 
 logger = logging
 
-secretsmanager = boto3.client(
-    "secretsmanager", endpoint_url=os.environ.get("AWS_ENDPOINT_URL")
-)
-
 class SiriusService:
     def __init__(self, config_params, cache):
         try:
@@ -38,6 +34,8 @@ class SiriusService:
                 if config_params.REQUEST_CACHING_TTL
                 else 48
             )
+
+            self.secretsmanager = boto3.client("secretsmanager")
         except Exception as e:
             raise Exception(f"Error loading config e: {e}")
 
@@ -85,7 +83,7 @@ class SiriusService:
         secret_name = f"{environment}/jwt-key"
 
         try:
-            get_secret_value_response = secretsmanager.get_secret_value(SecretId=secret_name)
+            get_secret_value_response = self.secretsmanager.get_secret_value(SecretId=secret_name)
             secret = get_secret_value_response["SecretString"]
         except ClientError as e:
             raise Exception(f"Unable to get secret from Secrets Manager: {e}")
