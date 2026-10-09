@@ -6,6 +6,7 @@ WORKDIR /app
 
 RUN dnf install -y unzip && \
     curl -L https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.20.0/layer.zip -o /tmp/otel-layer.zip && \
+    echo 'ad69218f4d5ba149ff50a794b785f9b4fa81b8f1d4ebfdbd6a36004a989b2b25  /tmp/otel-layer.zip' | sha256sum -c - && \
     unzip /tmp/otel-layer.zip -d /opt/ && \
     chmod -R 755 /opt/ && \
     rm /tmp/otel-layer.zip && \
