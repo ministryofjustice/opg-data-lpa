@@ -26,7 +26,7 @@ services:
 
   api_gateway:
     build:
-      context: ./lambda_functions/v1
+      dockerfile: lambda_functions/v1/Dockerfile
     depends_on:
       - localstack
       - mock-sirius
