@@ -4,6 +4,13 @@ FROM public.ecr.aws/lambda/python:3.14@sha256:b81a4aa3bc1d56999090333cefea611e5a
 
 WORKDIR /app
 
+RUN dnf install -y unzip && \
+    curl -L https://github.com/aws-observability/aws-otel-python-instrumentation/releases/download/v0.20.0/layer.zip -o /tmp/otel-layer.zip && \
+    unzip /tmp/otel-layer.zip -d /opt/ && \
+    chmod -R 755 /opt/ && \
+    rm /tmp/otel-layer.zip && \
+    dnf clean all
+
 ENV UV_MALWARE_CHECK=1
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_NO_INSTALLER_METADATA=1
@@ -25,7 +32,9 @@ RUN dnf upgrade -y --releasever=latest && \
 RUN pip uninstall -y -r <(pip freeze)
 
 ENV PYTHONPATH=${LAMBDA_TASK_ROOT}
+ENV AWS_LAMBDA_EXEC_WRAPPER=/opt/otel-instrument
 
+COPY --from=build /opt/ /opt/
 COPY --from=build /app/ ${LAMBDA_TASK_ROOT}/
 
 COPY lambda_functions/v1/functions/lpa/ ${LAMBDA_TASK_ROOT}
