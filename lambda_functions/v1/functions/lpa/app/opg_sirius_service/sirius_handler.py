@@ -12,7 +12,7 @@ from botocore.exceptions import ClientError
 import logging
 
 logger = logging
-
+secretsmanager = boto3.client("secretsmanager")
 
 class SiriusService:
     def __init__(self, config_params, cache):
@@ -82,21 +82,8 @@ class SiriusService:
         environment = self.environment
         secret_name = f"{environment}/jwt-key"
 
-        if environment == "local":  # pragma: no cover
-            logger.debug("Using local AWS Secrets Manager")  # pragma: no cover
-            current_session = localstack_client.session.Session(
-                region_name="eu-west-1"
-            )  # pragma: no cover
-
-        else:
-            current_session = boto3.session.Session()
-
-        client = current_session.client(
-            service_name="secretsmanager"
-        )
-
         try:
-            get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+            get_secret_value_response = secretsmanager.get_secret_value(SecretId=secret_name)
             secret = get_secret_value_response["SecretString"]
         except ClientError as e:
             raise Exception(f"Unable to get secret from Secrets Manager: {e}")
