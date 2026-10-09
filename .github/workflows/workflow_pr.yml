@@ -82,6 +82,7 @@ jobs:
     name: Build, Scan and Push
     needs:
       - set_variables
+      - python_unit_tests
     uses: ./.github/workflows/_docker_build_scan_push.yml
     with:
       semver_tag: ${{ needs.set_variables.outputs.semver_tag }}
