@@ -1,5 +1,6 @@
 import boto3
 import pytest
+from botocore.stub import Stubber
 from moto import mock_aws
 
 from .conftest import test_sirius_service
@@ -11,10 +12,17 @@ from .conftest import test_sirius_service
 )
 @mock_aws
 def test_get_secret(secret_code, environment, region):
-    session = boto3.session.Session()
-    client = session.client(service_name="secretsmanager", region_name=region)
+    client = boto3.client("secretsmanager")
+    stubber = Stubber(client)
 
-    client.create_secret(Name=f"{environment}/jwt-key", SecretString=secret_code)
+    stubber.add_response(
+        "get_secret_value",
+        {"SecretString": secret_code},
+        {"SecretId": f"{environment}/jwt-key"},
+    )
+    stubber.activate()
+
+    test_sirius_service.secretsmanager = client
     test_sirius_service.environment = environment
     assert test_sirius_service._get_secret() == secret_code
 
