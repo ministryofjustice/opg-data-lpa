@@ -5,14 +5,16 @@ from urllib.parse import urlencode, quote
 
 import boto3
 import jwt
-import localstack_client.session
 import requests
 from botocore.exceptions import ClientError
 
 import logging
 
 logger = logging
-secretsmanager = boto3.client("secretsmanager")
+
+secretsmanager = boto3.client(
+    "secretsmanager", endpoint_url=os.environ.get("AWS_ENDPOINT_URL")
+)
 
 class SiriusService:
     def __init__(self, config_params, cache):
