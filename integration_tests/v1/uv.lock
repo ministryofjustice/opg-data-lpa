@@ -22,30 +22,30 @@ wheels = [
 
 [[package]]
 name = "boto3"
-version = "1.43.108"
+version = "1.43.114"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/48/59/fb93b6ebd9ad43eb9a58c7a6da51a0fe24ab0c04bc4d534a0bfc5eba7f59/boto3-1.43.108.tar.gz", hash = "sha256:03341f089158368acf83e921aca98b706095322ca52bc4c039a616940aa5ad41", size = 112682, upload-time = "2026-10-02T19:32:25.211Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e2/8c/f6f884dc947789317e73ed6fce85e18580d22e9f90e48d67c2367b02667e/boto3-1.43.114.tar.gz", hash = "sha256:be704857751564a5cf69c5bbaadbfa01c22806409815c73563db42fbffe583a2", size = 112653, upload-time = "2026-10-14T19:24:22.561Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/74/e4/7e88c40e9f61888e12dac0de41a5fddc2bcd1c3992d9b28e17d915cce0df/boto3-1.43.108-py3-none-any.whl", hash = "sha256:19e9da95ef0c494e27052049a42137550e66730509bb613e76eaa30ddf9a7170", size = 140045, upload-time = "2026-10-02T19:32:23.826Z" },
+    { url = "https://files.pythonhosted.org/packages/c8/f8/0799a101e6f65c8b687f50c218654cef1e44658e946c7d33d362e2572621/boto3-1.43.114-py3-none-any.whl", hash = "sha256:d9cac2eb921ce674970cef1c9ad750f85ee3a846aedcf188d18368fb9eb6da23", size = 140043, upload-time = "2026-10-14T19:24:21.038Z" },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.43.108"
+version = "1.43.118"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/61/16/6b4477f433da2c11193802f538330ce080076c2f38d817ad437ed3cd1465/botocore-1.43.108.tar.gz", hash = "sha256:ee4f75cf3bdbb0da7912e089950e8112f692016539d939312c771499958e6cfd", size = 16312879, upload-time = "2026-10-02T19:32:20.797Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d4/b8/3e55154ddaf1a6d1d4ddda85c0e5983205a3b7657edacd8ebba8c6fd774c/botocore-1.43.118.tar.gz", hash = "sha256:7f3f9d88cc9e847587690f82a42e3c3c292c3026c92c1e60d68a9310018e003f", size = 16420126, upload-time = "2026-10-22T19:22:04.81Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7a/0b/4670b7e23914b5cc357be5ca45fae503b57d98ecff4b3eabea70412809fd/botocore-1.43.108-py3-none-any.whl", hash = "sha256:ab9d16c6b4350aaa54ed28202dfa2998b2d735fdbf3247eb60af469d8d48a5b8", size = 16008194, upload-time = "2026-10-02T19:32:15.086Z" },
+    { url = "https://files.pythonhosted.org/packages/9c/ce/61b39a8e7a69af5ea43c1c3e1b0065a4866b42ccddf107e16686a3143614/botocore-1.43.118-py3-none-any.whl", hash = "sha256:a45d7ae570674161e4a3542d8c68633bf7503f92d1de781ef7361b79488eda6f", size = 16122016, upload-time = "2026-10-22T19:22:00.414Z" },
 ]
 
 [[package]]
@@ -199,15 +199,15 @@ wheels = [
 
 [[package]]
 name = "fakeredis"
-version = "2.39.0"
+version = "2.40.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "redis" },
     { name = "sortedcontainers" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/2f/27/3ed3eee5e5a929345c37024b814a70f6e2452ffdab77a2680c2ebba3614a/fakeredis-2.39.0.tar.gz", hash = "sha256:e89c3410f290330042638ff5cca3e22788fa267dcaf28a64b4f483e14577208d", size = 301722, upload-time = "2026-10-01T12:35:19.404Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/61/d0/8cbd1339c2a606a0ceda74e1a181248d372bb2c66bc6cf9d954871839ff9/fakeredis-2.40.0.tar.gz", hash = "sha256:16eb05a3e97c37a033c73d1da7e885eb2aa47ba7604cc377144339efa2780a02", size = 332674, upload-time = "2026-10-14T12:46:01.851Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/35/ca/8bf657139922808196e6480ec6ed94008897e23d603abd5b27538cfdf811/fakeredis-2.39.0-py3-none-any.whl", hash = "sha256:acd1450575259634db2942d5bae93e383aac32bb9968aab29fe7b0c2ab880bb8", size = 186508, upload-time = "2026-10-01T12:35:17.899Z" },
+    { url = "https://files.pythonhosted.org/packages/c7/e4/6919d3653d72c53d1fb22c97ceb6fa3664cad302994e90ee52279f7eb394/fakeredis-2.40.0-py3-none-any.whl", hash = "sha256:b155ef2442134372eb1cc5664cf5638ccbe0a6dde9d1942153708e2782f315c9", size = 204148, upload-time = "2026-10-14T12:46:00.014Z" },
 ]
 
 [[package]]
@@ -264,13 +264,13 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "boto3", specifier = "==1.43.108" },
+    { name = "boto3", specifier = "==1.43.114" },
     { name = "coverage", specifier = "==7.16.2" },
-    { name = "fakeredis", specifier = "==2.39.0" },
+    { name = "fakeredis", specifier = "==2.40.0" },
     { name = "flask", specifier = "==3.1.3" },
     { name = "jsonschema", specifier = "==4.26.0" },
     { name = "pytest", specifier = "==9.1.1" },
-    { name = "pytest-env", specifier = "==1.8.0" },
+    { name = "pytest-env", specifier = "==1.8.1" },
     { name = "pytest-html", specifier = "==4.2.0" },
     { name = "pytest-xdist", specifier = "==3.8.0" },
     { name = "requests-aws4auth", specifier = "==1.4.0" },
@@ -408,15 +408,15 @@ wheels = [
 
 [[package]]
 name = "pytest-env"
-version = "1.8.0"
+version = "1.8.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pytest" },
     { name = "python-dotenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/19/e5/02fb78ca59d456291135b48fc95ee481a6e55dc47ad53e6cee31a7e40d54/pytest_env-1.8.0.tar.gz", hash = "sha256:e2dd383be15823a875403509949c0d975266f4f1711ccfbdcdbcbcf8fa83097c", size = 17363, upload-time = "2026-10-10T22:49:40.747Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0e/36/ccea73f55f269dc15c17ffb85d86beab7602bd7712f509300ef0d6bb937a/pytest_env-1.8.1.tar.gz", hash = "sha256:996f86ad78b6c7b5335e0d493f9e9ecd3e421174e056742856f91da439e1cbd9", size = 17852, upload-time = "2026-10-18T06:54:41.736Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8a/cd/c592fb78f8d5fc456568faf1983f2b994f00aa1690f0b3b24af95ad75121/pytest_env-1.8.0-py3-none-any.whl", hash = "sha256:43a026236949342be217f1539fa7ef32973f0d3a98d79d86a15eee973d3b1a2a", size = 10385, upload-time = "2026-10-10T22:49:39.251Z" },
+    { url = "https://files.pythonhosted.org/packages/8a/7d/d02c020f0daff882c9115c3c0381b8fac386570ef08c10d648a1a6fdf89e/pytest_env-1.8.1-py3-none-any.whl", hash = "sha256:753d3f0c646dd43f292a6d664099d1cafce39dda08217510ec5e9b6a681628a0", size = 10464, upload-time = "2026-10-18T06:54:40.508Z" },
 ]
 
 [[package]]
