@@ -18,13 +18,13 @@ dependencies = [
 dev = [
     "connexion==3.3.0",
     "coverage==7.16.2",
-    "fakeredis==2.39.0",
+    "fakeredis==2.40.0",
     "flake8==7.4.1",
     "flake8-quotes==3.4.0",
     "moto==5.2.4",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
-    "pytest-env==1.8.0",
+    "pytest-env==1.8.1",
     "pytest-html==4.2.0",
     "tenacity==9.2.1",
     "validators==0.36.0",
@@ -32,7 +32,7 @@ dev = [
     "importlib-metadata==8.9.0",
     "typing-extensions==4.16.0",
     "pact-python==3.4.1",
-    "boto3==1.43.108",
+    "boto3==1.43.115",
 ]
 
 [tool.uv]
