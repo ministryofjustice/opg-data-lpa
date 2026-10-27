@@ -57,7 +57,7 @@ services:
     image: unit-tests-request-handler:latest
     build:
       context: lambda_functions/v1
-      dockerfile: Dockerfile-tests
+      dockerfile: tests.Dockerfile
     volumes:
       - "./pact:/tmp/pact"
       - /var/run/docker.sock:/var/run/docker.sock
