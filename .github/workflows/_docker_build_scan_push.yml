@@ -92,7 +92,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
           snyk_policy_path: ./${{ matrix.data.snyk_policy_path }}
           snyk_test_args: >
-            --severity-threshold=high --file=./lambda_functions/v1/Dockerfile
+            --severity-threshold=high --file=${{matrix.data.docker_build_directory}}/Dockerfile
 
       - name: Upload Snyk scan results
         uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
