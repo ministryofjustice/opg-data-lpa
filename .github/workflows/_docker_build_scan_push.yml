@@ -86,7 +86,7 @@ jobs:
           provenance: false
 
       - name: Snyk Scan
-        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@ae37b9b322286123971417e82b665e56e9d6aa3f # v4.10.3
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@12bdbe54f92af873347bc0cd6f4e7769265c1a90 # v4.10.5
         with:
           SNYK_TEST_IMAGE: ${{ steps.docker_tags.outputs.semver_tag }}
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
@@ -95,7 +95,7 @@ jobs:
             --severity-threshold=high
 
       - name: Upload Snyk scan results
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         if: always()
         with:
           sarif_file: test-results/snyk.sarif
