@@ -30,6 +30,9 @@ FROM base AS runtime
 RUN dnf upgrade -y --releasever=latest && \
     dnf clean all
 
+# not necessary in a production image
+RUN rm /usr/local/bin/aws-lambda-rie
+
 # Remove python packages from the lambda that we didn't explicitly add
 RUN pip uninstall -y -r <(pip freeze)
 
