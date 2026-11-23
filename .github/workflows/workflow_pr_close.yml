@@ -15,7 +15,7 @@ defaults:
 jobs:
   branch_name:
     name: "Generate a safe branch name"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@11715bf7e74f8c0429fff4c719462a6f5a5582cd # v3.19.22
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/data-parse-branch-name.yml@3af63e9b78aee88f972b2847ceed1de3b4701502 # v3.19.25
 
   destroy-pr-env:
     name: Destroy PR Environment
